@@ -67,7 +67,7 @@ const DynamicTitle = () => {
   );
 };
 
-const Hero = () => {
+const Hero = ({ onOpenQuote }) => {
   return (
     <section
       id="home"
@@ -123,17 +123,15 @@ const Hero = () => {
           </div>
 
           <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '130px' }}>
-            <motion.a
-              href="https://wa.me/258848580244"
-              target="_blank"
-              rel="noopener noreferrer"
+            <motion.button
+              onClick={onOpenQuote}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 1 }}
               className="btn btn-primary"
-              style={{ padding: '15px 35px', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '10px' }}
+              style={{ padding: '15px 35px', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '10px', border: 'none', cursor: 'pointer' }}
             >
-              Contacte-nos <ChevronRight size={20} />
-            </motion.a>
+              Solicitar Orçamento <ChevronRight size={20} />
+            </motion.button>
             <motion.a
               href="#servicos"
               whileHover={{ scale: 1.05 }}

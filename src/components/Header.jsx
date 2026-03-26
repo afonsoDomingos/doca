@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Phone, Mail, Menu, X, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const Header = () => {
+const Header = ({ onOpenQuote }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -102,15 +102,13 @@ const Header = () => {
               </li>
             ))}
             <li>
-              <a 
-                href="https://wa.me/258848580244"
-                target="_blank" 
-                rel="noopener noreferrer"
+              <button 
+                onClick={onOpenQuote}
                 className="btn btn-primary" 
-                style={{ padding: '10px 20px', fontSize: '0.9rem' }}
+                style={{ padding: '10px 20px', fontSize: '0.9rem', border: 'none', cursor: 'pointer' }}
               >
                 Solicitar Orçamento
-              </a>
+              </button>
             </li>
           </ul>
         </nav>
@@ -156,15 +154,13 @@ const Header = () => {
                 </li>
               ))}
               <li style={{ marginTop: '20px' }}>
-                <a 
-                  href="https://wa.me/258848580244"
-                  target="_blank" 
-                  rel="noopener noreferrer"
+                <button 
+                  onClick={() => { setIsMobileMenuOpen(false); onOpenQuote(); }}
                   className="btn btn-primary" 
-                  style={{ width: '100%', display: 'block', textAlign: 'center' }}
+                  style={{ width: '100%', display: 'block', textAlign: 'center', border: 'none', cursor: 'pointer' }}
                 >
                   Solicitar Orçamento
-                </a>
+                </button>
               </li>
             </ul>
           </motion.nav>

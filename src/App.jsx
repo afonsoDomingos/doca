@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -11,12 +11,13 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import QuoteModal from './components/QuoteModal';
 
-const Home = () => (
+const Home = ({ onOpenQuote }) => (
   <div className="app-container">
-    <Header />
+    <Header onOpenQuote={onOpenQuote} />
     <main>
-      <Hero />
+      <Hero onOpenQuote={onOpenQuote} />
       <About />
       <Services />
       <MissionVision />
@@ -29,13 +30,16 @@ const Home = () => (
 );
 
 function App() {
+  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home onOpenQuote={() => setIsQuoteModalOpen(true)} />} />
         <Route path="/admin/login" element={<Login />} />
         <Route path="/admin/dashboard" element={<Dashboard />} />
       </Routes>
+      <QuoteModal isOpen={isQuoteModalOpen} onClose={() => setIsQuoteModalOpen(false)} />
     </Router>
   );
 }
