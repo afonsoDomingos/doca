@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const cloudinary = require('cloudinary').v2;
+const bcrypt = require('bcryptjs');
 const { Resend } = require('resend');
 
 const app = express();
@@ -273,15 +274,19 @@ app.post('/api/register', async (req, res) => {
       return res.status(400).json({ error: 'Este e-mail já está cadastrado' });
     }
 
+    // Encriptar senha
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     const user = new User({ 
       name, 
       email: normalizedEmail, 
-      password, 
+      password: hashedPassword, 
       phone 
     });
     
     await user.save();
-    console.log('✅ Novo usuário registrado:', normalizedEmail);
+    console.log('✅ Novo usuário registrado com segurança:', normalizedEmail);
     
     res.json({ 
       success: true, 
@@ -337,23 +342,46 @@ app.post('/api/auth/login', async (req, res) => {
     console.log('Consultando Admin:', email.toLowerCase());
     const admin = await Admin.findOne({ email: email.toLowerCase() });
 
-    if (admin && admin.password === password) {
-      console.log('Sucesso: Admin identificado');
-      return res.json({ success: true, role: 'admin', message: 'Admin logado com sucesso' });
+    if (admin) {
+      const isMatch = await bcrypt.compare(password, admin.password);
+      if (isMatch) {
+        console.log('Sucesso: Admin identificado');
+        return res.json({ success: true, role: 'admin', message: 'Admin logado com sucesso' });
+      } else {
+        // Tentar verificar em texto simples para contas antigas/migração
+        if (admin.password === password) {
+          console.log('⚠ Login via texto simples (recomenda-se atualizar senha)');
+          return res.json({ success: true, role: 'admin', message: 'Admin logado com sucesso' });
+        }
+      }
     }
 
     // 3. Tentar encontrar nos Usuários (Clientes)
     console.log('Consultando Cliente:', email.toLowerCase());
     const user = await User.findOne({ email: email.toLowerCase() });
 
-    if (user && user.password === password) {
-      console.log('Sucesso: Cliente identificado');
-      return res.json({ 
-        success: true, 
-        role: 'customer', 
-        user: { id: user._id, name: user.name, email: user.email },
-        message: 'Cliente logado com sucesso' 
-      });
+    if (user) {
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (isMatch) {
+         console.log('Sucesso: Cliente identificado');
+         return res.json({ 
+           success: true, 
+           role: 'customer', 
+           user: { id: user._id, name: user.name, email: user.email },
+           message: 'Cliente logado com sucesso' 
+         });
+      } else {
+        // Tentar verificar em texto simples para contas antigas/migração
+        if (user.password === password) {
+          console.log('⚠ Login via texto simples (recomenda-se atualizar senha)');
+          return res.json({ 
+            success: true, 
+            role: 'customer', 
+            user: { id: user._id, name: user.name, email: user.email },
+            message: 'Cliente logado com sucesso' 
+          });
+        }
+      }
     }
 
     // 4. Se não encontrar em nenhum
