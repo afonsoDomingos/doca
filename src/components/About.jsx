@@ -1,6 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Users, FolderKanban, Trophy } from 'lucide-react';
+
+const CounterStat = ({ target, label, icon: Icon, suffix = '+' }) => {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const started = useRef(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !started.current) {
+        started.current = true;
+        const duration = 2000;
+        const steps = 60;
+        const increment = target / steps;
+        let current = 0;
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= target) {
+            setCount(target);
+            clearInterval(timer);
+          } else {
+            setCount(Math.floor(current));
+          }
+        }, duration / steps);
+      }
+    }, { threshold: 0.3 });
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [target]);
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      style={{ textAlign: 'center', padding: '0 30px' }}
+    >
+      <div style={{ color: 'var(--accent-yellow)', marginBottom: '10px' }}>
+        <Icon size={36} />
+      </div>
+      <div style={{ fontSize: '3rem', fontWeight: '800', color: 'white', lineHeight: 1 }}>
+        {count}{suffix}
+      </div>
+      <div style={{ color: '#CBD5E1', fontSize: '1rem', marginTop: '8px', fontWeight: '500' }}>{label}</div>
+    </motion.div>
+  );
+};
 
 const About = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -87,7 +134,7 @@ const About = () => {
               boxShadow: 'var(--shadow-lg)'
             }}>
               <img 
-                src="https://images.unsplash.com/photo-1541913057-259c1ec391f4?w=1000&auto=format&fit=crop" 
+                src="/docasobrenoss.jpeg" 
                 alt="Equipa DOCA" 
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
@@ -107,6 +154,22 @@ const About = () => {
               <div style={{ fontSize: '1rem', fontWeight: '600', color: 'var(--text-muted)' }}>Anos de Experiência</div>
             </div>
           </motion.div>
+        </div>
+
+        {/* Stats Bar */}
+        <div style={{
+          background: 'linear-gradient(135deg, var(--primary-blue), #002244)',
+          borderRadius: '20px',
+          padding: '50px 40px',
+          marginTop: '60px',
+          display: 'flex',
+          justifyContent: 'space-around',
+          flexWrap: 'wrap',
+          gap: '30px'
+        }}>
+          <CounterStat target={49}  label="Clientes Satisfeitos" icon={Users}          suffix="+" />
+          <CounterStat target={178} label="Projetos Realizados"  icon={FolderKanban}   suffix="+" />
+          <CounterStat target={6}   label="Prémios Recebidos"    icon={Trophy}         suffix="" />
         </div>
       </div>
     </section>
