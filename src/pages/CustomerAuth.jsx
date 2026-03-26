@@ -86,7 +86,6 @@ const CustomerAuth = () => {
         flex: 1, 
         background: 'linear-gradient(135deg, #003366 0%, #001e40 100%)', 
         display: 'none', 
-        '@media (minWidth: 992px)': { display: 'flex' },
         flexDirection: 'column',
         justifyContent: 'center',
         padding: '6rem',

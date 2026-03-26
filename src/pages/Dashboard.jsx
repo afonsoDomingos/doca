@@ -13,6 +13,7 @@ import {
   ExternalLink,
   ChevronRight,
   User,
+  MessageCircle,
   Image as ImageIcon
 } from 'lucide-react';
 
