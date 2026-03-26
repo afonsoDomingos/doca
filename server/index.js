@@ -362,7 +362,9 @@ app.get('/', (req, res) => {
     res.send('DOCA API is running...');
 });
 
-const PORT = 5000;
-app.listen(PORT, () => console.log(`🚀 API DOCA running on port ${PORT}`));
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  const PORT = 5000;
+  app.listen(PORT, () => console.log(`🚀 Local API running on port ${PORT}`));
+}
 
 module.exports = app;

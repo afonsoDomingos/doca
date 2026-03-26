@@ -58,7 +58,19 @@ const CustomerAuth = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      const data = await response.json();
+      
+      let data = {};
+      const contentType = response.headers.get("content-type");
+      
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        data = await response.json();
+      } else {
+        const textError = await response.text();
+        console.error('Server returned non-JSON:', textError);
+        setError(`Erro do Servidor (Código ${response.status}). Verifique o console ou a base de dados.`);
+        setLoading(false);
+        return;
+      }
 
       if (response.ok) {
         if (isLogin) {
@@ -78,7 +90,8 @@ const CustomerAuth = () => {
         setError(data.error || 'E-mail ou senha incorretos');
       }
     } catch (err) {
-      setError('Erro de conexão com o servidor');
+      console.error('Fetch error:', err);
+      setError('Erro de conexão ou erro interno no servidor.');
     } finally {
       setLoading(false);
     }
