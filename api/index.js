@@ -71,17 +71,39 @@ const AdminSchema = new mongoose.Schema({
   password: { type: String, required: true }
 });
 
-// Quote Request Schema
+// Quote / Project Management Schema
 const QuoteSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null }, // Link to customer if logged in
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   clientName: String,
   email: String,
   phone: String,
   serviceType: String,
   budgetRange: String,
   description: String,
-  status: { type: String, default: 'Pendente' }, // Pendente, Em Análise, Concluído, Cancelado
+  status: { type: String, default: 'Pendente' }, 
   adminNotes: { type: String, default: '' },
+  
+  // --- NOVOS CAMPOS DE GESTÃO PRO ---
+  totalBudget: { type: Number, default: 0 },
+  startDate: { type: Date },
+  deadline: { type: Date },
+  percentage: { type: Number, default: 0 }, // 0 a 100
+  
+  payments: [{
+    amount: Number,
+    date: { type: Date, default: Date.now },
+    status: { type: String, default: 'Pendente' }, // Pago, Pendente
+    method: String
+  }],
+  
+  materials: [{
+    name: String,
+    cost: Number,
+    date: { type: Date, default: Date.now }
+  }],
+  
+  workPhotos: [String], // URLs de fotos da obra
+  
   createdAt: { type: Date, default: Date.now }
 });
 
@@ -130,6 +152,17 @@ app.delete('/api/projects/:id', async (req, res) => {
     await connectToDatabase();
     await Project.findByIdAndDelete(req.params.id);
     res.json({ message: 'Project deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Update Quote/Project Management
+app.put('/api/quotes/:id', async (req, res) => {
+  try {
+    await connectToDatabase();
+    const quote = await Quote.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(quote);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

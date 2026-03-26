@@ -32,6 +32,9 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [loadingImage, setLoadingImage] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isManageModalOpen, setIsManageModalOpen] = useState(false);
+  const [selectedQuote, setSelectedQuote] = useState(null);
+  const [manageTab, setManageTab] = useState('general');
   const [editingProject, setEditingProject] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
@@ -191,6 +194,34 @@ const Dashboard = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setEditingProject(null);
+  };
+
+  const openManageModal = (quote) => {
+    setSelectedQuote(quote);
+    setIsManageModalOpen(true);
+    setManageTab('general');
+  };
+
+  const closeManageModal = () => {
+    setIsManageModalOpen(false);
+    setSelectedQuote(null);
+  };
+
+  const handleUpdateQuote = async (updatedData) => {
+    try {
+      const response = await fetch(`${API_URL}/api/quotes/${selectedQuote._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedData)
+      });
+      if (response.ok) {
+        fetchData();
+        const freshData = await response.json();
+        setSelectedQuote(freshData);
+      }
+    } catch (err) {
+      console.error('Error updating quote:', err);
+    }
   };
 
   const filteredProjects = projects.filter(p => 
@@ -658,8 +689,11 @@ const Dashboard = () => {
                         </div>
                       </td>
                       <td style={{ padding: '1.5rem 2.5rem', textAlign: 'right' }}>
-                        <button onClick={() => alert(`Descrição: ${quote.description}`)} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '10px', borderRadius: '12px', cursor: 'pointer', marginRight: '10px' }}>
-                          <ExternalLink size={18} color="#64748b" />
+                        <button 
+                          onClick={() => openManageModal(quote)}
+                          style={{ background: '#1e293b', color: 'white', border: 'none', padding: '10px 16px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: '700', cursor: 'pointer', marginRight: '10px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                        >
+                          <Settings size={14} /> GESTÃO
                         </button>
                         <button onClick={() => handleDeleteQuote(quote._id)} style={{ background: '#fef2f2', border: 'none', padding: '10px', borderRadius: '12px', cursor: 'pointer' }}>
                           <Trash2 size={18} color="#ef4444" />
@@ -816,6 +850,224 @@ const Dashboard = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* PROJECT MANAGEMENT MODAL */}
+      {isManageModalOpen && selectedQuote && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '2rem' }}>
+          <div style={{ background: 'white', width: '100%', maxWidth: '900px', height: '80vh', borderRadius: '32px', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
+            
+            {/* Modal Header */}
+            <div style={{ padding: '2rem 2.5rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc' }}>
+              <div>
+                <h3 style={{ fontSize: '1.5rem', fontWeight: '900', color: '#1e293b', margin: 0 }}>Gestão de Obra: {selectedQuote.serviceType}</h3>
+                <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '0.875rem' }}>Cliente: {selectedQuote.clientName} | Ref: #DOCA-{selectedQuote._id.slice(-6).toUpperCase()}</p>
+              </div>
+              <button onClick={closeManageModal} style={{ background: '#f1f5f9', border: 'none', borderRadius: '12px', padding: '8px', cursor: 'pointer' }}>
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Modal Tabs */}
+            <div style={{ display: 'flex', background: '#f8fafc', padding: '0 2.5rem', gap: '2rem' }}>
+              {['general', 'finance', 'execution', 'gallery'].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setManageTab(tab)}
+                  style={{
+                    padding: '1rem 0',
+                    border: 'none',
+                    background: 'none',
+                    color: manageTab === tab ? '#eb8923' : '#64748b',
+                    fontWeight: '800',
+                    fontSize: '0.875rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1px',
+                    cursor: 'pointer',
+                    borderBottom: manageTab === tab ? '3px solid #eb8923' : '3px solid transparent',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {tab === 'general' && 'Geral'}
+                  {tab === 'finance' && 'Financeiro'}
+                  {tab === 'execution' && 'Execução'}
+                  {tab === 'gallery' && 'Galeria'}
+                </button>
+              ))}
+            </div>
+
+            {/* Modal Content */}
+            <div style={{ flex: 1, overflowY: 'auto', padding: '2.5rem' }}>
+              
+              {manageTab === 'general' && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontWeight: '700', marginBottom: '0.5rem' }}>Status da Obra</label>
+                    <select 
+                      value={selectedQuote.status}
+                      onChange={(e) => handleUpdateQuote({ status: e.target.value })}
+                      style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0' }}
+                    >
+                      <option value="Pendente">Pendente</option>
+                      <option value="Em Análise">Em Análise</option>
+                      <option value="Aprovado">Aprovado</option>
+                      <option value="Em Execução">Em Execução</option>
+                      <option value="Finalização">Finalização</option>
+                      <option value="Concluído">Concluído</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontWeight: '700', marginBottom: '0.5rem' }}>Orçamento Total (MT)</label>
+                    <input 
+                      type="number"
+                      value={selectedQuote.totalBudget || ''}
+                      onChange={(e) => handleUpdateQuote({ totalBudget: Number(e.target.value) })}
+                      placeholder="0.00"
+                      style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontWeight: '700', marginBottom: '0.5rem' }}>Data de Início</label>
+                    <input 
+                      type="date"
+                      value={selectedQuote.startDate ? new Date(selectedQuote.startDate).toISOString().split('T')[0] : ''}
+                      onChange={(e) => handleUpdateQuote({ startDate: e.target.value })}
+                      style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontWeight: '700', marginBottom: '0.5rem' }}>Deadline (Data de Entrega)</label>
+                    <input 
+                      type="date"
+                      value={selectedQuote.deadline ? new Date(selectedQuote.deadline).toISOString().split('T')[0] : ''}
+                      onChange={(e) => handleUpdateQuote({ deadline: e.target.value })}
+                      style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0' }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {manageTab === 'finance' && (
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                    <h4 style={{ margin: 0 }}>Histórico de Pagamentos</h4>
+                    <button 
+                      onClick={() => {
+                        const amount = prompt('Valor da Parcela (MT):');
+                        if (amount) {
+                          const newPayments = [...(selectedQuote.payments || []), { amount: Number(amount), status: 'Pago', date: new Date() }];
+                          handleUpdateQuote({ payments: newPayments });
+                        }
+                      }}
+                      style={{ background: '#eb8923', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: '700', cursor: 'pointer' }}
+                    >
+                      + Novo Pagamento
+                    </button>
+                  </div>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ textAlign: 'left', borderBottom: '1px solid #f1f5f9' }}>
+                        <th style={{ padding: '1rem 0', color: '#64748b' }}>Data</th>
+                        <th style={{ padding: '1rem 0', color: '#64748b' }}>Valor</th>
+                        <th style={{ padding: '1rem 0', color: '#64748b' }}>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(selectedQuote.payments || []).map((pay, i) => (
+                        <tr key={i} style={{ borderBottom: '1px solid #f8fafc' }}>
+                          <td style={{ padding: '1rem 0' }}>{new Date(pay.date).toLocaleDateString()}</td>
+                          <td style={{ padding: '1rem 0', fontWeight: '700' }}>{pay.amount.toLocaleString()} MT</td>
+                          <td style={{ padding: '1rem 0' }}>
+                            <span style={{ background: '#ecfdf5', color: '#10b981', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: '800' }}>{pay.status}</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {manageTab === 'execution' && (
+                <div>
+                  <div style={{ marginBottom: '3rem' }}>
+                    <label style={{ display: 'block', fontWeight: '700', marginBottom: '1rem' }}>Estado da Obra: {selectedQuote.percentage || 0}%</label>
+                    <input 
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={selectedQuote.percentage || 0}
+                      onChange={(e) => handleUpdateQuote({ percentage: Number(e.target.value) })}
+                      style={{ width: '100%', accentColor: '#eb8923', height: '10px' }}
+                    />
+                  </div>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                    <h4 style={{ margin: 0 }}>Materiais Adquiridos</h4>
+                    <button 
+                      onClick={() => {
+                        const name = prompt('Nome do Material:');
+                        const cost = prompt('Custo (MT):');
+                        if (name && cost) {
+                          const newMaterials = [...(selectedQuote.materials || []), { name, cost: Number(cost), date: new Date() }];
+                          handleUpdateQuote({ materials: newMaterials });
+                        }
+                      }}
+                      style={{ background: '#1e293b', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: '700', cursor: 'pointer' }}
+                    >
+                      + Registar Material
+                    </button>
+                  </div>
+                  {/* Small materials list */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
+                    {(selectedQuote.materials || []).map((mat, i) => (
+                      <div key={i} style={{ padding: '1rem', background: '#f8fafc', borderRadius: '16px', display: 'flex', justifyContent: 'space-between' }}>
+                        <div>
+                          <p style={{ margin: 0, fontWeight: '700' }}>{mat.name}</p>
+                          <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748b' }}>{new Date(mat.date).toLocaleDateString()}</p>
+                        </div>
+                        <p style={{ margin: 0, color: '#eb8923', fontWeight: '800' }}>{mat.cost.toLocaleString()} MT</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {manageTab === 'gallery' && (
+                <div>
+                  <div style={{ marginBottom: '2rem' }}>
+                    <button 
+                      onClick={() => {
+                        const url = prompt('URL da Foto da Obra (Dica: Upload para ImgBB/Cloudinary):');
+                        if (url) {
+                          const newPhotos = [...(selectedQuote.workPhotos || []), url];
+                          handleUpdateQuote({ workPhotos: newPhotos });
+                        }
+                      }}
+                      style={{ background: '#eb8923', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '16px', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                    >
+                      <Plus size={20} /> Adicionar Foto à Obra
+                    </button>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
+                    {(selectedQuote.workPhotos || []).map((photo, i) => (
+                      <div key={i} style={{ borderRadius: '16px', overflow: 'hidden', height: '150px', position: 'relative' }}>
+                        <img src={photo} alt="Progress" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <button 
+                          onClick={() => {
+                            const newPhotos = selectedQuote.workPhotos.filter((_, index) => index !== i);
+                            handleUpdateQuote({ workPhotos: newPhotos });
+                          }}
+                          style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: '8px', padding: '5px', cursor: 'pointer' }}
+                        >
+                          <Trash2 size={14} color="red" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

@@ -24,6 +24,7 @@ const CustomerDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+  const [selectedActiveProject, setSelectedActiveProject] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [newQuote, setNewQuote] = useState({
     serviceType: '',
@@ -267,6 +268,77 @@ const CustomerDashboard = () => {
           </div>
         </div>
 
+        {/* ACTIVE PROJECTS SECTION (Only if any) */}
+        {quotes.some(q => q.percentage > 0 || q.status === 'Em Execução' || q.status === 'Finalização') && (
+          <div style={{ marginBottom: '4rem' }}>
+            <h2 style={{ fontSize: '1.75rem', fontWeight: '900', color: '#1e293b', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <LayoutDashboard size={28} color="#eb8923" /> Acompanhamento de Obras
+            </h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '2rem' }}>
+              {quotes.filter(q => q.percentage > 0 || q.status === 'Em Execução' || q.status === 'Finalização').map((proj) => {
+                const totalPaid = (proj.payments || []).reduce((acc, curr) => acc + curr.amount, 0);
+                const daysLeft = proj.deadline ? Math.ceil((new Date(proj.deadline) - new Date()) / (1000 * 60 * 60 * 24)) : null;
+                
+                return (
+                  <div key={proj._id} style={{ background: 'white', borderRadius: '32px', border: '1px solid white', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+                    <div style={{ height: '200px', background: proj.workPhotos?.length > 0 ? `url(${proj.workPhotos[proj.workPhotos.length - 1]})` : '#1e293b', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}>
+                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)' }}></div>
+                      <div style={{ position: 'absolute', bottom: '20px', left: '20px' }}>
+                        <span style={{ background: '#eb8923', color: 'white', padding: '4px 12px', borderRadius: '100px', fontSize: '0.7rem', fontWeight: '900', textTransform: 'uppercase' }}>{proj.status}</span>
+                        <h3 style={{ color: 'white', margin: '8px 0 0', fontSize: '1.5rem', fontWeight: '800' }}>{proj.serviceType}</h3>
+                      </div>
+                    </div>
+                    
+                    <div style={{ padding: '2rem' }}>
+                      {/* Progress Bar */}
+                      <div style={{ marginBottom: '2rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                          <span style={{ fontWeight: '700', color: '#475569' }}>Progresso da Obra</span>
+                          <span style={{ fontWeight: '900', color: '#eb8923' }}>{proj.percentage || 0}%</span>
+                        </div>
+                        <div style={{ height: '12px', background: '#f1f5f9', borderRadius: '10px', overflow: 'hidden' }}>
+                          <motion.div 
+                            initial={{ width: 0 }}
+                            animate={{ width: `${proj.percentage || 0}%` }}
+                            style={{ height: '100%', background: 'linear-gradient(90deg, #eb8923, #f59e0b)', borderRadius: '10px' }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Finance Summary */}
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
+                        <div style={{ padding: '1.25rem', background: '#f8fafc', borderRadius: '20px' }}>
+                          <p style={{ margin: 0, fontSize: '0.75rem', fontWeight: '700', color: '#64748b' }}>INVESTIMENTO PAGO</p>
+                          <p style={{ margin: '5px 0 0', fontSize: '1.1rem', fontWeight: '900', color: '#1e293b' }}>{totalPaid.toLocaleString()} MT</p>
+                        </div>
+                        <div style={{ padding: '1.25rem', background: '#fef3c7', borderRadius: '20px' }}>
+                          <p style={{ margin: 0, fontSize: '0.75rem', fontWeight: '700', color: '#92400e' }}>TOTAL PREVISTO</p>
+                          <p style={{ margin: '5px 0 0', fontSize: '1.1rem', fontWeight: '900', color: '#92400e' }}>{(proj.totalBudget || 0).toLocaleString()} MT</p>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #f1f5f9', paddingTop: '1.5rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <Clock size={20} color="#64748b" />
+                          <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>
+                            {daysLeft !== null ? (daysLeft > 0 ? `Entrega em ${daysLeft} dias` : 'Prazo de Entrega atingido') : 'Prazo a definir'}
+                          </span>
+                        </div>
+                        <button 
+                          onClick={() => setSelectedActiveProject(proj)}
+                          style={{ background: '#003366', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '14px', fontWeight: '700', cursor: 'pointer', fontSize: '0.875rem' }}
+                        >
+                          Ver Relatório Completo
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {/* My Quotes List Table */}
         <div style={{ background: 'white', borderRadius: '32px', border: '1px solid white', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)' }}>
           <div style={{ padding: '2rem 2.5rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -472,6 +544,86 @@ const CustomerDashboard = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ACTIVE PROJECT FULL REPORT MODAL */}
+      {selectedActiveProject && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100, padding: '2rem' }}>
+          <div style={{ background: 'white', width: '100%', maxWidth: '1000px', height: '90vh', borderRadius: '40px', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
+            <div style={{ padding: '2.5rem', background: '#f8fafc', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <h2 style={{ margin: 0, fontSize: '2rem', fontWeight: '900', color: '#1e293b' }}>Relatório de Obra Detalhado</h2>
+                <p style={{ margin: '4px 0 0', color: '#64748b', fontWeight: '500' }}>#{selectedActiveProject._id.slice(-8).toUpperCase()} | {selectedActiveProject.serviceType}</p>
+              </div>
+              <button onClick={() => setSelectedActiveProject(null)} style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '15px', padding: '12px', cursor: 'pointer' }}>
+                <X size={24} />
+              </button>
+            </div>
+
+            <div style={{ flex: 1, overflowY: 'auto', padding: '3rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: '3rem' }}>
+                {/* Left Side: Progress & Photos */}
+                <div>
+                  <h4 style={{ fontSize: '1.25rem', fontWeight: '800', marginBottom: '1.5rem' }}>Evolução Fotográfica</h4>
+                  {selectedActiveProject.workPhotos?.length > 0 ? (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
+                      {selectedActiveProject.workPhotos.map((photo, i) => (
+                        <img key={i} src={photo} alt="Foto de obra" style={{ width: '100%', height: '180px', objectFit: 'cover', borderRadius: '20px', border: '4px solid #f8fafc' }} />
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={{ padding: '4rem', background: '#f8fafc', borderRadius: '24px', textAlign: 'center', color: '#94a3b8' }}>
+                      Nenhuma foto de obra disponível no momento.
+                    </div>
+                  )}
+
+                  <h4 style={{ fontSize: '1.25rem', fontWeight: '800', marginTop: '3rem', marginBottom: '1.5rem' }}>Lista de Materiais & Aquisições</h4>
+                  {selectedActiveProject.materials?.length > 0 ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      {selectedActiveProject.materials.map((mat, i) => (
+                        <div key={i} style={{ padding: '1.25rem', background: '#f8fafc', borderRadius: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#eb8923' }}></div>
+                            <span style={{ fontWeight: '700', color: '#1e293b' }}>{mat.name}</span>
+                          </div>
+                          <span style={{ color: '#64748b', fontSize: '0.875rem' }}>{new Date(mat.date).toLocaleDateString()}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p style={{ color: '#64748b' }}>A aguardar registo de materiais.</p>
+                  )}
+                </div>
+
+                {/* Right Side: Finances & Deadlines */}
+                <div>
+                  <div style={{ padding: '1.5rem', background: '#003366', borderRadius: '24px', color: 'white', marginBottom: '2rem' }}>
+                    <p style={{ margin: 0, opacity: 0.8, fontSize: '0.875rem' }}>ESTADO FINANCEIRO</p>
+                    <h3 style={{ margin: '10px 0', fontSize: '2rem', fontWeight: '900' }}>
+                      {((selectedActiveProject.payments?.reduce((acc, c) => acc + c.amount, 0) || 0)).toLocaleString()} MT
+                    </h3>
+                    <p style={{ margin: 0, fontSize: '0.875rem' }}>Pagos de um total de {(selectedActiveProject.totalBudget || 0).toLocaleString()} MT</p>
+                  </div>
+
+                  <h4 style={{ fontSize: '1.1rem', fontWeight: '800', marginBottom: '1rem' }}>Histórico de Parcelas</h4>
+                  <div style={{ background: '#f8fafc', borderRadius: '24px', padding: '1.5rem' }}>
+                    {selectedActiveProject.payments?.map((pay, i) => (
+                      <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: i === selectedActiveProject.payments.length - 1 ? 'none' : '1px solid #e2e8f0' }}>
+                        <span style={{ fontWeight: '600' }}>{pay.amount.toLocaleString()} MT</span>
+                        <span style={{ color: '#10b981', fontWeight: '800' }}>✓ PAGO</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div style={{ marginTop: '2rem', padding: '1.5rem', border: '1px solid #e2e8f0', borderRadius: '24px' }}>
+                    <p style={{ margin: 0, color: '#64748b', fontWeight: '700', fontSize: '0.75rem', textTransform: 'uppercase' }}>Notas da Administração</p>
+                    <p style={{ margin: '10px 0 0', color: '#1e293b', lineHeight: 1.6 }}>{selectedActiveProject.adminNotes || "A sua obra está a decorrer conforme o planeado pela equipa da DOCA Moçambique."}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
