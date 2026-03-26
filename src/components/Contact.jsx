@@ -59,8 +59,8 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 style={{ fontSize: '1.2rem', color: 'var(--primary-blue)', marginBottom: '5px' }}>Sede Social</h4>
-                  <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)' }}>Maputo, Moçambique</p>
-                  <p style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>Avenida das Obras, 1234</p>
+                  <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)' }}>Rua Renata Sadimba, N°139</p>
+                  <p style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>Bloco 1, 1° Andar, Flat 4, Malhangalene B</p>
                 </div>
               </li>
             </ul>
