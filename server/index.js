@@ -34,7 +34,7 @@ const ProjectSchema = new mongoose.Schema({
 // User (Customer) Schema
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  email: { type: String, unique: true, required: true },
+  email: { type: String, unique: true, required: true, lowercase: true },
   password: { type: String, required: true },
   phone: String,
   createdAt: { type: Date, default: Date.now }
@@ -42,7 +42,7 @@ const UserSchema = new mongoose.Schema({
 
 // Admin Schema
 const AdminSchema = new mongoose.Schema({
-  email: { type: String, unique: true, required: true },
+  email: { type: String, unique: true, required: true, lowercase: true },
   password: { type: String, required: true }
 });
 
