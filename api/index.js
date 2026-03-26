@@ -311,20 +311,7 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-// Login de Usuário (Cliente)
-app.post('/api/user/login', async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    await connectToDatabase();
-    const user = await User.findOne({ email });
-    if (!user || user.password !== password) {
-      return res.status(401).json({ error: 'E-mail ou senha incorretos' });
-    }
-    res.json({ success: true, user: { id: user._id, name: user.name, email: user.email } });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+// --- Fim da Gestão de Usuários ---
 
 // Buscar Pedidos de um Cliente Específico
 app.get('/api/user/quotes/:userId', async (req, res) => {
@@ -352,56 +339,60 @@ app.post('/api/auth/login', async (req, res) => {
     console.log('1. Conectando à base de dados para login...');
     await connectToDatabase();
 
-    // 2. Tentar encontrar nos Administradores
+    // 1. Verificar Coleção de Admins
     console.log('2. Consultando na coleção de Administradores...');
     const admin = await Admin.findOne({ email: email.toLowerCase() });
 
     if (admin) {
-      console.log('Admin encontrado. Validando senha...');
+      console.log('Admin encontrado. Validando...');
       try {
         const adminPass = admin.password || '';
         const isMatch = await bcrypt.compare(password, adminPass).catch(() => false);
         
         if (isMatch || admin.password === password) {
-          console.log('✅ SUCESSO: Login Admin aprovado');
-          return res.json({ success: true, role: 'admin', message: 'Admin logado com sucesso' });
+          console.log('✅ SUCESSO: Admin Identificado');
+          return res.json({ 
+            success: true, 
+            role: 'admin', 
+            user: { id: admin._id, email: admin.email, name: 'Administrador' } 
+          });
         }
-        console.log('❌ Falha: Senha admin incorreta');
-      } catch (bcryptErr) {
-        console.error('Bcrypt Admin Error:', bcryptErr);
-        // Fallback para texto simples se o bcrypt falhar por formato inválido
+        console.log('❌ Senha Admin Incorreta');
+        return res.status(401).json({ error: 'Senha incorreta para esta conta de administrador' });
+      } catch (e) {
+        console.error('Erro no Bcrypt Admin:', e);
         if (admin.password === password) return res.json({ success: true, role: 'admin' });
       }
     }
 
-    // 3. Tentar encontrar nos Usuários (Clientes)
+    // 2. Verificar Coleção de Clientes
     console.log('3. Consultando na coleção de Clientes...');
     const user = await User.findOne({ email: email.toLowerCase() });
 
     if (user) {
-      console.log('Cliente encontrado. Validando senha...');
+      console.log('Cliente encontrado. Validando...');
       try {
         const userPass = user.password || '';
         const isMatch = await bcrypt.compare(password, userPass).catch(() => false);
         
         if (isMatch || user.password === password) {
-           console.log('✅ SUCESSO: Login Cliente aprovado');
+           console.log('✅ SUCESSO: Cliente Identificado');
            return res.json({ 
              success: true, 
              role: 'customer', 
-             user: { id: user._id, name: user.name, email: user.email },
-             message: 'Cliente logado com sucesso' 
+             user: { id: user._id, name: user.name, email: user.email }
            });
         }
-        console.log('❌ Falha: Senha cliente incorreta');
-      } catch (bcryptErr) {
-        console.error('Bcrypt User Error:', bcryptErr);
+        console.log('❌ Senha Cliente Incorreta');
+        return res.status(401).json({ error: 'Senha incorreta para esta conta de cliente' });
+      } catch (e) {
+        console.error('Erro no Bcrypt Cliente:', e);
         if (user.password === password) return res.json({ success: true, role: 'customer', user });
       }
     }
 
-    // 4. Se não encontrar em nenhum
-    console.log('❌ Falha: Usuário ou Admin não encontrado');
+    // 3. Nenhum encontrado
+    console.log('❌ Conta não encontrada');
     res.status(401).json({ error: 'E-mail ou senha incorretos' });
   } catch (err) {
     console.error('❌ ERRO CRÍTICO NO LOGIN:', err.name, err.message);
