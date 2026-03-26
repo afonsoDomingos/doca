@@ -62,6 +62,10 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, unique: true, required: true, lowercase: true },
   password: { type: String, required: true },
   phone: String,
+  role: { type: String, default: 'customer' },
+  nuit: String,
+  address: String,
+  photo: String,
   createdAt: { type: Date, default: Date.now }
 });
 
@@ -266,6 +270,26 @@ app.get('/api/users', async (req, res) => {
     res.json(users);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// Update User Profile
+app.put('/api/user/:id', async (req, res) => {
+  try {
+    await connectToDatabase(); // Ensure database connection
+    const { name, email, phone, nuit, address, photo } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.params.id, 
+      { name, email, phone, nuit, address, photo },
+      { new: true }
+    );
+    if (!user) {
+      return res.status(404).json({ error: 'Usuário não encontrado' });
+    }
+    res.json(user);
+  } catch (err) {
+    console.error('Error updating user profile:', err);
+    res.status(500).json({ error: 'Erro ao atualizar perfil', details: err.message });
   }
 });
 
