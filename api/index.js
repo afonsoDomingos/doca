@@ -358,17 +358,19 @@ app.post('/api/auth/login', async (req, res) => {
 
     if (admin) {
       console.log('Admin encontrado. Validando senha...');
-      const isMatch = await bcrypt.compare(password, admin.password);
-      if (isMatch) {
-        console.log('✅ SUCESSO: Login Admin aprovado');
-        return res.json({ success: true, role: 'admin', message: 'Admin logado com sucesso' });
-      } else {
-        // Tentar verificar em texto simples para contas antigas/migração
-        if (admin.password === password) {
-          console.log('⚠ SUCESSO: Login Admin aprovado (Texto Simples)');
+      try {
+        const adminPass = admin.password || '';
+        const isMatch = await bcrypt.compare(password, adminPass).catch(() => false);
+        
+        if (isMatch || admin.password === password) {
+          console.log('✅ SUCESSO: Login Admin aprovado');
           return res.json({ success: true, role: 'admin', message: 'Admin logado com sucesso' });
         }
         console.log('❌ Falha: Senha admin incorreta');
+      } catch (bcryptErr) {
+        console.error('Bcrypt Admin Error:', bcryptErr);
+        // Fallback para texto simples se o bcrypt falhar por formato inválido
+        if (admin.password === password) return res.json({ success: true, role: 'admin' });
       }
     }
 
@@ -378,27 +380,23 @@ app.post('/api/auth/login', async (req, res) => {
 
     if (user) {
       console.log('Cliente encontrado. Validando senha...');
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (isMatch) {
-         console.log('✅ SUCESSO: Login Cliente aprovado');
-         return res.json({ 
-           success: true, 
-           role: 'customer', 
-           user: { id: user._id, name: user.name, email: user.email },
-           message: 'Cliente logado com sucesso' 
-         });
-      } else {
-        // Tentar verificar em texto simples para contas antigas/migração
-        if (user.password === password) {
-          console.log('⚠ SUCESSO: Login Cliente aprovado (Texto Simples)');
-          return res.json({ 
-            success: true, 
-            role: 'customer', 
-            user: { id: user._id, name: user.name, email: user.email },
-            message: 'Cliente logado com sucesso' 
-          });
+      try {
+        const userPass = user.password || '';
+        const isMatch = await bcrypt.compare(password, userPass).catch(() => false);
+        
+        if (isMatch || user.password === password) {
+           console.log('✅ SUCESSO: Login Cliente aprovado');
+           return res.json({ 
+             success: true, 
+             role: 'customer', 
+             user: { id: user._id, name: user.name, email: user.email },
+             message: 'Cliente logado com sucesso' 
+           });
         }
         console.log('❌ Falha: Senha cliente incorreta');
+      } catch (bcryptErr) {
+        console.error('Bcrypt User Error:', bcryptErr);
+        if (user.password === password) return res.json({ success: true, role: 'customer', user });
       }
     }
 
