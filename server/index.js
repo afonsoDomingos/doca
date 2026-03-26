@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const cloudinary = require('cloudinary').v2;
+const bcrypt = require('bcryptjs');
 const { Resend } = require('resend');
 
 const app = express();
@@ -17,26 +18,34 @@ cloudinary.config({
   api_secret: process.env.VITE_CLOUDINARY_API_SECRET
 });
 
-// MongoDB Connection (Serverless Optimization)
+// MongoDB Connection Strategy for Vercel
 let cachedDb = null;
-
-async function connectToDatabase() {
+const connectToDatabase = async () => {
   if (cachedDb && mongoose.connection.readyState === 1) {
+    console.log('=> Using existing database connection');
     return cachedDb;
   }
   
-  console.log('🔄 Connecting to MongoDB...');
-  const MONGODB_URI = process.env.VITE_MONGODB_URI;
-  
-  if (!MONGODB_URI) {
-    throw new Error('MONGODB_URI is not defined in environment variables');
+  const uri = process.env.MONGODB_URI || process.env.VITE_MONGODB_URI;
+  if (!uri) {
+    console.error('❌ FATAL: MONGODB_URI is not defined in environment!');
+    throw new Error('Database configuration missing');
   }
 
-  const db = await mongoose.connect(MONGODB_URI);
-  cachedDb = db;
-  console.log('✅ Connected to MongoDB');
-  return db;
-}
+  console.log('=> Connecting to database...');
+  try {
+    const conn = await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });
+    cachedDb = conn;
+    console.log('✅ Connected to MongoDB');
+    return cachedDb;
+  } catch (err) {
+    console.error('❌ MONGODB CONNECTION ERROR:', err.message);
+    throw err;
+  }
+};
 
 // Schema for Projects
 const ProjectSchema = new mongoose.Schema({
@@ -249,31 +258,42 @@ app.post('/api/users/promote', async (req, res) => {
 // Registro de Usuário (Cliente)
 app.post('/api/register', async (req, res) => {
   const { name, email, password, phone } = req.body;
+  console.log('--- NOVA TENTATIVA DE REGISTRO ---');
+  console.log('Dados recebidos (exceto senha):', { name, email, phone });
   
   if (!name || !email || !password) {
+    console.log('❌ Falha: Dados obrigatórios ausentes');
     return res.status(400).json({ error: 'Nome, e-mail e senha são obrigatórios' });
   }
 
   try {
+    console.log('1. Conectando à base de dados para registro...');
     await connectToDatabase();
     
     // Verificar se já existe (sempre em minúsculas)
     const normalizedEmail = email.toLowerCase();
+    console.log('2. Verificando existência de e-mail:', normalizedEmail);
     const existingUser = await User.findOne({ email: normalizedEmail });
     
     if (existingUser) {
+      console.log('❌ Falha: E-mail já cadastrado');
       return res.status(400).json({ error: 'Este e-mail já está cadastrado' });
     }
 
+    console.log('3. Gerando encriptação segura...');
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    console.log('4. Criando e salvando novo registro...');
     const user = new User({ 
       name, 
       email: normalizedEmail, 
-      password, 
+      password: hashedPassword, 
       phone 
     });
     
     await user.save();
-    console.log('✅ Novo usuário registrado:', normalizedEmail);
+    console.log('✅ SUCESSO: Usuário registrado no Banco de Dados');
     
     res.json({ 
       success: true, 
@@ -281,10 +301,11 @@ app.post('/api/register', async (req, res) => {
       user: { id: user._id, name: user.name, email: user.email } 
     });
   } catch (err) {
-    console.error('ERRO NO REGISTRO:', err);
+    console.error('❌ ERRO CRÍTICO NO REGISTRO:', err.name, err.message);
     res.status(500).json({ 
       error: 'Erro interno ao registrar usuário', 
-      details: err.message 
+      details: err.message,
+      code: err.code || 'UNKNOWN_ERROR'
     });
   }
 });
@@ -315,48 +336,80 @@ app.get('/api/user/quotes/:userId', async (req, res) => {
   }
 });
 
-// --- Login Unificado (Para Clientes e Admins) ---
+// Login Unificado (Admin + Cliente)
 app.post('/api/auth/login', async (req, res) => {
   const { email, password } = req.body;
-  
+  console.log('--- NOVA TENTATIVA DE LOGIN ---');
+  console.log('E-mail alvo:', email);
+
   if (!email || !password) {
+    console.log('❌ Falha: Credenciais ausentes');
     return res.status(400).json({ error: 'E-mail e senha são obrigatórios' });
   }
 
   try {
+    console.log('1. Conectando à base de dados para login...');
     await connectToDatabase();
+
     // 2. Tentar encontrar nos Administradores
-    console.log('Consultando Admin:', email.toLowerCase());
+    console.log('2. Consultando na coleção de Administradores...');
     const admin = await Admin.findOne({ email: email.toLowerCase() });
 
-    if (admin && admin.password === password) {
-      console.log('Sucesso: Admin identificado');
-      return res.json({ success: true, role: 'admin', message: 'Admin logado com sucesso' });
+    if (admin) {
+      console.log('Admin encontrado. Validando senha...');
+      const isMatch = await bcrypt.compare(password, admin.password);
+      if (isMatch) {
+        console.log('✅ SUCESSO: Login Admin aprovado');
+        return res.json({ success: true, role: 'admin', message: 'Admin logado com sucesso' });
+      } else {
+        // Tentar verificar em texto simples para contas antigas/migração
+        if (admin.password === password) {
+          console.log('⚠ SUCESSO: Login Admin aprovado (Texto Simples)');
+          return res.json({ success: true, role: 'admin', message: 'Admin logado com sucesso' });
+        }
+        console.log('❌ Falha: Senha admin incorreta');
+      }
     }
 
     // 3. Tentar encontrar nos Usuários (Clientes)
-    console.log('Consultando Cliente:', email.toLowerCase());
+    console.log('3. Consultando na coleção de Clientes...');
     const user = await User.findOne({ email: email.toLowerCase() });
 
-    if (user && user.password === password) {
-      console.log('Sucesso: Cliente identificado');
-      return res.json({ 
-        success: true, 
-        role: 'customer', 
-        user: { id: user._id, name: user.name, email: user.email },
-        message: 'Cliente logado com sucesso' 
-      });
+    if (user) {
+      console.log('Cliente encontrado. Validando senha...');
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (isMatch) {
+         console.log('✅ SUCESSO: Login Cliente aprovado');
+         return res.json({ 
+           success: true, 
+           role: 'customer', 
+           user: { id: user._id, name: user.name, email: user.email },
+           message: 'Cliente logado com sucesso' 
+         });
+      } else {
+        // Tentar verificar em texto simples para contas antigas/migração
+        if (user.password === password) {
+          console.log('⚠ SUCESSO: Login Cliente aprovado (Texto Simples)');
+          return res.json({ 
+            success: true, 
+            role: 'customer', 
+            user: { id: user._id, name: user.name, email: user.email },
+            message: 'Cliente logado com sucesso' 
+          });
+        }
+        console.log('❌ Falha: Senha cliente incorreta');
+      }
     }
 
     // 4. Se não encontrar em nenhum
+    console.log('❌ Falha: Usuário ou Admin não encontrado');
     res.status(401).json({ error: 'E-mail ou senha incorretos' });
   } catch (err) {
-    const errorInfo = err instanceof Error ? err.message : String(err);
-    console.error('CRITICAL LOGIN ERROR:', errorInfo);
+    console.error('❌ ERRO CRÍTICO NO LOGIN:', err.name, err.message);
     res.status(500).json({ 
       error: 'Erro interno no servidor de autenticação', 
-      details: errorInfo,
-      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined 
+      details: err.message,
+      code: err.code || 'AUTH_SYSTEM_ERROR'
     });
   }
 });
@@ -397,7 +450,7 @@ app.get('/', (req, res) => {
 
 if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
   const PORT = 5000;
-  app.listen(PORT, () => console.log(`🚀 Local API running on port ${PORT}`));
+  app.listen(PORT, () => console.log(`🚀 Local Server running on port ${PORT}`));
 }
 
 module.exports = app;
