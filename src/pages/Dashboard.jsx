@@ -24,6 +24,7 @@ const Dashboard = () => {
   const [projects, setProjects] = useState([]);
   const [quotes, setQuotes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingImage, setLoadingImage] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
   const [formData, setFormData] = useState({
@@ -421,15 +422,53 @@ const Dashboard = () => {
                 </div>
                 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#475569', marginBottom: '0.5rem' }}>URL da Imagem</label>
-                  <input 
-                    type="text" 
-                    name="imageUrl"
-                    value={formData.imageUrl}
-                    onChange={handleInputChange}
-                    required
-                    style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }}
-                  />
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#475569', marginBottom: '0.5rem' }}>Imagem do Projeto</label>
+                  <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    {formData.imageUrl && (
+                      <img src={formData.imageUrl} alt="Preview" style={{ width: '60px', height: '60px', borderRadius: '8px', objectFit: 'cover' }} />
+                    )}
+                    <label style={{ 
+                      flex: 1, 
+                      padding: '12px', 
+                      background: '#f8fafc', 
+                      border: '2px dashed #e2e8f0', 
+                      borderRadius: '12px', 
+                      textAlign: 'center',
+                      cursor: 'pointer',
+                      fontSize: '0.875rem',
+                      color: '#64748b'
+                    }}>
+                      {loadingImage ? 'Fazendo upload...' : (formData.imageUrl ? 'Trocar Imagem' : 'Selecionar Imagem do PC')}
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={async (e) => {
+                          const file = e.target.files[0];
+                          if (!file) return;
+                          
+                          setLoadingImage(true);
+                          const reader = new FileReader();
+                          reader.readAsDataURL(file);
+                          reader.onloadend = async () => {
+                            try {
+                              const response = await fetch(`${API_URL}/api/upload`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ data: reader.result })
+                              });
+                              const data = await response.json();
+                              setFormData({ ...formData, imageUrl: data.url });
+                            } catch (err) {
+                              alert('Erro ao fazer upload da imagem');
+                            } finally {
+                              setLoadingImage(false);
+                            }
+                          };
+                        }}
+                        style={{ display: 'none' }}
+                      />
+                    </label>
+                  </div>
                 </div>
                 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
