@@ -271,14 +271,27 @@ const QuoteForm = ({ onComplete }) => {
               <select 
                 value={formData.additionalDetails?.propertyType || ''}
                 onChange={(e) => updateAdditionalDetail('propertyType', e.target.value)}
-                style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white' }}
+                style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', fontWeight: '600' }}
               >
                 <option value="">Selecione...</option>
                 <option value="Moradia">Moradia</option>
                 <option value="Prédio">Prédio / Apartamento</option>
                 <option value="Armazém">Armazém / Industrial</option>
                 <option value="Comercial">Loja / Comercial</option>
+                <option value="Outro">Outro</option>
               </select>
+              {formData.additionalDetails?.propertyType === 'Outro' && (
+                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ marginTop: '1rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#eb8923', marginBottom: '0.5rem' }}>Especifique o Tipo de Obra</label>
+                  <input 
+                    type="text"
+                    placeholder="Ex: Estaleiro, Ponte, etc..."
+                    value={formData.additionalDetails?.customPropertyType || ''}
+                    onChange={(e) => updateAdditionalDetail('customPropertyType', e.target.value)}
+                    style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #eb8923', background: 'white', outline: 'none' }}
+                  />
+                </motion.div>
+              )}
             </div>
             <div>
               <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '0.5rem' }}>Área Prevista (m²)</label>
