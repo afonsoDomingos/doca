@@ -16,6 +16,8 @@ import {
   Image as ImageIcon
 } from 'lucide-react';
 
+const API_URL = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:5000' : '');
+
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('projects');
   const [projects, setProjects] = useState([]);
@@ -44,8 +46,8 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const [projectsRes, quotesRes] = await Promise.all([
-        fetch('http://localhost:5000/api/projects'),
-        fetch('http://localhost:5000/api/quotes')
+        fetch(`${API_URL}/api/projects`),
+        fetch(`${API_URL}/api/quotes`)
       ]);
       const projectsData = await projectsRes.json();
       const quotesData = await quotesRes.json();
@@ -74,8 +76,8 @@ const Dashboard = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const url = editingProject 
-      ? `http://localhost:5000/api/projects/${editingProject._id}` 
-      : 'http://localhost:5000/api/projects';
+      ? `${API_URL}/api/projects/${editingProject._id}` 
+      : `${API_URL}/api/projects`;
     const method = editingProject ? 'PUT' : 'POST';
 
     try {
@@ -97,7 +99,7 @@ const Dashboard = () => {
   const handleDeleteProject = async (id) => {
     if (window.confirm('Tem certeza que deseja excluir este projeto?')) {
       try {
-        await fetch(`http://localhost:5000/api/projects/${id}`, {
+        await fetch(`${API_URL}/api/projects/${id}`, {
           method: 'DELETE',
         });
         fetchData();
@@ -110,7 +112,7 @@ const Dashboard = () => {
   const handleDeleteQuote = async (id) => {
     if (window.confirm('Tem certeza que deseja excluir este pedido?')) {
       try {
-        await fetch(`http://localhost:5000/api/quotes/${id}`, {
+        await fetch(`${API_URL}/api/quotes/${id}`, {
           method: 'DELETE',
         });
         fetchData();

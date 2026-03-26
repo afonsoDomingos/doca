@@ -16,6 +16,8 @@ import {
   Phone
 } from 'lucide-react';
 
+const API_URL = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:5000' : '');
+
 const QuoteForm = () => {
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
@@ -58,7 +60,7 @@ const QuoteForm = () => {
 
   const handleSubmitPlatform = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/quotes', {
+      const response = await fetch(`${API_URL}/api/quotes`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

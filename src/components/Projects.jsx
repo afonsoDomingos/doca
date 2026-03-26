@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink, Plus } from 'lucide-react';
 
+const API_URL = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:5000' : '');
+
 const Projects = () => {
   const [filter, setFilter] = useState('Todas');
   const [projectsData, setProjectsData] = useState([]);
@@ -12,7 +14,7 @@ const Projects = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/projects');
+        const response = await fetch(`${API_URL}/api/projects`);
         const data = await response.json();
         setProjectsData(data);
       } catch (err) {
