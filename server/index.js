@@ -216,16 +216,43 @@ app.delete('/api/quotes/:id', async (req, res) => {
 // Registro de Usuário (Cliente)
 app.post('/api/register', async (req, res) => {
   const { name, email, password, phone } = req.body;
+  
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: 'Nome, e-mail e senha são obrigatórios' });
+  }
+
   try {
     await connectToDatabase();
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ error: 'E-mail já cadastrado' });
+    
+    // Verificar se já existe (sempre em minúsculas)
+    const normalizedEmail = email.toLowerCase();
+    const existingUser = await User.findOne({ email: normalizedEmail });
+    
+    if (existingUser) {
+      return res.status(400).json({ error: 'Este e-mail já está cadastrado' });
+    }
 
-    const user = new User({ name, email, password, phone });
+    const user = new User({ 
+      name, 
+      email: normalizedEmail, 
+      password, 
+      phone 
+    });
+    
     await user.save();
-    res.json({ success: true, message: 'Usuário registrado com sucesso', user: { id: user._id, name: user.name, email: user.email } });
+    console.log('✅ Novo usuário registrado:', normalizedEmail);
+    
+    res.json({ 
+      success: true, 
+      message: 'Usuário registrado com sucesso', 
+      user: { id: user._id, name: user.name, email: user.email } 
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('ERRO NO REGISTRO:', err);
+    res.status(500).json({ 
+      error: 'Erro interno ao registrar usuário', 
+      details: err.message 
+    });
   }
 });
 
