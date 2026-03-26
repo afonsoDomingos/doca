@@ -18,7 +18,7 @@ import {
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:5000' : '');
 
-const QuoteForm = () => {
+const QuoteForm = ({ onComplete }) => {
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [method, setMethod] = useState(null); // 'platform' or 'whatsapp'
@@ -99,6 +99,7 @@ const QuoteForm = () => {
       });
       if (response.ok) {
         setSubmitted(true);
+        if (onComplete) onComplete();
       }
     } catch (err) {
       console.error('Error submitting quote:', err);
