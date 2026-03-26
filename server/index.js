@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -7,19 +7,15 @@ const { Resend } = require('resend');
 
 const app = express();
 app.use(cors());
-app.use(express.json({ limit: '50mb' })); // Increase limit for image base64
+app.use(express.json({ limit: '50mb' }));
 
-// Resend Configuration
-const resend = new Resend(process.env.RESEND_API_KEY || 're_placeholder');
-const cloudinary = require('cloudinary').v2;
-
+// Configurations
+const resend = new Resend(process.env.RESEND_API_KEY);
 cloudinary.config({
   cloud_name: process.env.VITE_CLOUDINARY_CLOUD_NAME,
   api_key: process.env.VITE_CLOUDINARY_API_KEY,
   api_secret: process.env.VITE_CLOUDINARY_API_SECRET
 });
-
-// Cloudinary Configuration already done above
 
 // MongoDB Connection
 const MONGODB_URI = process.env.VITE_MONGODB_URI;
@@ -64,10 +60,12 @@ const QuoteSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-const Project = mongoose.model('Project', ProjectSchema);
-const Admin = mongoose.model('Admin', AdminSchema);
-const Quote = mongoose.model('Quote', QuoteSchema);
-const User = mongoose.model('User', UserSchema);
+
+
+const Project = mongoose.models.Project || mongoose.model('Project', ProjectSchema);
+const Admin = mongoose.models.Admin || mongoose.model('Admin', AdminSchema);
+const Quote = mongoose.models.Quote || mongoose.model('Quote', QuoteSchema);
+const User = mongoose.models.User || mongoose.model('User', UserSchema);
 
 // Routes
 // Projects CRUD
