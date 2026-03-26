@@ -9,7 +9,6 @@ import Projects from './components/Projects';
 import Testimonials from './components/Testimonials';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
-import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import QuoteModal from './components/QuoteModal';
 import CustomerAuth from './pages/CustomerAuth';
@@ -38,7 +37,6 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home onOpenQuote={() => setIsQuoteModalOpen(true)} />} />
-        <Route path="/admin/login" element={<Login />} />
         <Route path="/admin/dashboard" element={<Dashboard />} />
         <Route path="/portal/login" element={<CustomerAuth />} />
         <Route path="/portal/dashboard" element={<CustomerDashboard />} />

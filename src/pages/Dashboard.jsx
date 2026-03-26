@@ -39,7 +39,7 @@ const Dashboard = () => {
   useEffect(() => {
     const auth = localStorage.getItem('adminAuthenticated');
     if (!auth) {
-      navigate('/admin/login');
+      navigate('/portal/login');
     }
     fetchData();
   }, [navigate]);
