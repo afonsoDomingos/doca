@@ -80,14 +80,14 @@ const Header = ({ onOpenQuote }) => {
       }}>
         {/* Logo */}
         <div style={{ 
-          fontSize: '1.8rem', 
-          fontWeight: '800', 
-          fontFamily: 'Montserrat',
-          color: isScrolled ? 'var(--primary-blue)' : 'white',
+          fontSize: '1.5rem', 
+          fontWeight: '900', 
+          color: 'white', 
+          letterSpacing: '-1px',
           display: 'flex',
           alignItems: 'center'
         }}>
-          DOCA <span style={{ color: 'var(--accent-yellow)' }}>CONSTRUÇÃO</span>
+          DOCA <span style={{ color: 'var(--accent-yellow)', marginLeft: '8px' }}>MOZAMBIQUE</span>
         </div>
 
         {/* Desktop Navigation */}

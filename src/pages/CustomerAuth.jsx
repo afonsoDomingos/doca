@@ -110,8 +110,8 @@ const CustomerAuth = () => {
           transition={{ duration: 0.8 }}
           style={{ position: 'relative', zIndex: 10 }}
         >
-          <h1 style={{ fontSize: '3rem', fontWeight: '800', marginBottom: '1.5rem', lineHeight: '1.1', letterSpacing: '-1px' }}>
-            Portal do Cliente <br /> <span style={{ color: '#eb8923' }}>DOCA Construção</span>
+          <h1 style={{ fontSize: '3.5rem', fontWeight: '800', marginBottom: '1.5rem', lineHeight: '1.1', letterSpacing: '-1px' }}>
+            Portal do Cliente <br /> <span style={{ color: '#eb8923' }}>DOCA MOZAMBIQUE</span>
           </h1>
           <p style={{ fontSize: '1.25rem', opacity: '0.8', lineHeight: '1.6', maxWidth: '500px' }}>
             Aceda para gerenciar os seus orçamentos, acompanhar o estado das suas obras e comunicar-se diretamente com a nossa equipa técnica.
@@ -285,7 +285,7 @@ const CustomerAuth = () => {
           {/* Footer inside right side */}
           <div style={{ marginTop: '4rem', textAlign: 'center' }}>
             <Link to="/" style={{ color: '#94a3b8', fontSize: '0.75rem', textDecoration: 'none', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px' }}>
-              DOCA CONSTRUÇÃO MOÇAMBIQUE
+              DOCA MOZAMBIQUE
             </Link>
           </div>
         </div>

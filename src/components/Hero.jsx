@@ -45,7 +45,7 @@ const DynamicTitle = () => {
   }, []);
 
   return (
-    <div style={{ minHeight: 'clamp(140px, 22vw, 260px)', marginBottom: '20px' }}>
+    <div style={{ minHeight: 'clamp(140px, 22vw, 260px)', marginBottom: '50px', marginTop: '60px' }}>
       <AnimatePresence mode="wait">
         <motion.h1
           key={index}
@@ -54,10 +54,10 @@ const DynamicTitle = () => {
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.6 }}
           style={{
-            fontSize: 'clamp(2rem, 6vw, 4rem)',
+            fontSize: 'clamp(2.5rem, 8vw, 4.5rem)',
             fontFamily: 'Montserrat',
             fontWeight: '800',
-            lineHeight: '1.25'
+            lineHeight: '1.1'
           }}
         >
           {titles[index]}

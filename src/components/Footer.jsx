@@ -23,7 +23,7 @@ const Footer = () => {
           {/* Brand/About */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
             <div style={{ fontSize: '1.8rem', fontWeight: '800', fontFamily: 'Montserrat', color: 'white' }}>
-              DOCA <span style={{ color: 'var(--accent-yellow)' }}>CONSTRUÇÃO</span>
+              DOCA <span style={{ color: 'var(--accent-yellow)' }}>MOZAMBIQUE</span>
             </div>
             <p style={{ color: '#E2E8F0', lineHeight: '1.8', fontSize: '1rem' }}>
               Soluções integradas em construção, manutenção e gestão de empreendimentos imobiliários de elite. Construindo o futuro com confiança e agilidade.
@@ -64,7 +64,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', padding: '30px 0', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '20px' }}>
           <p style={{ color: '#94A3B8', fontSize: '0.9rem' }}>
-            &copy; {currentYear} DOCA CONSTRUÇÃO E MANUTENÇÃO, Lda. Todos os direitos reservados.
+            &copy; {currentYear} DOCA MOZAMBIQUE, Lda. Todos os direitos reservados.
           </p>
           <div style={{ display: 'flex', gap: '30px', fontSize: '0.9rem' }}>
             <a href="#" style={{ color: '#94A3B8' }}>Legal</a>
