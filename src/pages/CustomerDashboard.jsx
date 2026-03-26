@@ -27,6 +27,7 @@ const CustomerDashboard = () => {
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [selectedActiveProject, setSelectedActiveProject] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showWpOptions, setShowWpOptions] = useState(false);
   
   const navigate = useNavigate();
 
@@ -168,42 +169,69 @@ const CustomerDashboard = () => {
         </div>
 
         {/* Support Section */}
-        <div style={{ marginTop: '2.5rem', padding: '1.5rem', background: 'linear-gradient(135deg, #003366 0%, #001f3f 100%)', borderRadius: '24px', color: 'white' }}>
-           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
-              <MessageSquare size={18} color="#eb8923" />
-              <p style={{ margin: 0, fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px' }}>Suporte Grátis</p>
-           </div>
-           <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: '500', opacity: 0.8, lineHeight: 1.4 }}>Precisa de ajuda com o seu projeto?</p>
+        <div style={{ marginTop: '2.5rem', padding: '1.5rem', background: '#f8fafc', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
+           <button 
+             onClick={() => setShowWpOptions(!showWpOptions)}
+             style={{ 
+               width: '100%', 
+               padding: '12px', 
+               background: '#003366', 
+               color: 'white', 
+               border: 'none', 
+               borderRadius: '14px', 
+               fontWeight: '800', 
+               fontSize: '0.85rem', 
+               display: 'flex', 
+               alignItems: 'center', 
+               justifyContent: 'center', 
+               gap: '10px', 
+               cursor: 'pointer',
+               boxShadow: '0 10px 15px -3px rgba(0, 51, 102, 0.2)'
+             }}
+           >
+             <MessageSquare size={18} /> {showWpOptions ? 'FECHAR CONTACTO' : 'CONTACTAR VENDAS'}
+           </button>
            
-           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '1.5rem' }}>
-              {[
-                { label: 'Aguardar Retorno', msg: 'Saudações! Acabei de fazer o pedido do meu orçamento no portal e aguardo pelo vosso retorno para mais detalhes. Obrigado!' },
-                { label: 'Estado da Obra', msg: 'Olá DOCA! Gostaria de receber uma atualização rápida sobre o estado atual da minha obra/projeto.' },
-                { label: 'Dúvida Técnica', msg: 'Saudações, tenho uma dúvida técnica sobre o meu orçamento e gostaria de falar com um consultor.' }
-              ].map((whatsapp, i) => (
-                <motion.a
-                  key={i}
-                  whileHover={{ x: 4 }}
-                  href={`https://wa.me/258842183204?text=${encodeURIComponent(whatsapp.msg)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ 
-                    display: 'block', 
-                    padding: '10px 14px', 
-                    background: 'rgba(255,255,255,0.1)', 
-                    borderRadius: '14px', 
-                    color: 'white', 
-                    fontSize: '0.7rem', 
-                    textDecoration: 'none', 
-                    fontWeight: '700',
-                    border: '1px solid rgba(255,255,255,0.05)',
-                    transition: '0.2s'
-                  }}
-                >
-                  💬 {whatsapp.label}
-                </motion.a>
-              ))}
-           </div>
+           <AnimatePresence>
+             {showWpOptions && (
+               <motion.div 
+                 initial={{ height: 0, opacity: 0 }}
+                 animate={{ height: 'auto', opacity: 1 }}
+                 exit={{ height: 0, opacity: 0 }}
+                 style={{ overflow: 'hidden' }}
+               >
+                 <div style={{ padding: '1.5rem 0 0 0', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {[
+                      { label: 'Aguardar Retorno', msg: 'Saudações! Acabei de fazer o pedido do meu orçamento no portal e aguardo pelo vosso retorno para mais detalhes. Obrigado!' },
+                      { label: 'Estado da Obra', msg: 'Olá DOCA! Gostaria de receber uma atualização rápida sobre o estado atual da minha obra/projeto.' },
+                      { label: 'Dúvida Técnica', msg: 'Saudações, tenho uma dúvida técnica sobre o meu orçamento e gostaria de falar com um consultor.' }
+                    ].map((whatsapp, i) => (
+                      <motion.a
+                        key={i}
+                        whileHover={{ background: 'rgba(0, 51, 102, 0.05)', x: 4 }}
+                        href={`https://wa.me/258842183204?text=${encodeURIComponent(whatsapp.msg)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ 
+                          display: 'block', 
+                          padding: '10px 14px', 
+                          background: '#ffffff', 
+                          borderRadius: '12px', 
+                          color: '#003366', 
+                          fontSize: '0.75rem', 
+                          textDecoration: 'none', 
+                          fontWeight: '700',
+                          border: '1px solid #f1f5f9',
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
+                        }}
+                      >
+                        📱 {whatsapp.label}
+                      </motion.a>
+                    ))}
+                 </div>
+               </motion.div>
+             )}
+           </AnimatePresence>
         </div>
       </aside>
 
