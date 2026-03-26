@@ -122,22 +122,22 @@ const Hero = ({ onOpenQuote }) => {
             Nosso pilar é o <RotatingText />
           </div>
 
-          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '80px' }}>
+          <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', marginBottom: '50px' }}>
             <motion.button
               onClick={onOpenQuote}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 1 }}
               className="btn btn-primary"
-              style={{ padding: '12px 28px', fontSize: '1.05rem', display: 'flex', alignItems: 'center', gap: '10px', border: 'none', cursor: 'pointer' }}
+              style={{ padding: '10px 22px', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '8px', border: 'none', cursor: 'pointer' }}
             >
-              Solicitar Orçamento <ChevronRight size={20} />
+              Solicitar Orçamento <ChevronRight size={18} />
             </motion.button>
             <motion.a
               href="#servicos"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 1 }}
               className="btn btn-outline"
-              style={{ padding: '12px 28px', fontSize: '1.05rem' }}
+              style={{ padding: '10px 22px', fontSize: '1rem' }}
             >
               Ver Nossos Serviços
             </motion.a>
