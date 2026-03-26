@@ -22,6 +22,8 @@ const QuoteForm = () => {
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [method, setMethod] = useState(null); // 'platform' or 'whatsapp'
+  const [user, setUser] = useState(null);
+
   const [formData, setFormData] = useState({
     clientName: '',
     email: '',
@@ -30,6 +32,20 @@ const QuoteForm = () => {
     budgetRange: '',
     description: ''
   });
+
+  useEffect(() => {
+    const userData = localStorage.getItem('customerUser');
+    if (userData) {
+      const parsedUser = JSON.parse(userData);
+      setUser(parsedUser);
+      setFormData(prev => ({
+        ...prev,
+        clientName: parsedUser.name || '',
+        email: parsedUser.email || '',
+        phone: parsedUser.phone || ''
+      }));
+    }
+  }, []);
 
   const services = [
     { id: 'Construção', icon: Building2, label: 'Construção Civil' },
@@ -60,10 +76,11 @@ const QuoteForm = () => {
 
   const handleSubmitPlatform = async () => {
     try {
+      const payload = { ...formData, userId: user ? user.id : null };
       const response = await fetch(`${API_URL}/api/quotes`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
       if (response.ok) {
         setSubmitted(true);

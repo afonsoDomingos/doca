@@ -33,6 +33,15 @@ const ProjectSchema = new mongoose.Schema({
   isFeatured: Boolean
 });
 
+// User (Customer) Schema
+const UserSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, unique: true, required: true },
+  password: { type: String, required: true },
+  phone: String,
+  createdAt: { type: Date, default: Date.now }
+});
+
 // Admin Schema
 const AdminSchema = new mongoose.Schema({
   email: { type: String, unique: true, required: true },
@@ -41,19 +50,22 @@ const AdminSchema = new mongoose.Schema({
 
 // Quote Request Schema
 const QuoteSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null }, // Link to customer if logged in
   clientName: String,
   email: String,
   phone: String,
   serviceType: String,
   budgetRange: String,
   description: String,
-  status: { type: String, default: 'Pendente' },
+  status: { type: String, default: 'Pendente' }, // Pendente, Em Análise, Concluído, Cancelado
+  adminNotes: { type: String, default: '' },
   createdAt: { type: Date, default: Date.now }
 });
 
 const Project = mongoose.model('Project', ProjectSchema);
 const Admin = mongoose.model('Admin', AdminSchema);
 const Quote = mongoose.model('Quote', QuoteSchema);
+const User = mongoose.model('User', UserSchema);
 
 // Routes
 // Projects CRUD
@@ -177,7 +189,48 @@ app.delete('/api/quotes/:id', async (req, res) => {
   }
 });
 
-// Admin Login
+// --- Authenticação e Gestão de Usuários (Clientes) ---
+
+// Registro de Usuário (Cliente)
+app.post('/api/register', async (req, res) => {
+  const { name, email, password, phone } = req.body;
+  try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(400).json({ error: 'E-mail já cadastrado' });
+
+    const user = new User({ name, email, password, phone });
+    await user.save();
+    res.json({ success: true, message: 'Usuário registrado com sucesso', user: { id: user._id, name: user.name, email: user.email } });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Login de Usuário (Cliente)
+app.post('/api/user/login', async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user || user.password !== password) {
+      return res.status(401).json({ error: 'E-mail ou senha incorretos' });
+    }
+    res.json({ success: true, user: { id: user._id, name: user.name, email: user.email } });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Buscar Pedidos de um Cliente Específico
+app.get('/api/user/quotes/:userId', async (req, res) => {
+  try {
+    const quotes = await Quote.find({ userId: req.params.userId }).sort({ createdAt: -1 });
+    res.json(quotes);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- Admin Login ---
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
   try {

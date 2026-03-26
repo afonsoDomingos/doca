@@ -12,6 +12,8 @@ import Footer from './components/Footer';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import QuoteModal from './components/QuoteModal';
+import CustomerAuth from './pages/CustomerAuth';
+import CustomerDashboard from './pages/CustomerDashboard';
 
 const Home = ({ onOpenQuote }) => (
   <div className="app-container">
@@ -38,6 +40,8 @@ function App() {
         <Route path="/" element={<Home onOpenQuote={() => setIsQuoteModalOpen(true)} />} />
         <Route path="/admin/login" element={<Login />} />
         <Route path="/admin/dashboard" element={<Dashboard />} />
+        <Route path="/portal/login" element={<CustomerAuth />} />
+        <Route path="/portal/dashboard" element={<CustomerDashboard />} />
       </Routes>
       <QuoteModal isOpen={isQuoteModalOpen} onClose={() => setIsQuoteModalOpen(false)} />
     </Router>

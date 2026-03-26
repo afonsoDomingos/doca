@@ -1,16 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Phone, Mail, Menu, X, ChevronRight } from 'lucide-react';
+import { Phone, Mail, Menu, X, ChevronRight, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const Header = ({ onOpenQuote }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
     window.addEventListener('scroll', handleScroll);
+
+    const userData = localStorage.getItem('customerUser');
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -102,6 +110,21 @@ const Header = ({ onOpenQuote }) => {
               </li>
             ))}
             <li>
+              <Link 
+                to={user ? "/portal/dashboard" : "/portal/login"}
+                style={{ 
+                  color: isScrolled ? 'var(--primary-blue)' : 'white',
+                  fontWeight: '600',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  textDecoration: 'none'
+                }}
+              >
+                <User size={18} /> {user ? 'Minha Conta' : 'Entrar'}
+              </Link>
+            </li>
+            <li>
               <button 
                 onClick={onOpenQuote}
                 className="btn btn-primary" 
@@ -153,6 +176,15 @@ const Header = ({ onOpenQuote }) => {
                   </a>
                 </li>
               ))}
+              <li style={{ margin: '15px 0' }}>
+                <Link 
+                  to={user ? "/portal/dashboard" : "/portal/login"}
+                  style={{ fontSize: '1.1rem', fontWeight: '600', display: 'flex', justifyContent: 'space-between', color: 'var(--primary-blue)', textDecoration: 'none' }}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {user ? 'Minha Conta' : 'Aceder ao Portal'} <User size={18} />
+                </Link>
+              </li>
               <li style={{ marginTop: '20px' }}>
                 <button 
                   onClick={() => { setIsMobileMenuOpen(false); onOpenQuote(); }}
