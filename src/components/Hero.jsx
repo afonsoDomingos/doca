@@ -79,12 +79,29 @@ const Hero = () => {
         alignItems: 'center',
         padding: 0,
         overflow: 'hidden',
-        background: 'linear-gradient(rgba(0, 51, 102, 0.65), rgba(0, 51, 102, 0.35)), url("/bannerdoca.png")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
         color: 'white',
       }}
     >
+      {/* Animated Background Image */}
+      <div style={{
+        position: 'absolute',
+        top: '-15%',
+        left: 0,
+        width: '100%',
+        height: '130%',
+        backgroundImage: 'url("/bannerdoca.png")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        animation: 'heroPan 12s ease-in-out infinite alternate',
+        zIndex: 0
+      }} />
+      {/* Dark Overlay */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'linear-gradient(rgba(0, 51, 102, 0.65), rgba(0, 30, 80, 0.4))',
+        zIndex: 1
+      }} />
       <div className="container" style={{ position: 'relative', zIndex: 10 }}>
         <motion.div 
           initial={{ opacity: 0, x: -30 }}
@@ -142,6 +159,12 @@ const Hero = () => {
           <path fill="white" fillOpacity="1" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,122.7C960,117,1056,171,1152,197.3C1248,224,1344,224,1392,224L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
         </svg>
       </div>
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes heroPan {
+          0%   { transform: translateY(0%); }
+          100% { transform: translateY(-12%); }
+        }
+      `}} />
     </section>
   );
 };
