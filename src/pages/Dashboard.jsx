@@ -14,13 +14,18 @@ import {
   ChevronRight,
   User,
   MessageCircle,
+  Search,
+  TrendingUp,
+  Clock,
+  CheckCircle2,
+  Users,
   Image as ImageIcon
 } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:5000' : '');
 
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState('projects');
+  const [activeTab, setActiveTab] = useState('overview');
   const [projects, setProjects] = useState([]);
   const [quotes, setQuotes] = useState([]);
   const [users, setUsers] = useState([]);
@@ -33,6 +38,12 @@ const Dashboard = () => {
     category: '',
     imageUrl: '',
     isFeatured: false
+  });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [stats, setStats] = useState({
+    totalProjects: 0,
+    pendingQuotes: 0,
+    totalUsers: 0
   });
   
   const navigate = useNavigate();
@@ -59,6 +70,13 @@ const Dashboard = () => {
       setProjects(projectsData);
       setQuotes(quotesData);
       setUsers(usersData);
+      
+      // Calculate Stats
+      setStats({
+        totalProjects: projectsData.length,
+        pendingQuotes: quotesData.filter(q => q.status === 'Pendente' || q.status === 'Em Análise').length,
+        totalUsers: usersData.length
+      });
     } catch (err) {
       console.error('Error fetching data:', err);
     } finally {
@@ -175,8 +193,18 @@ const Dashboard = () => {
     setEditingProject(null);
   };
 
+  const filteredProjects = projects.filter(p => 
+    p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    p.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const filteredUsers = users.filter(u => 
+    u.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    u.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#f1f5f9', fontFamily: 'Inter, system-ui, sans-serif' }}>
       {/* Sidebar */}
       <aside style={{ 
         width: '280px', 
@@ -200,6 +228,22 @@ const Dashboard = () => {
           <div style={{ marginBottom: '2rem' }}>
             <p style={{ color: '#64748b', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '1rem', padding: '0 0.5rem' }}>Menu Principal</p>
             <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <li 
+                onClick={() => setActiveTab('overview')}
+                style={{ 
+                  background: activeTab === 'overview' ? 'rgba(235, 137, 35, 0.1)' : 'transparent', 
+                  color: activeTab === 'overview' ? '#eb8923' : '#94a3b8', 
+                  padding: '12px 16px', 
+                  borderRadius: '12px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '12px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  transition: 'all 0.2s'
+                }}>
+                <LayoutDashboard size={20} /> Visão Geral
+              </li>
               <li 
                 onClick={() => setActiveTab('projects')}
                 style={{ 
@@ -306,43 +350,93 @@ const Dashboard = () => {
 
       {activeTab === 'users' && (
         <div style={{ marginLeft: '280px', flex: 1, padding: '2rem 3rem' }}>
-          <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem' }}>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
-                Páginas <ChevronRight size={14} /> <span style={{ color: '#1e293b', fontWeight: '500' }}>Gestão de Usuários</span>
+          <header style={{ marginBottom: '3rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2rem' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+                  Páginas <ChevronRight size={14} /> <span style={{ color: '#eb8923', fontWeight: '600' }}>Gestão de Usuários</span>
+                </div>
+                <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: 0, letterSpacing: '-1px' }}>
+                  Base de Clientes
+                </h1>
               </div>
-              <h1 style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b', margin: 0 }}>
-                Gerenciar Usuários
-              </h1>
+              
+              <div style={{ position: 'relative' }}>
+                <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                <input 
+                  type="text" 
+                  placeholder="Pesquisar por nome ou email..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{ 
+                    padding: '12px 16px 12px 48px', 
+                    borderRadius: '16px', 
+                    border: '1px solid #e2e8f0', 
+                    background: 'white',
+                    width: '320px',
+                    outline: 'none',
+                    fontSize: '0.9rem',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Micro Stats for Users */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
+              <div style={{ background: 'white', padding: '1.5rem', borderRadius: '24px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                <div style={{ background: 'rgba(235, 137, 35, 0.1)', color: '#eb8923', padding: '15px', borderRadius: '18px' }}>
+                  <Users size={24} />
+                </div>
+                <div>
+                  <p style={{ margin: 0, fontSize: '0.875rem', fontWeight: '600', color: '#64748b' }}>Total de Clientes</p>
+                  <h4 style={{ margin: '4px 0 0', fontSize: '1.5rem', fontWeight: '800', color: '#1e293b' }}>{users.length}</h4>
+                </div>
+              </div>
             </div>
           </header>
-          <div style={{ background: 'white', borderRadius: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)', border: '1px solid #f1f5f9', overflow: 'hidden' }}>
+
+          <div style={{ background: 'white', borderRadius: '28px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.05)', border: '1px solid rgba(226, 232, 240, 0.5)', overflow: 'hidden' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead>
-                <tr style={{ borderBottom: '1px solid #f1f5f9', background: '#f8fafc' }}>
-                  <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Usuário</th>
-                  <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>E-mail</th>
-                  <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Telefone</th>
-                  <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', textAlign: 'center' }}>Ações</th>
+                <tr style={{ background: '#f8fafc' }}>
+                  <th style={{ padding: '1.5rem 2.5rem', color: '#475569', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px' }}>Usuário</th>
+                  <th style={{ padding: '1.5rem 2.5rem', color: '#475569', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px' }}>Contato</th>
+                  <th style={{ padding: '1.5rem 2.5rem', color: '#475569', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', textAlign: 'center' }}>Operações</th>
                 </tr>
               </thead>
               <tbody>
-                {users.map(user => (
-                  <tr key={user._id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '1.25rem 2rem' }}>
+                {filteredUsers.map(user => (
+                  <tr key={user._id} style={{ borderBottom: '1px solid #f1f5f9', transition: 'all 0.2s' }} className="table-row-hover">
+                    <td style={{ padding: '1.5rem 2.5rem' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#eb8923' }}>
-                          <User size={20} />
+                        <div style={{ width: '52px', height: '52px', borderRadius: '16px', background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#334155', border: '1px solid #e2e8f0' }}>
+                          <User size={22} />
                         </div>
-                        <span style={{ fontWeight: '600', color: '#1e293b' }}>{user.name}</span>
+                        <div>
+                          <p style={{ fontWeight: '700', color: '#1e293b', margin: 0, fontSize: '1rem' }}>{user.name}</p>
+                          <p style={{ margin: 0, fontSize: '0.75rem', color: '#94a3b8' }}>ID: {user._id.slice(-6).toUpperCase()}</p>
+                        </div>
                       </div>
                     </td>
-                    <td style={{ padding: '1.25rem 2rem', color: '#475569' }}>{user.email}</td>
-                    <td style={{ padding: '1.25rem 2rem', color: '#475569' }}>{user.phone || 'N/A'}</td>
-                    <td style={{ padding: '1.25rem 2rem', textAlign: 'center' }}>
+                    <td style={{ padding: '1.5rem 2.5rem' }}>
+                      <p style={{ fontWeight: '600', color: '#475569', margin: 0, fontSize: '0.9rem' }}>{user.email}</p>
+                      <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>{user.phone || 'Sem telefone'}</p>
+                    </td>
+                    <td style={{ padding: '1.5rem 2.5rem', textAlign: 'center' }}>
                       <button 
                         onClick={() => handlePromote(user._id, user.name)}
-                        style={{ background: '#eb8923', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '12px', fontSize: '0.875rem', fontWeight: '600', cursor: 'pointer' }}
+                        style={{ 
+                          background: 'rgba(235, 137, 35, 0.1)', 
+                          color: '#eb8923', 
+                          border: '1px solid rgba(235, 137, 35, 0.2)', 
+                          padding: '10px 20px', 
+                          borderRadius: '14px', 
+                          fontSize: '0.875rem', 
+                          fontWeight: '700', 
+                          cursor: 'pointer',
+                          transition: 'all 0.2s'
+                        }}
                       >
                         Promover a Admin
                       </button>
@@ -357,163 +451,208 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main style={{ marginLeft: '280px', flex: 1, padding: '2rem 3rem' }}>
-        {activeTab === 'users' ? (
-          /* Users Management View */
+        
+        {/* TAB: OVERVIEW */}
+        {activeTab === 'overview' && (
+          <div>
+            <header style={{ marginBottom: '3rem' }}>
+              <div style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Bem-vindo de volta, Admin</div>
+              <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: 0, letterSpacing: '-1px' }}>
+                Visão Geral do Negócio
+              </h1>
+            </header>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '3rem' }}>
+              <div style={{ background: 'white', padding: '1.5rem', borderRadius: '24px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', border: '1px solid white' }}>
+                <div style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6', width: '45px', height: '45px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+                  <Briefcase size={22} />
+                </div>
+                <p style={{ margin: 0, fontSize: '0.875rem', fontWeight: '600', color: '#64748b' }}>Projetos no Portfolio</p>
+                <h4 style={{ margin: '4px 0 0', fontSize: '2rem', fontWeight: '900', color: '#1e293b' }}>{stats.totalProjects}</h4>
+              </div>
+
+              <div style={{ background: 'white', padding: '1.5rem', borderRadius: '24px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', border: '1px solid white' }}>
+                <div style={{ background: 'rgba(235, 137, 35, 0.1)', color: '#eb8923', width: '45px', height: '45px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+                  <Clock size={22} />
+                </div>
+                <p style={{ margin: 0, fontSize: '0.875rem', fontWeight: '600', color: '#64748b' }}>Orçamentos Pendentes</p>
+                <h4 style={{ margin: '4px 0 0', fontSize: '2rem', fontWeight: '900', color: '#1e293b' }}>{stats.pendingQuotes}</h4>
+              </div>
+
+              <div style={{ background: 'white', padding: '1.5rem', borderRadius: '24px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', border: '1px solid white' }}>
+                <div style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', width: '45px', height: '45px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+                  <Users size={22} />
+                </div>
+                <p style={{ margin: 0, fontSize: '0.875rem', fontWeight: '600', color: '#64748b' }}>Total de Clientes</p>
+                <h4 style={{ margin: '4px 0 0', fontSize: '2rem', fontWeight: '900', color: '#1e293b' }}>{stats.totalUsers}</h4>
+              </div>
+            </div>
+
+            <div style={{ background: 'white', padding: '2rem', borderRadius: '32px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)', border: '1px solid white' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#1e293b' }}>Atividade Recente</h3>
+                <button 
+                  onClick={() => setActiveTab('quotes')}
+                  style={{ background: 'none', border: 'none', color: '#eb8923', fontWeight: '700', fontSize: '0.875rem', cursor: 'pointer' }}
+                >
+                  Ver todos os orçamentos →
+                </button>
+              </div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {quotes.slice(0, 3).map((q, idx) => (
+                  <div key={idx} style={{ padding: '1.25rem', background: '#f8fafc', borderRadius: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                      <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: q.status === 'Pendente' ? '#eb8923' : '#10b981' }} />
+                      <div>
+                        <p style={{ margin: 0, fontWeight: '700', color: '#1e293b', fontSize: '0.95rem' }}>{q.clientName}</p>
+                        <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748b' }}>Solicitou: {q.serviceType}</p>
+                      </div>
+                    </div>
+                    <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: '600' }}>{new Date(q.createdAt).toLocaleDateString()}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'users' && (
+          <div>
+            {/* Users list content (already defined above) */}
+          </div>
+        )}
+
+        {/* TAB: PROJECTS */}
+        {activeTab === 'projects' && (
           <div>
             <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
-                  Páginas <ChevronRight size={14} /> <span style={{ color: '#1e293b', fontWeight: '500' }}>Gestão de Usuários</span>
+                  Páginas <ChevronRight size={14} /> <span style={{ color: '#eb8923', fontWeight: '600' }}>Portfolio</span>
                 </div>
-                <h1 style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b', margin: 0 }}>
-                  Gerenciar Usuários
+                <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: 0, letterSpacing: '-1px' }}>
+                  Gerenciar Projetos
                 </h1>
               </div>
+              
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                 <div style={{ position: 'relative' }}>
+                  <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                  <input 
+                    type="text" 
+                    placeholder="Pesquisar projeto..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{ padding: '12px 16px 12px 48px', borderRadius: '16px', border: '1px solid #e2e8f0', background: 'white', outline: 'none', width: '250px' }}
+                  />
+                </div>
+                <button 
+                  onClick={() => openModal()}
+                  style={{ background: 'linear-gradient(135deg, #eb8923 0%, #d87a1d 100%)', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '16px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 6px -1px rgba(235, 137, 35, 0.4)', cursor: 'pointer' }}
+                >
+                  <Plus size={20} /> Novo Projeto
+                </button>
+              </div>
             </header>
-            <div style={{ background: 'white', borderRadius: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)', border: '1px solid #f1f5f9', overflow: 'hidden' }}>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
+              {filteredProjects.map((project) => (
+                <div key={project._id} style={{ background: 'white', borderRadius: '28px', overflow: 'hidden', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.05)', border: '1px solid white', transition: 'transform 0.2s' }}>
+                  <div style={{ position: 'relative', height: '200px' }}>
+                    <img src={project.imageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <div style={{ position: 'absolute', top: '15px', right: '15px', background: 'rgba(255, 255, 255, 0.9)', padding: '6px 12px', borderRadius: '100px', fontSize: '0.7rem', fontWeight: '800', color: '#eb8923', textTransform: 'uppercase' }}>
+                      {project.category}
+                    </div>
+                  </div>
+                  <div style={{ padding: '1.5rem' }}>
+                    <h4 style={{ margin: '0 0 1rem 0', fontSize: '1.25rem', fontWeight: '800', color: '#1e293b' }}>{project.title}</h4>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '0.8rem', color: project.isFeatured ? '#10b981' : '#94a3b8', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        {project.isFeatured ? <CheckCircle2 size={14} /> : null} {project.isFeatured ? 'Em Destaque' : 'Normal'}
+                      </span>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button onClick={() => openModal(project)} style={{ background: '#f1f5f9', border: 'none', padding: '8px', borderRadius: '10px', cursor: 'pointer', color: '#475569' }}><Edit size={16} /></button>
+                        <button onClick={() => handleDeleteProject(project._id)} style={{ background: '#fef2f2', border: 'none', padding: '8px', borderRadius: '10px', cursor: 'pointer', color: '#ef4444' }}><Trash2 size={16} /></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* TAB: QUOTES */}
+        {activeTab === 'quotes' && (
+          <div>
+            <header style={{ marginBottom: '3rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2rem' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+                    Páginas <ChevronRight size={14} /> <span style={{ color: '#eb8923', fontWeight: '600' }}>Orçamentos</span>
+                  </div>
+                  <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: 0, letterSpacing: '-1px' }}>
+                    Solicitações de Clientes
+                  </h1>
+                </div>
+                
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  <div style={{ position: 'relative' }}>
+                    <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                    <input 
+                      type="text" 
+                      placeholder="Filtrar por nome..."
+                      style={{ padding: '12px 16px 12px 48px', borderRadius: '16px', border: '1px solid #e2e8f0', background: 'white', outline: 'none' }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </header>
+
+            <div style={{ background: 'white', borderRadius: '32px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)', border: '1px solid white', overflow: 'hidden' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                 <thead>
-                  <tr style={{ borderBottom: '1px solid #f1f5f9', background: '#f8fafc' }}>
-                    <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Usuário</th>
-                    <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>E-mail</th>
-                    <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Telefone</th>
-                    <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', textAlign: 'center' }}>Ações</th>
+                  <tr style={{ background: '#f8fafc' }}>
+                    <th style={{ padding: '1.5rem 2.5rem', color: '#475569', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase' }}>Cliente / Contato</th>
+                    <th style={{ padding: '1.5rem 2.5rem', color: '#475569', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase' }}>Serviço Interessado</th>
+                    <th style={{ padding: '1.5rem 2.5rem', color: '#475569', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase' }}>Status Atual</th>
+                    <th style={{ padding: '1.5rem 2.5rem', color: '#475569', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', textAlign: 'right' }}>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map(user => (
-                    <tr key={user._id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                      <td style={{ padding: '1.25rem 2rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#eb8923' }}>
-                            <User size={20} />
-                          </div>
-                          <span style={{ fontWeight: '600', color: '#1e293b' }}>{user.name}</span>
+                  {quotes.map((quote) => (
+                    <tr key={quote._id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                      <td style={{ padding: '1.5rem 2.5rem' }}>
+                        <p style={{ fontWeight: '700', color: '#1e293b', margin: 0, fontSize: '1rem' }}>{quote.clientName}</p>
+                        <p style={{ fontSize: '0.8rem', color: '#64748b', margin: 0 }}>{quote.email} • {quote.phone}</p>
+                      </td>
+                      <td style={{ padding: '1.5rem 2.5rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ padding: '6px 14px', borderRadius: '100px', background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6', fontSize: '0.75rem', fontWeight: '800' }}>
+                            {quote.serviceType}
+                          </span>
+                        </div>
+                        <p style={{ margin: '8px 0 0 0', fontSize: '0.8rem', color: '#94a3b8' }}>Orçamento: {quote.budgetRange}</p>
+                      </td>
+                      <td style={{ padding: '1.5rem 2.5rem' }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 14px', borderRadius: '100px', fontSize: '0.75rem', fontWeight: '800', background: quote.status === 'Pendente' ? '#fff7ed' : '#f0fdf4', color: quote.status === 'Pendente' ? '#ea580c' : '#16a34a' }}>
+                          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: quote.status === 'Pendente' ? '#f97316' : '#22c55e' }} />
+                          {quote.status}
                         </div>
                       </td>
-                      <td style={{ padding: '1.25rem 2rem', color: '#475569' }}>{user.email}</td>
-                      <td style={{ padding: '1.25rem 2rem', color: '#475569' }}>{user.phone || 'N/A'}</td>
-                      <td style={{ padding: '1.25rem 2rem', textAlign: 'center' }}>
-                        <button 
-                          onClick={() => handlePromote(user._id, user.name)}
-                          style={{ background: '#eb8923', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '12px', fontSize: '0.875rem', fontWeight: '600', cursor: 'pointer' }}
-                        >
-                          Promover a Admin
+                      <td style={{ padding: '1.5rem 2.5rem', textAlign: 'right' }}>
+                        <button onClick={() => alert(`Descrição: ${quote.description}`)} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '10px', borderRadius: '12px', cursor: 'pointer', marginRight: '10px' }}>
+                          <ExternalLink size={18} color="#64748b" />
+                        </button>
+                        <button onClick={() => handleDeleteQuote(quote._id)} style={{ background: '#fef2f2', border: 'none', padding: '10px', borderRadius: '12px', cursor: 'pointer' }}>
+                          <Trash2 size={18} color="#ef4444" />
                         </button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
-          </div>
-        ) : (
-          /* Projects or Quotes View */
-          <div>
-            <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
-                  Páginas <ChevronRight size={14} /> <span style={{ color: '#1e293b', fontWeight: '500' }}>
-                    {activeTab === 'projects' ? 'Projetos' : 'Pedidos de Orçamento'}
-                  </span>
-                </div>
-                <h1 style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b', margin: 0 }}>
-                  {activeTab === 'projects' ? 'Gerenciar Projetos' : 'Solicitações de Orçamento'}
-                </h1>
-              </div>
-              
-              {activeTab === 'projects' && (
-                <button 
-                  onClick={() => openModal()}
-                  style={{ 
-                    background: 'linear-gradient(135deg, #eb8923 0%, #d87a1d 100%)', 
-                    color: 'white', 
-                    border: 'none', 
-                    padding: '12px 24px', 
-                    borderRadius: '16px', 
-                    fontWeight: '700',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    boxShadow: '0 4px 6px -1px rgba(235, 137, 35, 0.4)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <Plus size={20} /> Novo Projeto
-                </button>
-              )}
-            </header>
-
-            <div style={{ background: 'white', borderRadius: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)', border: '1px solid #f1f5f9', overflow: 'hidden' }}>
-              {activeTab === 'projects' ? (
-                /* Projects Table */
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid #f1f5f9', background: '#f8fafc' }}>
-                      <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Projeto</th>
-                      <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Categoria</th>
-                      <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Destaque</th>
-                      <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', textAlign: 'right' }}>Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {projects.map((project) => (
-                      <tr key={project._id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                        <td style={{ padding: '1.25rem 2rem' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                            <img src={project.imageUrl} alt="" style={{ width: '48px', height: '48px', borderRadius: '12px', objectFit: 'cover' }} />
-                            <span style={{ fontWeight: '600', color: '#1e293b' }}>{project.title}</span>
-                          </div>
-                        </td>
-                        <td style={{ padding: '1.25rem 2rem' }}>{project.category}</td>
-                        <td style={{ padding: '1.25rem 2rem' }}>{project.isFeatured ? 'Sim' : 'Não'}</td>
-                        <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
-                          <button onClick={() => openModal(project)} style={{ marginRight: '8px', background: 'none', border: '1px solid #e2e8f0', padding: '6px', borderRadius: '6px', cursor: 'pointer' }}><Edit size={16} color="#64748b" /></button>
-                          <button onClick={() => handleDeleteProject(project._id)} style={{ background: 'none', border: '1px solid #fee2e2', padding: '6px', borderRadius: '6px', cursor: 'pointer' }}><Trash2 size={16} color="#ef4444" /></button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                /* Quotes Table */
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid #f1f5f9', background: '#f8fafc' }}>
-                      <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Cliente</th>
-                      <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Serviço / Orçamento</th>
-                      <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Data</th>
-                      <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', textAlign: 'right' }}>Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {quotes.map((quote) => (
-                      <tr key={quote._id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                        <td style={{ padding: '1.25rem 2rem' }}>
-                          <p style={{ fontWeight: '600', color: '#1e293b', margin: 0 }}>{quote.clientName}</p>
-                          <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>{quote.email} | {quote.phone}</p>
-                        </td>
-                        <td style={{ padding: '1.25rem 2rem' }}>
-                          <p style={{ fontWeight: '600', color: '#10b981', margin: 0 }}>{quote.serviceType}</p>
-                          <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>{quote.budgetRange}</p>
-                        </td>
-                        <td style={{ padding: '1.25rem 2rem', fontSize: '0.875rem' }}>
-                          {new Date(quote.createdAt).toLocaleDateString('pt-MZ')}
-                        </td>
-                        <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
-                          <button 
-                            onClick={() => alert(`Descrição: ${quote.description}`)}
-                            style={{ marginRight: '8px', background: 'none', border: '1px solid #e2e8f0', padding: '6px', borderRadius: '6px', cursor: 'pointer' }}
-                          >
-                            <ExternalLink size={16} color="#3b82f6" />
-                          </button>
-                          <button onClick={() => handleDeleteQuote(quote._id)} style={{ background: 'none', border: '1px solid #fee2e2', padding: '6px', borderRadius: '6px', cursor: 'pointer' }}><Trash2 size={16} color="#ef4444" /></button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
             </div>
           </div>
         )}

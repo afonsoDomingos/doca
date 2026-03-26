@@ -11,7 +11,9 @@ import {
   AlertCircle,
   FileText,
   Calendar,
-  ArrowRight
+  ArrowRight,
+  Plus,
+  X
 } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:5000' : '');
@@ -20,6 +22,15 @@ const CustomerDashboard = () => {
   const [quotes, setQuotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [newQuote, setNewQuote] = useState({
+    serviceType: '',
+    budgetRange: '',
+    description: ''
+  });
+  const [submitting, setSubmitting] = useState(false);
+  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,6 +60,38 @@ const CustomerDashboard = () => {
     localStorage.removeItem('customerUser');
     navigate('/');
   };
+
+  const handleCreateQuote = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      const response = await fetch(`${API_URL}/api/quotes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...newQuote,
+          clientName: user.name,
+          email: user.email,
+          phone: user.phone || 'N/A',
+          userId: user.id
+        })
+      });
+      if (response.ok) {
+        setIsQuoteModalOpen(false);
+        setNewQuote({ serviceType: '', budgetRange: '', description: '' });
+        fetchQuotes(user.id);
+      }
+    } catch (err) {
+      console.error('Error creating quote:', err);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const filteredQuotes = quotes.filter(q => 
+    q.serviceType.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    q.status.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -160,131 +203,154 @@ const CustomerDashboard = () => {
       </aside>
 
       {/* Main Content */}
-      <main style={{ marginLeft: '280px', flex: 1, padding: '2.5rem 4rem' }}>
-        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem' }}>
+      <main style={{ marginLeft: '280px', flex: 1, padding: '2.5rem 4rem', background: '#f1f5f9' }}>
+        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3.5rem' }}>
           <div>
-            <h1 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#1e293b', margin: 0, letterSpacing: '-1px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+              Portal do Cliente <ChevronRight size={14} /> <span style={{ color: '#003366', fontWeight: '600' }}>Início</span>
+            </div>
+            <h1 style={{ fontSize: '2.75rem', fontWeight: '900', color: '#1e293b', margin: 0, letterSpacing: '-1.5px' }}>
               Olá, {user.name.split(' ')[0]} 👋
             </h1>
-            <p style={{ color: '#64748b', marginTop: '8px', fontSize: '1.125rem' }}>
-              Bem-vindo ao seu painel de gerenciamento de obras e pedidos.
+            <p style={{ color: '#64748b', marginTop: '8px', fontSize: '1.1rem', fontWeight: '500' }}>
+              Estamos prontos para transformar as suas ideias em realidade.
             </p>
           </div>
           <button 
-            onClick={() => navigate('/#contacto')}
+            onClick={() => setIsQuoteModalOpen(true)}
             style={{ 
-              padding: '14px 28px', 
-              background: '#eb8923', 
+              padding: '16px 32px', 
+              background: 'linear-gradient(135deg, #eb8923 0%, #d87a1d 100%)', 
               color: 'white', 
               border: 'none', 
-              borderRadius: '16px', 
-              fontWeight: '700', 
+              borderRadius: '20px', 
+              fontWeight: '800', 
               display: 'flex', 
               alignItems: 'center', 
-              gap: '10px', 
+              gap: '12px', 
               cursor: 'pointer',
-              boxShadow: '0 10px 15px -3px rgba(235, 137, 35, 0.3)'
+              boxShadow: '0 12px 20px -5px rgba(235, 137, 35, 0.4)',
+              transition: 'all 0.3s'
             }}
           >
-            Novo Orçamento <ArrowRight size={20} />
+            NOVO ORÇAMENTO <Plus size={22} />
           </button>
         </header>
 
         {/* Info Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '3rem' }}>
-          <div style={{ background: 'white', padding: '1.5rem', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-            <div style={{ color: '#3b82f6', marginBottom: '1rem', background: 'rgba(59, 130, 246, 0.1)', width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <FileText size={20} />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem', marginBottom: '4rem' }}>
+          <div style={{ background: 'white', padding: '2rem', borderRadius: '32px', border: '1px solid white', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }}>
+            <div style={{ color: '#003366', marginBottom: '1.5rem', background: 'rgba(0, 51, 102, 0.05)', width: '50px', height: '50px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <FileText size={24} />
             </div>
-            <p style={{ color: '#64748b', fontSize: '0.875rem', fontWeight: '600', margin: 0 }}>Total de Pedidos</p>
-            <h3 style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b', margin: '4px 0 0 0' }}>{quotes.length}</h3>
+            <p style={{ color: '#64748b', fontSize: '0.875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 }}>Histórico Total</p>
+            <h3 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: '8px 0 0 0' }}>{quotes.length}</h3>
           </div>
-          <div style={{ background: 'white', padding: '1.5rem', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-            <div style={{ color: '#f59e0b', marginBottom: '1rem', background: 'rgba(245, 158, 11, 0.1)', width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Clock size={20} />
+          <div style={{ background: 'white', padding: '2rem', borderRadius: '32px', border: '1px solid white', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }}>
+            <div style={{ color: '#eb8923', marginBottom: '1.5rem', background: 'rgba(235, 137, 35, 0.05)', width: '50px', height: '50px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Clock size={24} />
             </div>
-            <p style={{ color: '#64748b', fontSize: '0.875rem', fontWeight: '600', margin: 0 }}>Em Análise</p>
-            <h3 style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b', margin: '4px 0 0 0' }}>{quotes.filter(q => q.status === 'Pendente' || q.status === 'Em Análise').length}</h3>
+            <p style={{ color: '#64748b', fontSize: '0.875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 }}>Em Análise</p>
+            <h3 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: '8px 0 0 0' }}>{quotes.filter(q => q.status === 'Pendente' || q.status === 'Em Análise').length}</h3>
           </div>
-          <div style={{ background: 'white', padding: '1.5rem', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-            <div style={{ color: '#10b981', marginBottom: '1rem', background: 'rgba(16, 185, 129, 0.1)', width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <CheckCircle size={20} />
+          <div style={{ background: 'white', padding: '2rem', borderRadius: '32px', border: '1px solid white', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }}>
+            <div style={{ color: '#10b981', marginBottom: '1.5rem', background: 'rgba(16, 185, 129, 0.05)', width: '50px', height: '50px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <CheckCircle size={24} />
             </div>
-            <p style={{ color: '#64748b', fontSize: '0.875rem', fontWeight: '600', margin: 0 }}>Concluídos</p>
-            <h3 style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b', margin: '4px 0 0 0' }}>{quotes.filter(q => q.status === 'Concluído').length}</h3>
+            <p style={{ color: '#64748b', fontSize: '0.875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 }}>Projetos Concluídos</p>
+            <h3 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: '8px 0 0 0' }}>{quotes.filter(q => q.status === 'Concluído').length}</h3>
           </div>
         </div>
 
-        {/* My Quotes List */}
-        <div style={{ background: 'white', borderRadius: '24px', border: '1px solid #e2e8f0', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-          <div style={{ padding: '1.5rem 2rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#1e293b', margin: 0 }}>Histórico de Orçamentos</h2>
+        {/* My Quotes List Table */}
+        <div style={{ background: 'white', borderRadius: '32px', border: '1px solid white', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)' }}>
+          <div style={{ padding: '2rem 2.5rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#1e293b', margin: 0 }}>Meus Orçamentos & Pedidos</h2>
+            
+            <div style={{ position: 'relative' }}>
+              <input 
+                type="text" 
+                placeholder="Pesquisar serviço..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{ 
+                  padding: '10px 16px', 
+                  borderRadius: '14px', 
+                  border: '1px solid #e2e8f0', 
+                  fontSize: '0.875rem',
+                  width: '240px',
+                  outline: 'none'
+                }}
+              />
+            </div>
           </div>
           
           {loading ? (
-            <div style={{ padding: '4rem', textAlign: 'center', color: '#64748b' }}>Carregando seus pedidos...</div>
-          ) : quotes.length === 0 ? (
-            <div style={{ padding: '6rem', textAlign: 'center' }}>
+            <div style={{ padding: '6rem', textAlign: 'center', color: '#64748b' }}>A carregar os seus dados de luxo...</div>
+          ) : filteredQuotes.length === 0 ? (
+            <div style={{ padding: '8rem', textAlign: 'center' }}>
               <div style={{ color: '#cbd5e1', marginBottom: '1.5rem' }}>
-                <FileText size={48} style={{ margin: '0 auto' }} />
+                <FileText size={64} style={{ margin: '0 auto' }} />
               </div>
-              <p style={{ color: '#64748b', fontSize: '1.125rem' }}>Ainda não fez nenhum pedido de orçamento.</p>
-              <button onClick={() => navigate('/#contacto')} style={{ color: '#003366', fontWeight: '700', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem' }}>Fazer meu primeiro orçamento →</button>
+              <p style={{ color: '#64748b', fontSize: '1.25rem', fontWeight: '500' }}>Ainda não fez nenhum pedido de orçamento.</p>
+              <button onClick={() => setIsQuoteModalOpen(true)} style={{ color: '#eb8923', fontWeight: '800', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.1rem', marginTop: '1rem' }}>Solicitar Agora →</button>
             </div>
           ) : (
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                 <thead>
-                  <tr style={{ background: '#f8fafc', borderBottom: '1px solid #f1f5f9' }}>
-                    <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Serviço</th>
-                    <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Data</th>
-                    <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Status</th>
-                    <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', textAlign: 'right' }}>Ações</th>
+                  <tr style={{ background: '#f8fafc' }}>
+                    <th style={{ padding: '1.5rem 2.5rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px' }}>Serviço Solicitado</th>
+                    <th style={{ padding: '1.5rem 2.5rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px' }}>Data do Pedido</th>
+                    <th style={{ padding: '1.5rem 2.5rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px' }}>Status da Obra</th>
+                    <th style={{ padding: '1.5rem 2.5rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', textAlign: 'right' }}>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {quotes.map((quote) => (
-                    <tr key={quote._id} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background 0.2s' }}>
-                      <td style={{ padding: '1.25rem 2rem' }}>
-                        <p style={{ fontWeight: '700', color: '#1e293b', margin: 0 }}>{quote.serviceType}</p>
-                        <p style={{ fontSize: '0.75rem', color: '#94a3b8', margin: 0 }}>Ref: {quote._id.slice(-8).toUpperCase()}</p>
+                  {filteredQuotes.map((quote) => (
+                    <tr key={quote._id} style={{ borderBottom: '1px solid #f1f5f9', transition: 'all 0.2s' }}>
+                      <td style={{ padding: '1.5rem 2.5rem' }}>
+                        <p style={{ fontWeight: '800', color: '#1e293b', margin: 0, fontSize: '1.1rem' }}>{quote.serviceType}</p>
+                        <p style={{ fontSize: '0.8rem', color: '#94a3b8', margin: '4px 0 0' }}>Ref: #DOCA-{quote._id.slice(-6).toUpperCase()}</p>
                       </td>
-                      <td style={{ padding: '1.25rem 2rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#475569', fontSize: '0.875rem' }}>
-                          <Calendar size={14} /> {new Date(quote.createdAt).toLocaleDateString('pt-MZ')}
+                      <td style={{ padding: '1.5rem 2.5rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#475569', fontSize: '0.95rem', fontWeight: '500' }}>
+                          <Calendar size={16} color="#94a3b8" /> {new Date(quote.createdAt).toLocaleDateString('pt-MZ')}
                         </div>
                       </td>
-                      <td style={{ padding: '1.25rem 2rem' }}>
+                      <td style={{ padding: '1.5rem 2.5rem' }}>
                         <div style={{ 
                           display: 'inline-flex', 
                           alignItems: 'center', 
-                          gap: '6px', 
-                          padding: '6px 14px', 
+                          gap: '8px', 
+                          padding: '8px 16px', 
                           borderRadius: '100px', 
                           fontSize: '0.75rem', 
-                          fontWeight: '700',
-                          background: `${getStatusColor(quote.status)}10`,
-                          color: getStatusColor(quote.status)
+                          fontWeight: '800',
+                          background: `${getStatusColor(quote.status)}15`,
+                          color: getStatusColor(quote.status),
+                          border: `1px solid ${getStatusColor(quote.status)}30`
                         }}>
                           {getStatusIcon(quote.status)}
-                          {quote.status}
+                          {quote.status.toUpperCase()}
                         </div>
                       </td>
-                      <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
+                      <td style={{ padding: '1.5rem 2.5rem', textAlign: 'right' }}>
                         <button 
-                          onClick={() => alert(`Detalhes do Orçamento:\n\nServiço: ${quote.serviceType}\nStatus: ${quote.status}\nNotas: ${quote.adminNotes || 'Nenhuma nota disponível.'}`)}
+                          onClick={() => alert(`Detalhes da Obra:\n\nServiço: ${quote.serviceType}\nAlcance: ${quote.budgetRange}\nStatus: ${quote.status}\n\nNota da Administração: ${quote.adminNotes || 'O seu pedido está a ser analisado pela nossa equipe técnica.'}`)}
                           style={{ 
-                            background: '#f1f5f9', 
+                            background: '#003366', 
                             border: 'none', 
-                            color: '#1e293b', 
-                            padding: '8px 16px', 
-                            borderRadius: '10px', 
-                            fontWeight: '600', 
+                            color: 'white', 
+                            padding: '10px 20px', 
+                            borderRadius: '14px', 
+                            fontWeight: '700', 
                             fontSize: '0.875rem',
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 6px -1px rgba(0, 51, 102, 0.2)'
                           }}
                         >
-                          Ver Detalhes
+                          Detalhes
                         </button>
                       </td>
                     </tr>
@@ -295,6 +361,115 @@ const CustomerDashboard = () => {
           )}
         </div>
       </main>
+
+      {/* NEW QUOTE MODAL */}
+      {isQuoteModalOpen && (
+        <div style={{ 
+          position: 'fixed', 
+          inset: 0, 
+          background: 'rgba(15, 23, 42, 0.8)', 
+          backdropFilter: 'blur(8px)',
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          zIndex: 1000,
+          padding: '2rem'
+        }}>
+          <div style={{ 
+            background: 'white', 
+            width: '100%', 
+            maxWidth: '600px', 
+            borderRadius: '32px', 
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+            overflow: 'hidden',
+            animation: 'modalSlideUp 0.3s ease-out'
+          }}>
+            <div style={{ padding: '2rem 2.5rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc' }}>
+              <div>
+                <h3 style={{ fontSize: '1.5rem', fontWeight: '900', color: '#1e293b', margin: 0 }}>Novo Pedido de Obra</h3>
+                <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '0.875rem' }}>Preencha os dados e entraremos em contato.</p>
+              </div>
+              <button onClick={() => setIsQuoteModalOpen(false)} style={{ background: '#f1f5f9', border: 'none', borderRadius: '12px', padding: '8px', cursor: 'pointer', color: '#64748b' }}>
+                <X size={24} />
+              </button>
+            </div>
+            
+            <form onSubmit={handleCreateQuote} style={{ padding: '2.5rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' }}>Tipo de Serviço</label>
+                  <select 
+                    required
+                    value={newQuote.serviceType}
+                    onChange={(e) => setNewQuote({...newQuote, serviceType: e.target.value})}
+                    style={{ width: '100%', padding: '14px 18px', borderRadius: '14px', border: '1px solid #e2e8f0', outline: 'none', background: '#f8fafc', fontSize: '1rem' }}
+                  >
+                    <option value="">Selecione o serviço...</option>
+                    <option value="Construção de Edifício">Construção de Edifício</option>
+                    <option value="Manutenção de Edifício">Manutenção de Edifício</option>
+                    <option value="Consultoria">Consultoria</option>
+                    <option value="Arranjo Exterior">Arranjo Exterior</option>
+                    <option value="Outros">Outros</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' }}>Estimativa de Orçamento (Opcional)</label>
+                  <select 
+                    value={newQuote.budgetRange}
+                    onChange={(e) => setNewQuote({...newQuote, budgetRange: e.target.value})}
+                    style={{ width: '100%', padding: '14px 18px', borderRadius: '14px', border: '1px solid #e2e8f0', outline: 'none', background: '#f8fafc', fontSize: '1rem' }}
+                  >
+                    <option value="">Selecione uma faixa...</option>
+                    <option value="Menos de 100.000 MT">Menos de 100.000 MT</option>
+                    <option value="100.000 MT - 500.000 MT">100.000 MT - 500.000 MT</option>
+                    <option value="500.000 MT - 1.000.000 MT">500.000 MT - 1.000.000 MT</option>
+                    <option value="Mais de 1.000.000 MT">Mais de 1.000.000 MT</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' }}>Descrição do Projeto</label>
+                  <textarea 
+                    required
+                    placeholder="Descreva brevemente o que precisa..."
+                    value={newQuote.description}
+                    onChange={(e) => setNewQuote({...newQuote, description: e.target.value})}
+                    style={{ width: '100%', padding: '14px 18px', borderRadius: '14px', border: '1px solid #e2e8f0', outline: 'none', background: '#f8fafc', minHeight: '120px', fontSize: '1rem' }}
+                  />
+                </div>
+              </div>
+              
+              <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem' }}>
+                <button 
+                  type="button" 
+                  onClick={() => setIsQuoteModalOpen(false)}
+                  style={{ flex: 1, padding: '14px', borderRadius: '14px', border: '1px solid #e2e8f0', background: 'white', fontWeight: '700', color: '#64748b', cursor: 'pointer' }}
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="submit"
+                  disabled={submitting}
+                  style={{ 
+                    flex: 1, 
+                    padding: '14px', 
+                    borderRadius: '14px', 
+                    border: 'none', 
+                    background: '#eb8923', 
+                    fontWeight: '800', 
+                    color: 'white', 
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(235, 137, 35, 0.3)'
+                  }}
+                >
+                  {submitting ? 'A ENVIAR...' : 'ENVIAR SOLICITAÇÃO'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
