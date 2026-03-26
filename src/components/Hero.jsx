@@ -29,6 +29,44 @@ const RotatingText = () => {
   );
 };
 
+const DynamicTitle = () => {
+  const titles = [
+    <>Soluções Integradas <br /> em <span style={{ color: 'var(--accent-yellow)' }}>Construção e</span> <br /><span style={{ color: 'var(--accent-yellow)' }}>Manutenção</span></>,
+    <>Construindo e fortalecendo <br /> o seu <br /><span style={{ color: 'var(--accent-yellow)' }}>Património</span></>
+  ];
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex((prevIndex) => (prevIndex + 1) % titles.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div style={{ minHeight: 'clamp(180px, 30vw, 300px)' }}>
+      <AnimatePresence mode="wait">
+        <motion.h1 
+          key={index}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.6 }}
+          style={{ 
+            fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', 
+            marginBottom: '20px',
+            fontFamily: 'Montserrat',
+            fontWeight: '800',
+            lineHeight: '1.2'
+          }}
+        >
+          {titles[index]}
+        </motion.h1>
+      </AnimatePresence>
+    </div>
+  );
+};
+
 const Hero = () => {
   return (
     <section 
@@ -54,18 +92,7 @@ const Hero = () => {
           transition={{ duration: 0.8 }}
           style={{ maxWidth: '800px' }}
         >
-          <motion.h1 
-            style={{ 
-              fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', 
-              marginBottom: '20px',
-              fontFamily: 'Montserrat',
-              fontWeight: '800',
-              lineHeight: '1.2'
-            }}
-          >
-            Soluções Integradas em <br />
-            <span style={{ color: 'var(--accent-yellow)' }}>Construção e Manutenção</span>
-          </motion.h1>
+          <DynamicTitle />
 
           <div style={{ 
             fontSize: 'clamp(1.2rem, 3vw, 1.8rem)', 
@@ -78,9 +105,11 @@ const Hero = () => {
             Nosso pilar é a <RotatingText />
           </div>
 
-          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '80px' }}>
             <motion.a 
-              href="#contacto"
+              href="https://wa.me/258848580244"
+              target="_blank"
+              rel="noopener noreferrer"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 1 }}
               className="btn btn-primary"

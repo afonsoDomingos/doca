@@ -48,9 +48,9 @@ const Header = () => {
         }}>
           <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', gap: '20px' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <Phone size={14} /> +258 829580244
-              </span>
+              <a href="https://wa.me/258848580244" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <Phone size={14} /> +258 848580244
+              </a>
               <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <Mail size={14} /> geral@docacm.com
               </span>
@@ -102,9 +102,15 @@ const Header = () => {
               </li>
             ))}
             <li>
-              <button className="btn btn-primary" style={{ padding: '10px 20px', fontSize: '0.9rem' }}>
+              <a 
+                href="https://wa.me/258848580244"
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="btn btn-primary" 
+                style={{ padding: '10px 20px', fontSize: '0.9rem' }}
+              >
                 Solicitar Orçamento
-              </button>
+              </a>
             </li>
           </ul>
         </nav>
@@ -150,9 +156,15 @@ const Header = () => {
                 </li>
               ))}
               <li style={{ marginTop: '20px' }}>
-                <button className="btn btn-primary" style={{ width: '100%' }}>
+                <a 
+                  href="https://wa.me/258848580244"
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="btn btn-primary" 
+                  style={{ width: '100%', display: 'block', textAlign: 'center' }}
+                >
                   Solicitar Orçamento
-                </button>
+                </a>
               </li>
             </ul>
           </motion.nav>
