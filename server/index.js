@@ -239,26 +239,33 @@ app.post('/api/auth/login', async (req, res) => {
   }
 
   try {
-    console.log('Tentativa de login para:', email);
+    // 1. Verificar Estado da Base de Dados
+    const dbStatus = mongoose.connection.readyState;
+    console.log('MongoDB Status:', dbStatus);
     
-    // 1. Verificar se a conexão com MongoDB está ativa
-    if (mongoose.connection.readyState !== 1) {
-      throw new Error('Base de dados não conectada');
+    if (dbStatus !== 1) {
+      return res.status(503).json({ 
+        error: 'Serviço temporariamente indisponível', 
+        details: 'A base de dados ainda está a ligar ou falhou. Tente novamente em 5 segundos.',
+        status: dbStatus 
+      });
     }
 
     // 2. Tentar encontrar nos Administradores
+    console.log('Consultando Admin:', email.toLowerCase());
     const admin = await Admin.findOne({ email: email.toLowerCase() });
-    console.log('Admin encontrado:', admin ? 'Sim' : 'Não');
 
     if (admin && admin.password === password) {
+      console.log('Sucesso: Admin identificado');
       return res.json({ success: true, role: 'admin', message: 'Admin logado com sucesso' });
     }
 
     // 3. Tentar encontrar nos Usuários (Clientes)
+    console.log('Consultando Cliente:', email.toLowerCase());
     const user = await User.findOne({ email: email.toLowerCase() });
-    console.log('Cliente encontrado:', user ? 'Sim' : 'Não');
 
     if (user && user.password === password) {
+      console.log('Sucesso: Cliente identificado');
       return res.json({ 
         success: true, 
         role: 'customer', 
@@ -270,10 +277,12 @@ app.post('/api/auth/login', async (req, res) => {
     // 4. Se não encontrar em nenhum
     res.status(401).json({ error: 'E-mail ou senha incorretos' });
   } catch (err) {
-    console.error('ERRO NO LOGIN:', err);
+    const errorInfo = err instanceof Error ? err.message : String(err);
+    console.error('CRITICAL LOGIN ERROR:', errorInfo);
     res.status(500).json({ 
       error: 'Erro interno no servidor de autenticação', 
-      details: err.message 
+      details: errorInfo,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined 
     });
   }
 });
