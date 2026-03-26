@@ -13,7 +13,8 @@ import {
   Calendar,
   ArrowRight,
   Plus,
-  X
+  X,
+  ExternalLink
 } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:5000' : '');
@@ -152,18 +153,22 @@ const CustomerDashboard = () => {
             }}>
               <FileText size={20} /> Meus Pedidos
             </li>
-            <li style={{ 
-              color: '#64748b', 
-              padding: '12px 16px', 
-              borderRadius: '12px', 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '12px',
-              cursor: 'pointer',
-              fontWeight: '500',
-              transition: 'all 0.2s'
-            }}>
-              <MessageCircle size={20} /> Suporte
+            <li 
+              onClick={() => navigate('/')}
+              style={{ 
+                color: '#64748b', 
+                padding: '12px 16px', 
+                borderRadius: '12px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '12px',
+                cursor: 'pointer',
+                fontWeight: '500',
+                transition: 'all 0.2s',
+                marginTop: '10px',
+                border: '1px solid #f1f5f9'
+              }}>
+              <ExternalLink size={20} /> Ir para o Site
             </li>
           </ul>
         </nav>

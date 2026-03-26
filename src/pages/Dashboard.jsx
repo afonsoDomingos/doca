@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Briefcase, 
@@ -217,12 +217,12 @@ const Dashboard = () => {
         height: '100vh',
         zIndex: 10
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '3rem', padding: '0 0.5rem' }}>
+        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '3rem', padding: '0 0.5rem' }}>
           <div style={{ background: '#eb8923', width: '40px', height: '40px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <LayoutDashboard size={20} color="white" />
           </div>
-          <span style={{ fontSize: '1.25rem', fontWeight: '700', letterSpacing: '0.5px' }}>DOCA ADMIN</span>
-        </div>
+          <span style={{ fontSize: '1.25rem', fontWeight: '700', letterSpacing: '0.5px', color: 'white' }}>DOCA ADMIN</span>
+        </Link>
 
         <nav style={{ flex: 1 }}>
           <div style={{ marginBottom: '2rem' }}>
@@ -303,6 +303,22 @@ const Dashboard = () => {
                 transition: 'all 0.2s'
               }}>
                 <Settings size={20} /> Configurações
+              </li>
+              <li 
+                onClick={() => navigate('/')}
+                style={{ 
+                color: '#94a3b8', 
+                padding: '12px 16px', 
+                borderRadius: '12px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                marginTop: '10px',
+                border: '1px solid rgba(255,255,255,0.05)'
+              }}>
+                <ExternalLink size={20} /> Ver Site Oficial
               </li>
             </ul>
           </div>

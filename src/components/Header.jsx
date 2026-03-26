@@ -8,6 +8,7 @@ const Header = ({ onOpenQuote }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,20 +16,27 @@ const Header = ({ onOpenQuote }) => {
     };
     window.addEventListener('scroll', handleScroll);
 
+    // Verificar Cliente
     const userData = localStorage.getItem('customerUser');
     if (userData) {
       setUser(JSON.parse(userData));
+    }
+
+    // Verificar Admin
+    const adminAuth = localStorage.getItem('adminAuthenticated');
+    if (adminAuth === 'true') {
+      setIsAdmin(true);
     }
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const navLinks = [
-    { name: 'Home', href: '#home' },
-    { name: 'Serviços', href: '#servicos' },
-    { name: 'Projetos', href: '#projetos' },
-    { name: 'Sobre', href: '#sobre' },
-    { name: 'Contacto', href: '#contacto' },
+    { name: 'Home', href: '/#home' },
+    { name: 'Serviços', href: '/#servicos' },
+    { name: 'Projetos', href: '/#projetos' },
+    { name: 'Sobre', href: '/#sobre' },
+    { name: 'Contacto', href: '/#contacto' },
   ];
 
   return (
@@ -112,17 +120,20 @@ const Header = ({ onOpenQuote }) => {
             ))}
             <li>
               <Link 
-                to={user ? "/portal/dashboard" : "/portal/login"}
+                to={isAdmin ? "/admin/dashboard" : (user ? "/portal/dashboard" : "/portal/login")}
                 style={{ 
                   color: isScrolled ? 'var(--primary-blue)' : 'white',
-                  fontWeight: '600',
+                  fontWeight: '700',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '5px',
-                  textDecoration: 'none'
+                  textDecoration: 'none',
+                  background: (isAdmin || user) ? 'rgba(235, 137, 35, 0.15)' : 'transparent',
+                  padding: (isAdmin || user) ? '6px 12px' : '0',
+                  borderRadius: '10px'
                 }}
               >
-                <User size={18} /> {user ? 'Minha Conta' : 'Entrar'}
+                <User size={18} /> {isAdmin ? 'Painel Admin' : (user ? 'Meu Portal' : 'Entrar')}
               </Link>
             </li>
             <li>
