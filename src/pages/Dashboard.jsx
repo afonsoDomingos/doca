@@ -945,6 +945,21 @@ const Dashboard = () => {
                       style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0' }}
                     />
                   </div>
+
+                  {/* ADDITIONAL DETAILS DISPLAY */}
+                  {selectedQuote.additionalDetails && Object.keys(selectedQuote.additionalDetails).length > 0 && (
+                    <div style={{ gridColumn: '1 / -1', marginTop: '1rem', padding: '1.5rem', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                      <p style={{ margin: '0 0 1rem 0', fontWeight: '800', color: '#1e293b', fontSize: '0.85rem', textTransform: 'uppercase' }}>🔧 Especificações Técnicas (Triagem Inteligente)</p>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+                        {Object.entries(selectedQuote.additionalDetails).map(([key, value]) => (
+                          <div key={key}>
+                            <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748b', fontWeight: '700', textTransform: 'capitalize' }}>{key.replace(/([A-Z])/g, ' $1')}</p>
+                            <p style={{ margin: '4px 0 0', fontWeight: '800', color: '#0f172a' }}>{value}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 

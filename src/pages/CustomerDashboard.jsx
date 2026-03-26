@@ -29,7 +29,8 @@ const CustomerDashboard = () => {
   const [newQuote, setNewQuote] = useState({
     serviceType: '',
     budgetRange: '',
-    description: ''
+    description: '',
+    additionalDetails: {}
   });
   const [submitting, setSubmitting] = useState(false);
   
@@ -75,12 +76,13 @@ const CustomerDashboard = () => {
           clientName: user.name,
           email: user.email,
           phone: user.phone || 'N/A',
-          userId: user.id
+          userId: user.id,
+          additionalDetails: newQuote.additionalDetails
         })
       });
       if (response.ok) {
         setIsQuoteModalOpen(false);
-        setNewQuote({ serviceType: '', budgetRange: '', description: '' });
+        setNewQuote({ serviceType: '', budgetRange: '', description: '', additionalDetails: {} });
         fetchQuotes(user.id);
       }
     } catch (err) {
@@ -478,30 +480,87 @@ const CustomerDashboard = () => {
                   <select 
                     required
                     value={newQuote.serviceType}
-                    onChange={(e) => setNewQuote({...newQuote, serviceType: e.target.value})}
+                    onChange={(e) => setNewQuote({...newQuote, serviceType: e.target.value, additionalDetails: {}})}
                     style={{ width: '100%', padding: '14px 18px', borderRadius: '14px', border: '1px solid #e2e8f0', outline: 'none', background: '#f8fafc', fontSize: '1rem' }}
                   >
                     <option value="">Selecione o serviço...</option>
-                    <option value="Construção de Edifício">Construção de Edifício</option>
-                    <option value="Manutenção de Edifício">Manutenção de Edifício</option>
+                    <option value="Construção">Construção Civil</option>
+                    <option value="Manutenção">Manutenção de Edifício</option>
                     <option value="Consultoria">Consultoria</option>
-                    <option value="Arranjo Exterior">Arranjo Exterior</option>
                     <option value="Outros">Outros</option>
                   </select>
                 </div>
+
+                {/* Conditional Construction Details */}
+                {newQuote.serviceType === 'Construção' && (
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', marginBottom: '0.5rem' }}>Imóvel</label>
+                      <select 
+                        onChange={(e) => setNewQuote({...newQuote, additionalDetails: {...newQuote.additionalDetails, propertyType: e.target.value}})}
+                        style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0' }}
+                      >
+                        <option value="">Selecione...</option>
+                        <option value="Moradia">Moradia</option>
+                        <option value="Prédio">Prédio / Apartamento</option>
+                        <option value="Armazém">Armazém / Industrial</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', marginBottom: '0.5rem' }}>Área (m²)</label>
+                      <input 
+                        type="number"
+                        placeholder="Ex: 200"
+                        onChange={(e) => setNewQuote({...newQuote, additionalDetails: {...newQuote.additionalDetails, area: e.target.value}})}
+                        style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0' }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Conditional Maintenance Details */}
+                {newQuote.serviceType === 'Manutenção' && (
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', marginBottom: '0.5rem' }}>Especialidade</label>
+                      <select 
+                        onChange={(e) => setNewQuote({...newQuote, additionalDetails: {...newQuote.additionalDetails, maintenanceType: e.target.value}})}
+                        style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0' }}
+                      >
+                        <option value="">Selecione...</option>
+                        <option value="Elétrica">Elétrica</option>
+                        <option value="Canalização">Canalização</option>
+                        <option value="Pintura">Pintura</option>
+                        <option value="Geral">Manutenção Geral</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', marginBottom: '0.5rem' }}>Urgência</label>
+                      <select 
+                        onChange={(e) => setNewQuote({...newQuote, additionalDetails: {...newQuote.additionalDetails, urgency: e.target.value}})}
+                        style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0' }}
+                      >
+                        <option value="">Selecione...</option>
+                        <option value="Baixa">Baixa</option>
+                        <option value="Média">Média</option>
+                        <option value="Crítica">Crítica</option>
+                      </select>
+                    </div>
+                  </div>
+                )}
                 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' }}>Estimativa de Orçamento (Opcional)</label>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' }}>Estimativa de Orçamento</label>
                   <select 
                     value={newQuote.budgetRange}
                     onChange={(e) => setNewQuote({...newQuote, budgetRange: e.target.value})}
                     style={{ width: '100%', padding: '14px 18px', borderRadius: '14px', border: '1px solid #e2e8f0', outline: 'none', background: '#f8fafc', fontSize: '1rem' }}
                   >
                     <option value="">Selecione uma faixa...</option>
-                    <option value="Menos de 100.000 MT">Menos de 100.000 MT</option>
-                    <option value="100.000 MT - 500.000 MT">100.000 MT - 500.000 MT</option>
-                    <option value="500.000 MT - 1.000.000 MT">500.000 MT - 1.000.000 MT</option>
-                    <option value="Mais de 1.000.000 MT">Mais de 1.000.000 MT</option>
+                    <option value="Sob Consulta">Sob Consulta</option>
+                    <option value="Abaixo de 100k MT">Abaixo de 100.000 MT</option>
+                    <option value="100k - 500k MT">100.000 MT - 500.000 MT</option>
+                    <option value="Acima de 500k MT">Acima de 500.000 MT</option>
                   </select>
                 </div>
                 

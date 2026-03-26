@@ -30,7 +30,8 @@ const QuoteForm = () => {
     phone: '',
     serviceType: '',
     budgetRange: '',
-    description: ''
+    description: '',
+    additionalDetails: {}
   });
 
   useEffect(() => {
@@ -70,8 +71,22 @@ const QuoteForm = () => {
   };
 
   const handleServiceSelect = (serviceId) => {
-    setFormData({ ...formData, serviceType: serviceId });
+    setFormData({ 
+      ...formData, 
+      serviceType: serviceId,
+      additionalDetails: {} // Limpar detalhes se mudar o serviço
+    });
     nextStep();
+  };
+
+  const updateAdditionalDetail = (key, value) => {
+    setFormData(prev => ({
+      ...prev,
+      additionalDetails: {
+        ...prev.additionalDetails,
+        [key]: value
+      }
+    }));
   };
 
   const handleSubmitPlatform = async () => {
@@ -247,6 +262,70 @@ const QuoteForm = () => {
       <p style={{ color: '#64748b', textAlign: 'center', marginBottom: '1.5rem', fontSize: '0.9rem' }}>Quanto mais detalhes, mais preciso será seu orçamento.</p>
       
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        {/* Conditional Fields: Construção Civil */}
+        {formData.serviceType === 'Construção' && (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '0.5rem' }}>Tipo de Imóvel</label>
+              <select 
+                value={formData.additionalDetails?.propertyType || ''}
+                onChange={(e) => updateAdditionalDetail('propertyType', e.target.value)}
+                style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white' }}
+              >
+                <option value="">Selecione...</option>
+                <option value="Moradia">Moradia</option>
+                <option value="Prédio">Prédio / Apartamento</option>
+                <option value="Armazém">Armazém / Industrial</option>
+                <option value="Comercial">Loja / Comercial</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '0.5rem' }}>Área Prevista (m²)</label>
+              <input 
+                type="number"
+                placeholder="Ex: 150"
+                value={formData.additionalDetails?.area || ''}
+                onChange={(e) => updateAdditionalDetail('area', e.target.value)}
+                style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0' }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Conditional Fields: Manutenção */}
+        {formData.serviceType === 'Manutenção' && (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '0.5rem' }}>Especialidade</label>
+              <select 
+                value={formData.additionalDetails?.maintenanceType || ''}
+                onChange={(e) => updateAdditionalDetail('maintenanceType', e.target.value)}
+                style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white' }}
+              >
+                <option value="">Selecione...</option>
+                <option value="Elétrica">Instalação Elétrica</option>
+                <option value="Canalização">Canalização / Hidráulica</option>
+                <option value="Pintura">Pintura e Acabamentos</option>
+                <option value="Impermeabilização">Impermeabilização</option>
+                <option value="Geral">Manutenção Geral</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '0.5rem' }}>Urgência</label>
+              <select 
+                value={formData.additionalDetails?.urgency || ''}
+                onChange={(e) => updateAdditionalDetail('urgency', e.target.value)}
+                style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white' }}
+              >
+                <option value="">Selecione...</option>
+                <option value="Baixa">Baixa (Planeamento)</option>
+                <option value="Média">Média (Próximos dias)</option>
+                <option value="Crítica">Crítica (Imediata)</option>
+              </select>
+            </div>
+          </div>
+        )}
+
         <div>
           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '0.5rem' }}>
             <DollarSign size={14} /> Expectativa de Orçamento
@@ -264,12 +343,12 @@ const QuoteForm = () => {
         
         <div>
           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '0.5rem' }}>
-            <Calendar size={14} /> Descrição do pedido
+            <MessageCircle size={14} /> Descrição Adicional
           </label>
           <textarea 
             name="description" 
             placeholder="Descreva o que você precisa, localização, prazos, etc..." 
-            rows="4" 
+            rows="3" 
             value={formData.description} 
             onChange={handleInputChange}
             style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none', resize: 'none' }}

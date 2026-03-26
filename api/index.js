@@ -104,6 +104,8 @@ const QuoteSchema = new mongoose.Schema({
   
   workPhotos: [String], // URLs de fotos da obra
   
+  additionalDetails: { type: mongoose.Schema.Types.Mixed, default: {} }, // Guardar detalhes dinâmicos (m2, pisos, urgência, etc)
+  
   createdAt: { type: Date, default: Date.now }
 });
 
