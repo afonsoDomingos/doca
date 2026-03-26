@@ -5,12 +5,11 @@ import { ChevronDown, ChevronUp, Users, FolderKanban, Trophy } from 'lucide-reac
 const CounterStat = ({ target, label, icon: Icon, suffix = '+' }) => {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
-  const started = useRef(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !started.current) {
-        started.current = true;
+      if (entry.isIntersecting) {
+        setCount(0);
         const duration = 2000;
         const steps = 60;
         const increment = target / steps;
@@ -24,8 +23,10 @@ const CounterStat = ({ target, label, icon: Icon, suffix = '+' }) => {
             setCount(Math.floor(current));
           }
         }, duration / steps);
+      } else {
+        setCount(0);
       }
-    }, { threshold: 0.3 });
+    }, { threshold: 0.2 });
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, [target]);
@@ -35,7 +36,6 @@ const CounterStat = ({ target, label, icon: Icon, suffix = '+' }) => {
       ref={ref}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
       style={{ textAlign: 'center', padding: '0 30px' }}
     >
       <div style={{ color: 'var(--accent-yellow)', marginBottom: '10px' }}>
@@ -66,10 +66,10 @@ const About = () => {
               Nossa História
             </div>
             <h2 style={{ fontSize: '2.5rem', marginBottom: '25px', color: 'var(--primary-blue)' }}>
-              Sobre a <span style={{ color: 'var(--accent-yellow-dark)' }}>DOCA Construção</span>
+              Sobre a <span style={{ color: 'var(--accent-yellow-dark)' }}>DOCA MOZAMBIQUE</span>
             </h2>
             <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)', marginBottom: '20px' }}>
-              A DOCA CONSTRUÇÃO E MANUTENÇÃO é uma empresa líder no mercado de construção civil, 
+              A DOCA MOZAMBIQUE é uma empresa líder no mercado de construção civil, 
               especializada em fornecer soluções inovadoras e de alta qualidade para projetos de 
               grande e média escala. Fundada com a visão de transformar o cenário urbano através de 
               excelência em engenharia e gestão de projetos.
