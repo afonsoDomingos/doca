@@ -17,11 +17,26 @@ cloudinary.config({
   api_secret: process.env.VITE_CLOUDINARY_API_SECRET
 });
 
-// MongoDB Connection
-const MONGODB_URI = process.env.VITE_MONGODB_URI;
-mongoose.connect(MONGODB_URI)
-  .then(() => console.log('✅ DOCA MongoDB Connected'))
-  .catch(err => console.error('❌ MongoDB Connection Error:', err));
+// MongoDB Connection (Serverless Optimization)
+let cachedDb = null;
+
+async function connectToDatabase() {
+  if (cachedDb && mongoose.connection.readyState === 1) {
+    return cachedDb;
+  }
+  
+  console.log('🔄 Connecting to MongoDB...');
+  const MONGODB_URI = process.env.VITE_MONGODB_URI;
+  
+  if (!MONGODB_URI) {
+    throw new Error('MONGODB_URI is not defined in environment variables');
+  }
+
+  const db = await mongoose.connect(MONGODB_URI);
+  cachedDb = db;
+  console.log('✅ Connected to MongoDB');
+  return db;
+}
 
 // Schema for Projects
 const ProjectSchema = new mongoose.Schema({
@@ -71,6 +86,7 @@ const User = mongoose.models.User || mongoose.model('User', UserSchema);
 // Projects CRUD
 app.get('/api/projects', async (req, res) => {
   try {
+    await connectToDatabase();
     const projects = await Project.find();
     res.json(projects);
   } catch (err) {
@@ -80,6 +96,7 @@ app.get('/api/projects', async (req, res) => {
 
 app.post('/api/projects', async (req, res) => {
   try {
+    await connectToDatabase();
     const project = new Project(req.body);
     await project.save();
     res.json(project);
@@ -90,6 +107,7 @@ app.post('/api/projects', async (req, res) => {
 
 app.put('/api/projects/:id', async (req, res) => {
   try {
+    await connectToDatabase();
     const project = await Project.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(project);
   } catch (err) {
@@ -99,6 +117,7 @@ app.put('/api/projects/:id', async (req, res) => {
 
 app.delete('/api/projects/:id', async (req, res) => {
   try {
+    await connectToDatabase();
     await Project.findByIdAndDelete(req.params.id);
     res.json({ message: 'Project deleted' });
   } catch (err) {
@@ -151,6 +170,7 @@ const createEmailTemplate = (data) => `
 // Quotes endpoints
 app.post('/api/quotes', async (req, res) => {
   try {
+    await connectToDatabase();
     const quote = new Quote(req.body);
     await quote.save();
 
@@ -173,6 +193,7 @@ app.post('/api/quotes', async (req, res) => {
 
 app.get('/api/quotes', async (req, res) => {
   try {
+    await connectToDatabase();
     const quotes = await Quote.find().sort({ createdAt: -1 });
     res.json(quotes);
   } catch (err) {
@@ -182,6 +203,7 @@ app.get('/api/quotes', async (req, res) => {
 
 app.delete('/api/quotes/:id', async (req, res) => {
   try {
+    await connectToDatabase();
     await Quote.findByIdAndDelete(req.params.id);
     res.json({ message: 'Quote deleted' });
   } catch (err) {
@@ -195,6 +217,7 @@ app.delete('/api/quotes/:id', async (req, res) => {
 app.post('/api/register', async (req, res) => {
   const { name, email, password, phone } = req.body;
   try {
+    await connectToDatabase();
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ error: 'E-mail já cadastrado' });
 
@@ -210,6 +233,7 @@ app.post('/api/register', async (req, res) => {
 app.post('/api/user/login', async (req, res) => {
   const { email, password } = req.body;
   try {
+    await connectToDatabase();
     const user = await User.findOne({ email });
     if (!user || user.password !== password) {
       return res.status(401).json({ error: 'E-mail ou senha incorretos' });
@@ -223,6 +247,7 @@ app.post('/api/user/login', async (req, res) => {
 // Buscar Pedidos de um Cliente Específico
 app.get('/api/user/quotes/:userId', async (req, res) => {
   try {
+    await connectToDatabase();
     const quotes = await Quote.find({ userId: req.params.userId }).sort({ createdAt: -1 });
     res.json(quotes);
   } catch (err) {
@@ -239,18 +264,7 @@ app.post('/api/auth/login', async (req, res) => {
   }
 
   try {
-    // 1. Verificar Estado da Base de Dados
-    const dbStatus = mongoose.connection.readyState;
-    console.log('MongoDB Status:', dbStatus);
-    
-    if (dbStatus !== 1) {
-      return res.status(503).json({ 
-        error: 'Serviço temporariamente indisponível', 
-        details: 'A base de dados ainda está a ligar ou falhou. Tente novamente em 5 segundos.',
-        status: dbStatus 
-      });
-    }
-
+    await connectToDatabase();
     // 2. Tentar encontrar nos Administradores
     console.log('Consultando Admin:', email.toLowerCase());
     const admin = await Admin.findOne({ email: email.toLowerCase() });
@@ -304,6 +318,7 @@ app.post('/api/login', async (req, res) => {
 // --- Upload de Imagem (Cloudinary) ---
 app.post('/api/upload', async (req, res) => {
   try {
+    await connectToDatabase();
     const fileStr = req.body.data;
     const uploadResponse = await cloudinary.uploader.upload(fileStr, {
       upload_preset: 'doca_portfolio',
