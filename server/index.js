@@ -213,6 +213,39 @@ app.delete('/api/quotes/:id', async (req, res) => {
 
 // --- Authenticação e Gestão de Usuários (Clientes) ---
 
+// Listar todos os usuários (Apenas para Admins)
+app.get('/api/users', async (req, res) => {
+  try {
+    await connectToDatabase();
+    const users = await User.find().select('-password'); // Não enviar senhas por segurança
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Promover Usuário a Admin
+app.post('/api/users/promote', async (req, res) => {
+  const { userId } = req.body;
+  try {
+    await connectToDatabase();
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
+
+    // Verificar se já é admin
+    const alreadyAdmin = await Admin.findOne({ email: user.email });
+    if (alreadyAdmin) return res.status(400).json({ error: 'Este usuário já é um administrador' });
+
+    // Adicionar à coleção de Admins
+    const newAdmin = new Admin({ email: user.email, password: user.password });
+    await newAdmin.save();
+
+    res.json({ success: true, message: `${user.name} foi promovido a Administrador!` });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Registro de Usuário (Cliente)
 app.post('/api/register', async (req, res) => {
   const { name, email, password, phone } = req.body;

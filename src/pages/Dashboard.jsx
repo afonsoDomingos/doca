@@ -23,6 +23,7 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('projects');
   const [projects, setProjects] = useState([]);
   const [quotes, setQuotes] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingImage, setLoadingImage] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,14 +48,17 @@ const Dashboard = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [projectsRes, quotesRes] = await Promise.all([
+      const [projectsRes, quotesRes, usersRes] = await Promise.all([
         fetch(`${API_URL}/api/projects`),
-        fetch(`${API_URL}/api/quotes`)
+        fetch(`${API_URL}/api/quotes`),
+        fetch(`${API_URL}/api/users`)
       ]);
       const projectsData = await projectsRes.json();
       const quotesData = await quotesRes.json();
+      const usersData = await usersRes.json();
       setProjects(projectsData);
       setQuotes(quotesData);
+      setUsers(usersData);
     } catch (err) {
       console.error('Error fetching data:', err);
     } finally {
@@ -145,6 +149,27 @@ const Dashboard = () => {
     setIsModalOpen(true);
   };
 
+  const handlePromote = async (userId, name) => {
+    if (window.confirm(`Tens a certeza que desejas promover ${name} a Administrador? Ele terá acesso total ao painel.`)) {
+      try {
+        const response = await fetch(`${API_URL}/api/users/promote`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId })
+        });
+        if (response.ok) {
+          alert(`${name} agora é um Administrador!`);
+          fetchData();
+        } else {
+          const data = await response.json();
+          alert(data.error || 'Erro ao promover usuário');
+        }
+      } catch (err) {
+        console.error('Error promoting user:', err);
+      }
+    }
+  };
+
   const closeModal = () => {
     setIsModalOpen(false);
     setEditingProject(null);
@@ -207,6 +232,22 @@ const Dashboard = () => {
                 }}>
                 <MessageCircle size={20} /> Pedidos de Orçamento
               </li>
+              <li 
+                onClick={() => setActiveTab('users')}
+                style={{ 
+                  background: activeTab === 'users' ? 'rgba(235, 137, 35, 0.1)' : 'transparent', 
+                  color: activeTab === 'users' ? '#eb8923' : '#94a3b8', 
+                  padding: '12px 16px', 
+                  borderRadius: '12px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '12px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  transition: 'all 0.2s'
+                }}>
+                <User size={20} /> Gestão de Usuários
+              </li>
               <li style={{ 
                 color: '#94a3b8', 
                 padding: '12px 16px', 
@@ -263,99 +304,217 @@ const Dashboard = () => {
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main style={{ marginLeft: '280px', flex: 1, padding: '2rem 3rem' }}>
-        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
-              Páginas <ChevronRight size={14} /> <span style={{ color: '#1e293b', fontWeight: '500' }}>{activeTab === 'projects' ? 'Projetos' : 'Pedidos de Orçamento'}</span>
+      {activeTab === 'users' && (
+        <div style={{ marginLeft: '280px', flex: 1, padding: '2rem 3rem' }}>
+          <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+                Páginas <ChevronRight size={14} /> <span style={{ color: '#1e293b', fontWeight: '500' }}>Gestão de Usuários</span>
+              </div>
+              <h1 style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b', margin: 0 }}>
+                Gerenciar Usuários
+              </h1>
             </div>
-            <h1 style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b', margin: 0 }}>
-              {activeTab === 'projects' ? 'Gerenciar Projetos' : 'Solicitações de Orçamento'}
-            </h1>
-          </div>
-          
-          {activeTab === 'projects' && (
-            <button 
-              onClick={() => openModal()}
-              style={{ padding: '12px 24px', background: '#eb8923', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
-            >
-              <Plus size={20} /> Novo Projeto
-            </button>
-          )}
-        </header>
-
-        {activeTab === 'projects' ? (
-          /* Projects View */
+          </header>
           <div style={{ background: 'white', borderRadius: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)', border: '1px solid #f1f5f9', overflow: 'hidden' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #f1f5f9', background: '#f8fafc' }}>
-                  <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Projeto</th>
-                  <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Categoria</th>
-                  <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Destaque</th>
-                  <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', textAlign: 'right' }}>Ações</th>
+                  <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Usuário</th>
+                  <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>E-mail</th>
+                  <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Telefone</th>
+                  <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', textAlign: 'center' }}>Ações</th>
                 </tr>
               </thead>
               <tbody>
-                {projects.map((project) => (
-                  <tr key={project._id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                {users.map(user => (
+                  <tr key={user._id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                     <td style={{ padding: '1.25rem 2rem' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        <img src={project.imageUrl} alt="" style={{ width: '48px', height: '48px', borderRadius: '12px', objectFit: 'cover' }} />
-                        <span style={{ fontWeight: '600', color: '#1e293b' }}>{project.title}</span>
+                        <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#eb8923' }}>
+                          <User size={20} />
+                        </div>
+                        <span style={{ fontWeight: '600', color: '#1e293b' }}>{user.name}</span>
                       </div>
                     </td>
-                    <td style={{ padding: '1.25rem 2rem' }}>{project.category}</td>
-                    <td style={{ padding: '1.25rem 2rem' }}>{project.isFeatured ? 'Sim' : 'Não'}</td>
-                    <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
-                      <button onClick={() => openModal(project)} style={{ marginRight: '8px', background: 'none', border: '1px solid #e2e8f0', padding: '6px', borderRadius: '6px', cursor: 'pointer' }}><Edit size={16} color="#64748b" /></button>
-                      <button onClick={() => handleDeleteProject(project._id)} style={{ background: 'none', border: '1px solid #fee2e2', padding: '6px', borderRadius: '6px', cursor: 'pointer' }}><Trash2 size={16} color="#ef4444" /></button>
+                    <td style={{ padding: '1.25rem 2rem', color: '#475569' }}>{user.email}</td>
+                    <td style={{ padding: '1.25rem 2rem', color: '#475569' }}>{user.phone || 'N/A'}</td>
+                    <td style={{ padding: '1.25rem 2rem', textAlign: 'center' }}>
+                      <button 
+                        onClick={() => handlePromote(user._id, user.name)}
+                        style={{ background: '#eb8923', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '12px', fontSize: '0.875rem', fontWeight: '600', cursor: 'pointer' }}
+                      >
+                        Promover a Admin
+                      </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        ) : (
-          /* Quotes View */
-          <div style={{ background: 'white', borderRadius: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)', border: '1px solid #f1f5f9', overflow: 'hidden' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid #f1f5f9', background: '#f8fafc' }}>
-                  <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Cliente</th>
-                  <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Serviço / Orçamento</th>
-                  <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Data</th>
-                  <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', textAlign: 'right' }}>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {quotes.map((quote) => (
-                  <tr key={quote._id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '1.25rem 2rem' }}>
-                      <p style={{ fontWeight: '600', color: '#1e293b', margin: 0 }}>{quote.clientName}</p>
-                      <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>{quote.email} | {quote.phone}</p>
-                    </td>
-                    <td style={{ padding: '1.25rem 2rem' }}>
-                      <p style={{ fontWeight: '600', color: '#10b981', margin: 0 }}>{quote.serviceType}</p>
-                      <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>{quote.budgetRange}</p>
-                    </td>
-                    <td style={{ padding: '1.25rem 2rem', fontSize: '0.875rem' }}>
-                      {new Date(quote.createdAt).toLocaleDateString('pt-MZ')}
-                    </td>
-                    <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
-                      <button 
-                        onClick={() => alert(`Descrição: ${quote.description}`)}
-                        style={{ marginRight: '8px', background: 'none', border: '1px solid #e2e8f0', padding: '6px', borderRadius: '6px', cursor: 'pointer' }}
-                      >
-                        <ExternalLink size={16} color="#3b82f6" />
-                      </button>
-                      <button onClick={() => handleDeleteQuote(quote._id)} style={{ background: 'none', border: '1px solid #fee2e2', padding: '6px', borderRadius: '6px', cursor: 'pointer' }}><Trash2 size={16} color="#ef4444" /></button>
-                    </td>
+        </div>
+      )}
+
+      {/* Main Content */}
+      <main style={{ marginLeft: '280px', flex: 1, padding: '2rem 3rem' }}>
+        {activeTab === 'users' ? (
+          /* Users Management View */
+          <div>
+            <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+                  Páginas <ChevronRight size={14} /> <span style={{ color: '#1e293b', fontWeight: '500' }}>Gestão de Usuários</span>
+                </div>
+                <h1 style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b', margin: 0 }}>
+                  Gerenciar Usuários
+                </h1>
+              </div>
+            </header>
+            <div style={{ background: 'white', borderRadius: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)', border: '1px solid #f1f5f9', overflow: 'hidden' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid #f1f5f9', background: '#f8fafc' }}>
+                    <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Usuário</th>
+                    <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>E-mail</th>
+                    <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Telefone</th>
+                    <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', textAlign: 'center' }}>Ações</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {users.map(user => (
+                    <tr key={user._id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                      <td style={{ padding: '1.25rem 2rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#eb8923' }}>
+                            <User size={20} />
+                          </div>
+                          <span style={{ fontWeight: '600', color: '#1e293b' }}>{user.name}</span>
+                        </div>
+                      </td>
+                      <td style={{ padding: '1.25rem 2rem', color: '#475569' }}>{user.email}</td>
+                      <td style={{ padding: '1.25rem 2rem', color: '#475569' }}>{user.phone || 'N/A'}</td>
+                      <td style={{ padding: '1.25rem 2rem', textAlign: 'center' }}>
+                        <button 
+                          onClick={() => handlePromote(user._id, user.name)}
+                          style={{ background: '#eb8923', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '12px', fontSize: '0.875rem', fontWeight: '600', cursor: 'pointer' }}
+                        >
+                          Promover a Admin
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ) : (
+          /* Projects or Quotes View */
+          <div>
+            <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+                  Páginas <ChevronRight size={14} /> <span style={{ color: '#1e293b', fontWeight: '500' }}>
+                    {activeTab === 'projects' ? 'Projetos' : 'Pedidos de Orçamento'}
+                  </span>
+                </div>
+                <h1 style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b', margin: 0 }}>
+                  {activeTab === 'projects' ? 'Gerenciar Projetos' : 'Solicitações de Orçamento'}
+                </h1>
+              </div>
+              
+              {activeTab === 'projects' && (
+                <button 
+                  onClick={() => openModal()}
+                  style={{ 
+                    background: 'linear-gradient(135deg, #eb8923 0%, #d87a1d 100%)', 
+                    color: 'white', 
+                    border: 'none', 
+                    padding: '12px 24px', 
+                    borderRadius: '16px', 
+                    fontWeight: '700',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 6px -1px rgba(235, 137, 35, 0.4)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <Plus size={20} /> Novo Projeto
+                </button>
+              )}
+            </header>
+
+            <div style={{ background: 'white', borderRadius: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)', border: '1px solid #f1f5f9', overflow: 'hidden' }}>
+              {activeTab === 'projects' ? (
+                /* Projects Table */
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid #f1f5f9', background: '#f8fafc' }}>
+                      <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Projeto</th>
+                      <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Categoria</th>
+                      <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Destaque</th>
+                      <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', textAlign: 'right' }}>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {projects.map((project) => (
+                      <tr key={project._id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                        <td style={{ padding: '1.25rem 2rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                            <img src={project.imageUrl} alt="" style={{ width: '48px', height: '48px', borderRadius: '12px', objectFit: 'cover' }} />
+                            <span style={{ fontWeight: '600', color: '#1e293b' }}>{project.title}</span>
+                          </div>
+                        </td>
+                        <td style={{ padding: '1.25rem 2rem' }}>{project.category}</td>
+                        <td style={{ padding: '1.25rem 2rem' }}>{project.isFeatured ? 'Sim' : 'Não'}</td>
+                        <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
+                          <button onClick={() => openModal(project)} style={{ marginRight: '8px', background: 'none', border: '1px solid #e2e8f0', padding: '6px', borderRadius: '6px', cursor: 'pointer' }}><Edit size={16} color="#64748b" /></button>
+                          <button onClick={() => handleDeleteProject(project._id)} style={{ background: 'none', border: '1px solid #fee2e2', padding: '6px', borderRadius: '6px', cursor: 'pointer' }}><Trash2 size={16} color="#ef4444" /></button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                /* Quotes Table */
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid #f1f5f9', background: '#f8fafc' }}>
+                      <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Cliente</th>
+                      <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Serviço / Orçamento</th>
+                      <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>Data</th>
+                      <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', textAlign: 'right' }}>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {quotes.map((quote) => (
+                      <tr key={quote._id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                        <td style={{ padding: '1.25rem 2rem' }}>
+                          <p style={{ fontWeight: '600', color: '#1e293b', margin: 0 }}>{quote.clientName}</p>
+                          <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>{quote.email} | {quote.phone}</p>
+                        </td>
+                        <td style={{ padding: '1.25rem 2rem' }}>
+                          <p style={{ fontWeight: '600', color: '#10b981', margin: 0 }}>{quote.serviceType}</p>
+                          <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>{quote.budgetRange}</p>
+                        </td>
+                        <td style={{ padding: '1.25rem 2rem', fontSize: '0.875rem' }}>
+                          {new Date(quote.createdAt).toLocaleDateString('pt-MZ')}
+                        </td>
+                        <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
+                          <button 
+                            onClick={() => alert(`Descrição: ${quote.description}`)}
+                            style={{ marginRight: '8px', background: 'none', border: '1px solid #e2e8f0', padding: '6px', borderRadius: '6px', cursor: 'pointer' }}
+                          >
+                            <ExternalLink size={16} color="#3b82f6" />
+                          </button>
+                          <button onClick={() => handleDeleteQuote(quote._id)} style={{ background: 'none', border: '1px solid #fee2e2', padding: '6px', borderRadius: '6px', cursor: 'pointer' }}><Trash2 size={16} color="#ef4444" /></button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
           </div>
         )}
       </main>
