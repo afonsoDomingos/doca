@@ -48,7 +48,7 @@ const Header = () => {
         }}>
           <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', gap: '20px' }}>
-              <a href="https://wa.me/258829580244" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <a href="https://wa.me/258848580244" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <Phone size={14} /> +258 848580244
               </a>
               <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -103,7 +103,7 @@ const Header = () => {
             ))}
             <li>
               <a 
-                href="https://wa.me/258829580244"
+                href="https://wa.me/258848580244"
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="btn btn-primary" 
@@ -157,7 +157,7 @@ const Header = () => {
               ))}
               <li style={{ marginTop: '20px' }}>
                 <a 
-                  href="https://wa.me/258829580244"
+                  href="https://wa.me/258848580244"
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="btn btn-primary" 

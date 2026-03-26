@@ -39,7 +39,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 style={{ fontSize: '1.2rem', color: 'var(--primary-blue)', marginBottom: '5px' }}>Telefone</h4>
-                  <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)' }}>+258 829580244</p>
+                  <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)' }}>+258 848580244</p>
                   <p style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>Segunda a Sexta, 8h - 17h</p>
                 </div>
               </li>

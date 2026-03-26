@@ -1,20 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink, Plus } from 'lucide-react';
 
 const Projects = () => {
   const [filter, setFilter] = useState('Todas');
+  const [projectsData, setProjectsData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const categories = ['Todas', 'Construção', 'Manutenção', 'Consultoria', 'Antes/Depois'];
 
-  const projectsData = [
-    { id: 1, title: 'Residencial MiraMar', category: 'Construção', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop' },
-    { id: 2, title: 'Sede Bancária Maputo', category: 'Manutenção', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&auto=format&fit=crop' },
-    { id: 3, title: 'Reforma Comercial', category: 'Antes/Depois', image: '/project_before_after_1774479019694.png' },
-    { id: 4, title: 'Edifício Infinity', category: 'Construção', image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&auto=format&fit=crop' },
-    { id: 5, title: 'Plano Diretor Industrial', category: 'Consultoria', image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&auto=format&fit=crop' },
-    { id: 6, title: 'Manutenção Galeria Central', category: 'Manutenção', image: 'https://images.unsplash.com/photo-1590725121839-892b458a74fe?w=800&auto=format&fit=crop' }
-  ];
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/projects');
+        const data = await response.json();
+        setProjectsData(data);
+      } catch (err) {
+        console.error('Error fetching projects:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProjects();
+  }, []);
 
   const filteredProjects = filter === 'Todas' 
     ? projectsData 
@@ -61,7 +69,7 @@ const Projects = () => {
           <AnimatePresence>
             {filteredProjects.map((project) => (
               <motion.div
-                key={project.id}
+                key={project._id}
                 layout
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -78,7 +86,7 @@ const Projects = () => {
                 }}
               >
                 <img 
-                  src={project.image} 
+                  src={project.imageUrl} 
                   alt={project.title}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />

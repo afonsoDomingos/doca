@@ -32,7 +32,7 @@ const RotatingText = () => {
 const DynamicTitle = () => {
   const titles = [
     <>Soluções Integradas em <span style={{ color: 'var(--accent-yellow)' }}>Construção</span><br />
-    <span style={{ color: 'var(--accent-yellow)' }}>e Manutenção</span></>,
+      <span style={{ color: 'var(--accent-yellow)' }}>e Manutenção</span></>,
     <>Construindo e fortalecendo <br /> o seu <span style={{ color: 'var(--accent-yellow)' }}>Património</span></>
   ];
   const [index, setIndex] = useState(0);
@@ -47,14 +47,14 @@ const DynamicTitle = () => {
   return (
     <div style={{ minHeight: 'clamp(140px, 22vw, 260px)', marginBottom: '20px' }}>
       <AnimatePresence mode="wait">
-        <motion.h1 
+        <motion.h1
           key={index}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.6 }}
-          style={{ 
-            fontSize: 'clamp(2rem, 6vw, 4rem)', 
+          style={{
+            fontSize: 'clamp(2rem, 6vw, 4rem)',
             fontFamily: 'Montserrat',
             fontWeight: '800',
             lineHeight: '1.25'
@@ -69,7 +69,7 @@ const DynamicTitle = () => {
 
 const Hero = () => {
   return (
-    <section 
+    <section
       id="home"
       style={{
         position: 'relative',
@@ -89,7 +89,7 @@ const Hero = () => {
         left: 0,
         width: '100%',
         height: '130%',
-        backgroundImage: 'url("/bannerdoca.png")',
+        backgroundImage: 'url("/bannerdoca.jpg")',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         animation: 'heroPan 12s ease-in-out infinite alternate',
@@ -103,7 +103,7 @@ const Hero = () => {
         zIndex: 1
       }} />
       <div className="container" style={{ position: 'relative', zIndex: 10 }}>
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
@@ -111,20 +111,20 @@ const Hero = () => {
         >
           <DynamicTitle />
 
-          <div style={{ 
-            fontSize: 'clamp(1.2rem, 3vw, 1.8rem)', 
+          <div style={{
+            fontSize: 'clamp(1.2rem, 3vw, 1.8rem)',
             fontWeight: '600',
             marginBottom: '40px',
             display: 'flex',
             alignItems: 'center',
             gap: '15px'
           }}>
-            Nosso pilar é a <RotatingText />
+            Nosso pilar é o <RotatingText />
           </div>
 
           <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '130px' }}>
-            <motion.a 
-              href="https://wa.me/258829580244"
+            <motion.a
+              href="https://wa.me/258848580244"
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.05 }}
@@ -134,7 +134,7 @@ const Hero = () => {
             >
               Contacte-nos <ChevronRight size={20} />
             </motion.a>
-            <motion.a 
+            <motion.a
               href="#servicos"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 1 }}
@@ -148,18 +148,19 @@ const Hero = () => {
       </div>
 
       {/* Decorative SVG Overlay */}
-      <div style={{ 
-        position: 'absolute', 
-        bottom: '-2px', 
-        left: 0, 
-        width: '100%', 
-        zIndex: 5 
+      <div style={{
+        position: 'absolute',
+        bottom: '-2px',
+        left: 0,
+        width: '100%',
+        zIndex: 5
       }}>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
           <path fill="white" fillOpacity="1" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,122.7C960,117,1056,171,1152,197.3C1248,224,1344,224,1392,224L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
         </svg>
       </div>
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @keyframes heroPan {
           0%   { transform: translateY(0%); }
           100% { transform: translateY(-12%); }
