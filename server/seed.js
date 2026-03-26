@@ -8,7 +8,13 @@ const ProjectSchema = new mongoose.Schema({
   isFeatured: Boolean
 });
 
+const AdminSchema = new mongoose.Schema({
+  email: { type: String, unique: true, required: true },
+  password: { type: String, required: true }
+});
+
 const Project = mongoose.model('Project', ProjectSchema);
+const Admin = mongoose.model('Admin', AdminSchema);
 
 const projectsData = [
   { title: 'Residencial MiraMar', category: 'Construção', imageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop', isFeatured: true },
@@ -19,12 +25,23 @@ const projectsData = [
   { title: 'Manutenção Galeria Central', category: 'Manutenção', imageUrl: 'https://images.unsplash.com/photo-1590725121839-892b458a74fe?w=800&auto=format&fit=crop', isFeatured: false }
 ];
 
+const adminData = {
+  email: 'geral@docacm.com',
+  password: '@Admin123@'
+};
+
 async function seed() {
   await mongoose.connect(process.env.VITE_MONGODB_URI);
   console.log('Connected to MongoDB');
+  
   await Project.deleteMany({});
   await Project.insertMany(projectsData);
   console.log('Projects seeded!');
+
+  await Admin.deleteMany({});
+  await Admin.create(adminData);
+  console.log('Admin seeded!');
+
   await mongoose.disconnect();
 }
 
