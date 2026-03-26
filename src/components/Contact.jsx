@@ -46,7 +46,7 @@ const Contact = () => {
                   <MapPin size={24} />
                 </div>
                 <div>
-                  <h4 style={{ fontSize: '1.1rem', color: '#1e293b', marginBottom: '5px', fontWeight: '700' }}>Sede Social</h4>
+                  <h4 style={{ fontSize: '1.1rem', color: '#1e293b', marginBottom: '5px', fontWeight: '700' }}>Endereço</h4>
                   <p style={{ fontSize: '1.1rem', color: '#64748b' }}>Rua Renata Sadimba, N°139, Malhangalene B</p>
                 </div>
               </li>

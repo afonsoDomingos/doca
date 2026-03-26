@@ -539,7 +539,7 @@ const CustomerDashboard = () => {
               </div>
 
               <div style={{ marginBottom: '2.5rem' }}>
-                <label style={{ display: 'block', fontWeight: '800', color: '#64748b', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '8px' }}>Endereço Completo</label>
+                <label style={{ display: 'block', fontWeight: '800', color: '#64748b', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '8px' }}>Endereço</label>
                 <div style={{ position: 'relative' }}>
                   <MapPin size={18} style={{ position: 'absolute', left: '16px', top: '16px', color: '#cbd5e1' }} />
                   <textarea 
