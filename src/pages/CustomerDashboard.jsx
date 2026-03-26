@@ -123,13 +123,14 @@ const CustomerDashboard = () => {
       <aside style={{ 
         width: '280px', 
         background: '#ffffff', 
-        borderRight: '1px solid #e2e8f0',
-        padding: '2rem 1.5rem',
+        borderRight: '1px solid #f1f5f9',
+        padding: '2.5rem 1.8rem',
         display: 'flex',
         flexDirection: 'column',
         position: 'fixed',
         height: '100vh',
-        zIndex: 100
+        zIndex: 100,
+        boxShadow: '4px 0 24px rgba(0,0,0,0.02)'
       }}>
         <div style={{ marginBottom: '3rem', padding: '0 0.5rem' }}>
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -211,63 +212,94 @@ const CustomerDashboard = () => {
       </aside>
 
       {/* Main Content */}
-      <main style={{ marginLeft: '280px', flex: 1, padding: '2.5rem 4rem', background: '#f1f5f9' }}>
-        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3.5rem' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
-              Portal do Cliente <ChevronRight size={14} /> <span style={{ color: '#003366', fontWeight: '600' }}>Início</span>
+      <main style={{ 
+        marginLeft: '280px', 
+        flex: 1, 
+        padding: '3rem 5rem', 
+        background: 'radial-gradient(at top left, #f8fafc 0%, #f1f5f9 100%)',
+        minHeight: '100vh'
+      }}>
+        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+            <div style={{ 
+              width: '80px', 
+              height: '80px', 
+              background: 'linear-gradient(135deg, #003366 0%, #001f3f 100%)', 
+              borderRadius: '24px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '2rem',
+              fontWeight: '900',
+              boxShadow: '0 20px 25px -5px rgba(0, 51, 102, 0.2)'
+            }}>
+              {user.name.charAt(0)}
             </div>
-            <h1 style={{ fontSize: '2.75rem', fontWeight: '900', color: '#1e293b', margin: 0, letterSpacing: '-1.5px' }}>
-              Olá, {user.name.split(' ')[0]} 👋
-            </h1>
-            <p style={{ color: '#64748b', marginTop: '8px', fontSize: '1.1rem', fontWeight: '500' }}>
-              Estamos prontos para transformar as suas ideias em realidade.
-            </p>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.9rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>
+                Painel do Cliente <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#cbd5e1' }}></div> Online
+              </div>
+              <h1 style={{ fontSize: '3rem', fontWeight: '900', color: '#0f172a', margin: 0, letterSpacing: '-2px', lineHeight: 1 }}>
+                Olá, {user.name.split(' ')[0]}
+              </h1>
+            </div>
           </div>
-          <button 
+          <motion.button 
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => setIsQuoteModalOpen(true)}
             style={{ 
-              padding: '16px 32px', 
-              background: 'linear-gradient(135deg, #eb8923 0%, #d87a1d 100%)', 
+              padding: '18px 36px', 
+              background: '#eb8923', 
               color: 'white', 
               border: 'none', 
-              borderRadius: '20px', 
-              fontWeight: '800', 
+              borderRadius: '24px', 
+              fontWeight: '900', 
               display: 'flex', 
               alignItems: 'center', 
               gap: '12px', 
               cursor: 'pointer',
-              boxShadow: '0 12px 20px -5px rgba(235, 137, 35, 0.4)',
-              transition: 'all 0.3s'
+              boxShadow: '0 20px 30px -10px rgba(235, 137, 35, 0.4)',
+              fontSize: '1rem',
+              letterSpacing: '0.5px'
             }}
           >
-            NOVO ORÇAMENTO <Plus size={22} />
-          </button>
+            SOLICITAR ORÇAMENTO <ArrowRight size={22} />
+          </motion.button>
         </header>
 
-        {/* Info Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem', marginBottom: '4rem' }}>
-          <div style={{ background: 'white', padding: '2rem', borderRadius: '32px', border: '1px solid white', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }}>
-            <div style={{ color: '#003366', marginBottom: '1.5rem', background: 'rgba(0, 51, 102, 0.05)', width: '50px', height: '50px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <FileText size={24} />
+        {/* Stats Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2.5rem', marginBottom: '5rem' }}>
+          {[
+            { label: 'Pedidos Realizados', val: quotes.length, icon: FileText, color: '#003366' },
+            { label: 'Obras em Análise', val: quotes.filter(q => q.status === 'Pendente' || q.status === 'Em Análise').length, icon: Clock, color: '#eb8923' },
+            { label: 'Projectos Concluídos', val: quotes.filter(q => q.status === 'Concluído').length, icon: CheckCircle, color: '#10b981' }
+          ].map((stat, i) => (
+            <div key={i} style={{ 
+              background: 'white', 
+              padding: '2.5rem', 
+              borderRadius: '32px', 
+              border: '1px solid white', 
+              boxShadow: '0 20px 25px -5px rgba(0,0,0,0.03)',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <div style={{ 
+                position: 'absolute', 
+                top: '-20px', 
+                right: '-20px', 
+                opacity: 0.03 
+              }}>
+                <stat.icon size={120} />
+              </div>
+              <div style={{ color: stat.color, marginBottom: '1.5rem', background: `${stat.color}10`, width: '56px', height: '56px', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <stat.icon size={28} />
+              </div>
+              <p style={{ color: '#64748b', fontSize: '0.8rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', margin: 0 }}>{stat.label}</p>
+              <h3 style={{ fontSize: '3rem', fontWeight: '950', color: '#0f172a', margin: '10px 0 0 0', letterSpacing: '-1px' }}>{stat.val}</h3>
             </div>
-            <p style={{ color: '#64748b', fontSize: '0.875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 }}>Histórico Total</p>
-            <h3 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: '8px 0 0 0' }}>{quotes.length}</h3>
-          </div>
-          <div style={{ background: 'white', padding: '2rem', borderRadius: '32px', border: '1px solid white', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }}>
-            <div style={{ color: '#eb8923', marginBottom: '1.5rem', background: 'rgba(235, 137, 35, 0.05)', width: '50px', height: '50px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Clock size={24} />
-            </div>
-            <p style={{ color: '#64748b', fontSize: '0.875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 }}>Em Análise</p>
-            <h3 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: '8px 0 0 0' }}>{quotes.filter(q => q.status === 'Pendente' || q.status === 'Em Análise').length}</h3>
-          </div>
-          <div style={{ background: 'white', padding: '2rem', borderRadius: '32px', border: '1px solid white', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }}>
-            <div style={{ color: '#10b981', marginBottom: '1.5rem', background: 'rgba(16, 185, 129, 0.05)', width: '50px', height: '50px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <CheckCircle size={24} />
-            </div>
-            <p style={{ color: '#64748b', fontSize: '0.875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 }}>Projetos Concluídos</p>
-            <h3 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: '8px 0 0 0' }}>{quotes.filter(q => q.status === 'Concluído').length}</h3>
-          </div>
+          ))}
         </div>
 
         {/* ACTIVE PROJECTS SECTION (Only if any) */}
@@ -283,56 +315,58 @@ const CustomerDashboard = () => {
                 
                 return (
                   <div key={proj._id} style={{ background: 'white', borderRadius: '32px', border: '1px solid white', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
-                    <div style={{ height: '200px', background: proj.workPhotos?.length > 0 ? `url(${proj.workPhotos[proj.workPhotos.length - 1]})` : '#1e293b', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}>
-                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)' }}></div>
-                      <div style={{ position: 'absolute', bottom: '20px', left: '20px' }}>
-                        <span style={{ background: '#eb8923', color: 'white', padding: '4px 12px', borderRadius: '100px', fontSize: '0.7rem', fontWeight: '900', textTransform: 'uppercase' }}>{proj.status}</span>
-                        <h3 style={{ color: 'white', margin: '8px 0 0', fontSize: '1.5rem', fontWeight: '800' }}>{proj.serviceType}</h3>
+                    <div style={{ height: '240px', background: proj.workPhotos?.length > 0 ? `url(${proj.workPhotos[proj.workPhotos.length - 1]})` : 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}>
+                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(15, 23, 42, 0.95), transparent)' }}></div>
+                      <div style={{ position: 'absolute', bottom: '25px', left: '25px', right: '25px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                        <div>
+                          <span style={{ background: 'rgba(235, 137, 35, 0.2)', color: '#eb8923', padding: '6px 14px', borderRadius: '100px', fontSize: '0.7rem', fontWeight: '900', textTransform: 'uppercase', border: '1px solid rgba(235, 137, 35, 0.3)', backdropFilter: 'blur(4px)' }}>{proj.status}</span>
+                          <h3 style={{ color: 'white', margin: '12px 0 0', fontSize: '1.75rem', fontWeight: '900', letterSpacing: '-0.5px' }}>{proj.serviceType}</h3>
+                        </div>
+                        <div style={{ color: 'white', textAlign: 'right' }}>
+                           <p style={{ margin: 0, fontSize: '0.7rem', opacity: 0.6, fontWeight: '700' }}>INVESTIMENTO TOTAL</p>
+                           <p style={{ margin: 0, fontSize: '1.1rem', fontWeight: '900' }}>{(proj.totalBudget || 0).toLocaleString()} MT</p>
+                        </div>
                       </div>
                     </div>
                     
-                    <div style={{ padding: '2rem' }}>
-                      {/* Progress Bar */}
-                      <div style={{ marginBottom: '2rem' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                          <span style={{ fontWeight: '700', color: '#475569' }}>Progresso da Obra</span>
-                          <span style={{ fontWeight: '900', color: '#eb8923' }}>{proj.percentage || 0}%</span>
+                    <div style={{ padding: '2.5rem' }}>
+                      {/* Modern Progress Line */}
+                      <div style={{ marginBottom: '2.5rem' }}>
+                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                           <h4 style={{ margin: 0, fontSize: '0.85rem', fontWeight: '800', color: '#0f172a', textTransform: 'uppercase' }}>Estado da Execução</h4>
+                           <span style={{ fontSize: '1.25rem', fontWeight: '950', color: '#eb8923' }}>{proj.percentage || 0}%</span>
+                         </div>
+                         <div style={{ height: '8px', background: '#f1f5f9', borderRadius: '100px', overflow: 'hidden' }}>
+                           <motion.div 
+                             initial={{ width: 0 }}
+                             animate={{ width: `${proj.percentage || 0}%` }}
+                             transition={{ duration: 1, ease: 'easeOut' }}
+                             style={{ height: '100%', background: 'linear-gradient(90deg, #eb8923, #f59e0b)', borderRadius: '100px' }}
+                           />
+                         </div>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2.5rem' }}>
+                        <div style={{ padding: '1.25rem', background: '#f8fafc', borderRadius: '24px', border: '1px solid #f1f5f9' }}>
+                           <div style={{ color: '#003366', opacity: 0.4, marginBottom: '8px' }}><DollarSign size={16} /></div>
+                           <p style={{ margin: 0, fontSize: '0.7rem', fontWeight: '800', color: '#64748b' }}>TOTAL PAGO</p>
+                           <p style={{ margin: '4px 0 0', fontSize: '1rem', fontWeight: '900' }}>{totalPaid.toLocaleString()} MT</p>
                         </div>
-                        <div style={{ height: '12px', background: '#f1f5f9', borderRadius: '10px', overflow: 'hidden' }}>
-                          <motion.div 
-                            initial={{ width: 0 }}
-                            animate={{ width: `${proj.percentage || 0}%` }}
-                            style={{ height: '100%', background: 'linear-gradient(90deg, #eb8923, #f59e0b)', borderRadius: '10px' }}
-                          />
+                        <div style={{ padding: '1.25rem', background: '#f8fafc', borderRadius: '24px', border: '1px solid #f1f5f9' }}>
+                           <div style={{ color: '#003366', opacity: 0.4, marginBottom: '8px' }}><Calendar size={16} /></div>
+                           <p style={{ margin: 0, fontSize: '0.7rem', fontWeight: '800', color: '#64748b' }}>PRÓXIMA ENTREGA</p>
+                           <p style={{ margin: '4px 0 0', fontSize: '0.9rem', fontWeight: '900' }}>{proj.deadline ? new Date(proj.deadline).toLocaleDateString() : 'A definir'}</p>
                         </div>
                       </div>
 
-                      {/* Finance Summary */}
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
-                        <div style={{ padding: '1.25rem', background: '#f8fafc', borderRadius: '20px' }}>
-                          <p style={{ margin: 0, fontSize: '0.75rem', fontWeight: '700', color: '#64748b' }}>INVESTIMENTO PAGO</p>
-                          <p style={{ margin: '5px 0 0', fontSize: '1.1rem', fontWeight: '900', color: '#1e293b' }}>{totalPaid.toLocaleString()} MT</p>
-                        </div>
-                        <div style={{ padding: '1.25rem', background: '#fef3c7', borderRadius: '20px' }}>
-                          <p style={{ margin: 0, fontSize: '0.75rem', fontWeight: '700', color: '#92400e' }}>TOTAL PREVISTO</p>
-                          <p style={{ margin: '5px 0 0', fontSize: '1.1rem', fontWeight: '900', color: '#92400e' }}>{(proj.totalBudget || 0).toLocaleString()} MT</p>
-                        </div>
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #f1f5f9', paddingTop: '1.5rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <Clock size={20} color="#64748b" />
-                          <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>
-                            {daysLeft !== null ? (daysLeft > 0 ? `Entrega em ${daysLeft} dias` : 'Prazo de Entrega atingido') : 'Prazo a definir'}
-                          </span>
-                        </div>
-                        <button 
-                          onClick={() => setSelectedActiveProject(proj)}
-                          style={{ background: '#003366', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '14px', fontWeight: '700', cursor: 'pointer', fontSize: '0.875rem' }}
-                        >
-                          Ver Relatório Completo
-                        </button>
-                      </div>
+                      <motion.button 
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => setSelectedActiveProject(proj)}
+                        style={{ width: '100%', background: '#0f172a', color: 'white', border: 'none', padding: '16px', borderRadius: '20px', fontWeight: '900', cursor: 'pointer', fontSize: '0.9rem', letterSpacing: '1px' }}
+                      >
+                        ABRIR MONITOR DE OBRA
+                      </motion.button>
                     </div>
                   </div>
                 );
@@ -342,9 +376,12 @@ const CustomerDashboard = () => {
         )}
 
         {/* My Quotes List Table */}
-        <div style={{ background: 'white', borderRadius: '32px', border: '1px solid white', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)' }}>
-          <div style={{ padding: '2rem 2.5rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#1e293b', margin: 0 }}>Meus Orçamentos & Pedidos</h2>
+        <div style={{ background: 'white', borderRadius: '40px', border: '1px solid white', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.04)', padding: '1rem' }}>
+          <div style={{ padding: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <h2 style={{ fontSize: '1.75rem', fontWeight: '900', color: '#0f172a', margin: 0, letterSpacing: '-0.5px' }}>Histórico de Solicitações</h2>
+              <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '0.9rem', fontWeight: '500' }}>Acompanhe o estado de todos os seus pedidos de orçamento.</p>
+            </div>
             
             <div style={{ position: 'relative' }}>
               <input 
@@ -353,86 +390,103 @@ const CustomerDashboard = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 style={{ 
-                  padding: '10px 16px', 
-                  borderRadius: '14px', 
-                  border: '1px solid #e2e8f0', 
-                  fontSize: '0.875rem',
-                  width: '240px',
-                  outline: 'none'
+                  padding: '14px 24px', 
+                  borderRadius: '18px', 
+                  border: '1px solid #f1f5f9', 
+                  fontSize: '0.9rem',
+                  width: '300px',
+                  outline: 'none',
+                  background: '#f8fafc',
+                  fontWeight: '600',
+                  color: '#0f172a'
                 }}
               />
             </div>
           </div>
           
           {loading ? (
-            <div style={{ padding: '6rem', textAlign: 'center', color: '#64748b' }}>A carregar os seus dados de luxo...</div>
+            <div style={{ padding: '6rem', textAlign: 'center', color: '#64748b', fontWeight: '700' }}>
+               <div style={{ marginBottom: '1rem' }}>⚙️</div>
+               A carregar os seus dados premium...
+            </div>
           ) : filteredQuotes.length === 0 ? (
             <div style={{ padding: '8rem', textAlign: 'center' }}>
-              <div style={{ color: '#cbd5e1', marginBottom: '1.5rem' }}>
-                <FileText size={64} style={{ margin: '0 auto' }} />
+              <div style={{ color: '#cbd5e1', marginBottom: '2rem' }}>
+                <FileText size={80} style={{ margin: '0 auto' }} />
               </div>
-              <p style={{ color: '#64748b', fontSize: '1.25rem', fontWeight: '500' }}>Ainda não fez nenhum pedido de orçamento.</p>
-              <button onClick={() => setIsQuoteModalOpen(true)} style={{ color: '#eb8923', fontWeight: '800', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.1rem', marginTop: '1rem' }}>Solicitar Agora →</button>
+              <h3 style={{ color: '#0f172a', fontSize: '1.5rem', fontWeight: '900', margin: 0 }}>Sem Pedidos Recentes</h3>
+              <p style={{ color: '#64748b', fontSize: '1.1rem', fontWeight: '500', marginTop: '8px' }}>Parece que ainda não iniciou a sua jornada connosco.</p>
+              <button 
+                onClick={() => setIsQuoteModalOpen(true)} 
+                style={{ background: '#003366', color: 'white', border: 'none', padding: '12px 28px', borderRadius: '14px', fontWeight: '800', cursor: 'pointer', marginTop: '2rem' }}
+              >
+                Solicitar Agora
+              </button>
             </div>
           ) : (
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <div style={{ overflowX: 'auto', padding: '0 1rem 2rem 1rem' }}>
+              <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 12px', textAlign: 'left' }}>
                 <thead>
-                  <tr style={{ background: '#f8fafc' }}>
-                    <th style={{ padding: '1.5rem 2.5rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px' }}>Serviço Solicitado</th>
-                    <th style={{ padding: '1.5rem 2.5rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px' }}>Data do Pedido</th>
-                    <th style={{ padding: '1.5rem 2.5rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px' }}>Status da Obra</th>
-                    <th style={{ padding: '1.5rem 2.5rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', textAlign: 'right' }}>Ações</th>
+                  <tr style={{ background: 'transparent' }}>
+                    <th style={{ padding: '1rem 2rem', color: '#94a3b8', fontSize: '0.7rem', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1.5px' }}>Serviço / Referência</th>
+                    <th style={{ padding: '1rem 2rem', color: '#94a3b8', fontSize: '0.7rem', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1.5px' }}>Data de Registo</th>
+                    <th style={{ padding: '1rem 2rem', color: '#94a3b8', fontSize: '0.7rem', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1.5px' }}>Estado Atual</th>
+                    <th style={{ padding: '1rem 2rem', color: '#94a3b8', fontSize: '0.7rem', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1.5px', textAlign: 'right' }}>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredQuotes.map((quote) => (
-                    <tr key={quote._id} style={{ borderBottom: '1px solid #f1f5f9', transition: 'all 0.2s' }}>
-                      <td style={{ padding: '1.5rem 2.5rem' }}>
-                        <p style={{ fontWeight: '800', color: '#1e293b', margin: 0, fontSize: '1.1rem' }}>{quote.serviceType}</p>
-                        <p style={{ fontSize: '0.8rem', color: '#94a3b8', margin: '4px 0 0' }}>Ref: #DOCA-{quote._id.slice(-6).toUpperCase()}</p>
+                    <motion.tr 
+                      key={quote._id} 
+                      whileHover={{ scale: 1.005, y: -2 }}
+                      style={{ background: '#f8fafc', borderRadius: '24px', transition: 'all 0.2s', cursor: 'pointer' }}
+                    >
+                      <td style={{ padding: '1.5rem 2rem', borderTopLeftRadius: '24px', borderBottomLeftRadius: '24px' }}>
+                        <div style={{ fontWeight: '900', color: '#0f172a', fontSize: '1.1rem' }}>{quote.serviceType}</div>
+                        <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: '700', marginTop: '4px' }}>ID: DOCA-{quote._id.slice(-6).toUpperCase()}</div>
                       </td>
-                      <td style={{ padding: '1.5rem 2.5rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#475569', fontSize: '0.95rem', fontWeight: '500' }}>
-                          <Calendar size={16} color="#94a3b8" /> {new Date(quote.createdAt).toLocaleDateString('pt-MZ')}
+                      <td style={{ padding: '1.5rem 2rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#475569', fontSize: '0.95rem', fontWeight: '700' }}>
+                          <Calendar size={16} color="#cbd5e1" /> {new Date(quote.createdAt).toLocaleDateString('pt-MZ')}
                         </div>
                       </td>
-                      <td style={{ padding: '1.5rem 2.5rem' }}>
+                      <td style={{ padding: '1.5rem 2rem' }}>
                         <div style={{ 
                           display: 'inline-flex', 
                           alignItems: 'center', 
                           gap: '8px', 
-                          padding: '8px 16px', 
+                          padding: '8px 18px', 
                           borderRadius: '100px', 
                           fontSize: '0.75rem', 
-                          fontWeight: '800',
-                          background: `${getStatusColor(quote.status)}15`,
+                          fontWeight: '900',
+                          background: 'white',
                           color: getStatusColor(quote.status),
-                          border: `1px solid ${getStatusColor(quote.status)}30`
+                          border: `1px solid ${getStatusColor(quote.status)}30`,
+                          boxShadow: '0 4px 6px -1px rgba(0,0,0,0.03)'
                         }}>
-                          {getStatusIcon(quote.status)}
+                          <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: getStatusColor(quote.status) }}></div>
                           {quote.status.toUpperCase()}
                         </div>
                       </td>
-                      <td style={{ padding: '1.5rem 2.5rem', textAlign: 'right' }}>
+                      <td style={{ padding: '1.5rem 2rem', textAlign: 'right', borderTopRightRadius: '24px', borderBottomRightRadius: '24px' }}>
                         <button 
-                          onClick={() => alert(`Detalhes da Obra:\n\nServiço: ${quote.serviceType}\nAlcance: ${quote.budgetRange}\nStatus: ${quote.status}\n\nNota da Administração: ${quote.adminNotes || 'O seu pedido está a ser analisado pela nossa equipe técnica.'}`)}
+                          onClick={() => alert(`Detalhes da Obra:\n\nServiço: ${quote.serviceType}\nStatus: ${quote.status}\n\nNota da Administração: ${quote.adminNotes || 'O seu pedido está a ser analisado.'}`)}
                           style={{ 
-                            background: '#003366', 
-                            border: 'none', 
-                            color: 'white', 
+                            background: 'white', 
+                            border: '1px solid #e2e8f0', 
+                            color: '#0f172a', 
                             padding: '10px 20px', 
                             borderRadius: '14px', 
-                            fontWeight: '700', 
-                            fontSize: '0.875rem',
+                            fontWeight: '800', 
+                            fontSize: '0.85rem',
                             cursor: 'pointer',
-                            boxShadow: '0 4px 6px -1px rgba(0, 51, 102, 0.2)'
+                            boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)'
                           }}
                         >
                           Detalhes
                         </button>
                       </td>
-                    </tr>
+                    </motion.tr>
                   ))}
                 </tbody>
               </table>
