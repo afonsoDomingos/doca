@@ -79,7 +79,7 @@ const Hero = () => {
         alignItems: 'center',
         padding: 0,
         overflow: 'hidden',
-        background: 'linear-gradient(rgba(0, 51, 102, 0.7), rgba(0, 51, 102, 0.4)), url("/hero_construction_banner_1774478893785.png")',
+        background: 'linear-gradient(rgba(0, 51, 102, 0.65), rgba(0, 51, 102, 0.35)), url("/bannerdoca.png")',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         color: 'white',
@@ -105,9 +105,9 @@ const Hero = () => {
             Nosso pilar é a <RotatingText />
           </div>
 
-          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '80px' }}>
+          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '130px' }}>
             <motion.a 
-              href="https://wa.me/258848580244"
+              href="https://wa.me/258829580244"
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.05 }}

@@ -87,7 +87,7 @@ const About = () => {
               boxShadow: 'var(--shadow-lg)'
             }}>
               <img 
-                src="https://images.unsplash.com/photo-1541913057-259c1ec391f4?fm=jpg&q=80&w=1000&ixlib=rb-4.0.3" 
+                src="https://images.unsplash.com/photo-1541913057-259c1ec391f4?w=1000&auto=format&fit=crop" 
                 alt="Equipa DOCA" 
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
