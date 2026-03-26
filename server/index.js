@@ -233,15 +233,31 @@ app.get('/api/user/quotes/:userId', async (req, res) => {
 // --- Login Unificado (Para Clientes e Admins) ---
 app.post('/api/auth/login', async (req, res) => {
   const { email, password } = req.body;
+  
+  if (!email || !password) {
+    return res.status(400).json({ error: 'E-mail e senha são obrigatórios' });
+  }
+
   try {
-    // 1. Tentar encontrar nos Administradores
-    const admin = await Admin.findOne({ email });
+    console.log('Tentativa de login para:', email);
+    
+    // 1. Verificar se a conexão com MongoDB está ativa
+    if (mongoose.connection.readyState !== 1) {
+      throw new Error('Base de dados não conectada');
+    }
+
+    // 2. Tentar encontrar nos Administradores
+    const admin = await Admin.findOne({ email: email.toLowerCase() });
+    console.log('Admin encontrado:', admin ? 'Sim' : 'Não');
+
     if (admin && admin.password === password) {
       return res.json({ success: true, role: 'admin', message: 'Admin logado com sucesso' });
     }
 
-    // 2. Tentar encontrar nos Usuários (Clientes)
-    const user = await User.findOne({ email });
+    // 3. Tentar encontrar nos Usuários (Clientes)
+    const user = await User.findOne({ email: email.toLowerCase() });
+    console.log('Cliente encontrado:', user ? 'Sim' : 'Não');
+
     if (user && user.password === password) {
       return res.json({ 
         success: true, 
@@ -251,10 +267,14 @@ app.post('/api/auth/login', async (req, res) => {
       });
     }
 
-    // 3. Se não encontrar em nenhum
+    // 4. Se não encontrar em nenhum
     res.status(401).json({ error: 'E-mail ou senha incorretos' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('ERRO NO LOGIN:', err);
+    res.status(500).json({ 
+      error: 'Erro interno no servidor de autenticação', 
+      details: err.message 
+    });
   }
 });
 

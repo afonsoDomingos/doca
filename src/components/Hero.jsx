@@ -45,7 +45,7 @@ const DynamicTitle = () => {
   }, []);
 
   return (
-    <div style={{ minHeight: 'clamp(140px, 22vw, 260px)', marginBottom: '50px', marginTop: '60px' }}>
+    <div style={{ minHeight: 'clamp(120px, 18vw, 240px)', marginBottom: '40px', marginTop: '50px' }}>
       <AnimatePresence mode="wait">
         <motion.h1
           key={index}
@@ -54,7 +54,7 @@ const DynamicTitle = () => {
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.6 }}
           style={{
-            fontSize: 'clamp(2.5rem, 8vw, 4.5rem)',
+            fontSize: 'clamp(2.2rem, 7vw, 4rem)',
             fontFamily: 'Montserrat',
             fontWeight: '800',
             lineHeight: '1.1'
@@ -122,13 +122,13 @@ const Hero = ({ onOpenQuote }) => {
             Nosso pilar é o <RotatingText />
           </div>
 
-          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '130px' }}>
+          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '80px' }}>
             <motion.button
               onClick={onOpenQuote}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 1 }}
               className="btn btn-primary"
-              style={{ padding: '15px 35px', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '10px', border: 'none', cursor: 'pointer' }}
+              style={{ padding: '12px 28px', fontSize: '1.05rem', display: 'flex', alignItems: 'center', gap: '10px', border: 'none', cursor: 'pointer' }}
             >
               Solicitar Orçamento <ChevronRight size={20} />
             </motion.button>
@@ -137,7 +137,7 @@ const Hero = ({ onOpenQuote }) => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 1 }}
               className="btn btn-outline"
-              style={{ padding: '15px 35px', fontSize: '1.1rem' }}
+              style={{ padding: '12px 28px', fontSize: '1.05rem' }}
             >
               Ver Nossos Serviços
             </motion.a>
