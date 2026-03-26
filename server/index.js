@@ -230,6 +230,34 @@ app.get('/api/user/quotes/:userId', async (req, res) => {
   }
 });
 
+// --- Login Unificado (Para Clientes e Admins) ---
+app.post('/api/auth/login', async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    // 1. Tentar encontrar nos Administradores
+    const admin = await Admin.findOne({ email });
+    if (admin && admin.password === password) {
+      return res.json({ success: true, role: 'admin', message: 'Admin logado com sucesso' });
+    }
+
+    // 2. Tentar encontrar nos Usuários (Clientes)
+    const user = await User.findOne({ email });
+    if (user && user.password === password) {
+      return res.json({ 
+        success: true, 
+        role: 'customer', 
+        user: { id: user._id, name: user.name, email: user.email },
+        message: 'Cliente logado com sucesso' 
+      });
+    }
+
+    // 3. Se não encontrar em nenhum
+    res.status(401).json({ error: 'E-mail ou senha incorretos' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // --- Admin Login ---
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;

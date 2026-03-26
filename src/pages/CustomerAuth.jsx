@@ -47,7 +47,7 @@ const CustomerAuth = () => {
       return;
     }
 
-    const endpoint = isLogin ? '/api/user/login' : '/api/register';
+    const endpoint = isLogin ? '/api/auth/login' : '/api/register';
     const payload = isLogin 
       ? { email: formData.email, password: formData.password }
       : { name: formData.name, email: formData.email, password: formData.password, phone: formData.phone };
@@ -62,15 +62,20 @@ const CustomerAuth = () => {
 
       if (response.ok) {
         if (isLogin) {
-          localStorage.setItem('customerUser', JSON.stringify(data.user));
-          navigate('/portal/dashboard');
+          if (data.role === 'admin') {
+            localStorage.setItem('adminAuthenticated', 'true');
+            navigate('/admin/dashboard');
+          } else {
+            localStorage.setItem('customerUser', JSON.stringify(data.user));
+            navigate('/portal/dashboard');
+          }
         } else {
           setSuccess('Cadastro realizado com sucesso! Pode fazer login.');
           setIsLogin(true);
           setFormData({ ...formData, password: '', confirmPassword: '' });
         }
       } else {
-        setError(data.error || 'Ocorreu um erro ao processar sua solicitação');
+        setError(data.error || 'E-mail ou senha incorretos');
       }
     } catch (err) {
       setError('Erro de conexão com o servidor');
