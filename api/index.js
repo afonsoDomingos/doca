@@ -17,26 +17,34 @@ cloudinary.config({
   api_secret: process.env.VITE_CLOUDINARY_API_SECRET
 });
 
-// MongoDB Connection (Serverless Optimization)
+// MongoDB Connection Strategy for Vercel
 let cachedDb = null;
-
-async function connectToDatabase() {
+const connectToDatabase = async () => {
   if (cachedDb && mongoose.connection.readyState === 1) {
+    console.log('=> Using existing database connection');
     return cachedDb;
   }
   
-  console.log('🔄 Connecting to MongoDB...');
-  const MONGODB_URI = process.env.VITE_MONGODB_URI;
-  
-  if (!MONGODB_URI) {
-    throw new Error('MONGODB_URI is not defined in environment variables');
+  const uri = process.env.MONGODB_URI || process.env.VITE_MONGODB_URI;
+  if (!uri) {
+    console.error('❌ FATAL: MONGODB_URI is not defined in environment!');
+    throw new Error('Database configuration missing');
   }
 
-  const db = await mongoose.connect(MONGODB_URI);
-  cachedDb = db;
-  console.log('✅ Connected to MongoDB');
-  return db;
-}
+  console.log('=> Connecting to database...');
+  try {
+    const conn = await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });
+    cachedDb = conn;
+    console.log('✅ Connected to MongoDB');
+    return cachedDb;
+  } catch (err) {
+    console.error('❌ MONGODB CONNECTION ERROR:', err.message);
+    throw err;
+  }
+};
 
 // Schema for Projects
 const ProjectSchema = new mongoose.Schema({
@@ -213,6 +221,39 @@ app.delete('/api/quotes/:id', async (req, res) => {
 
 // --- Authenticação e Gestão de Usuários (Clientes) ---
 
+// Listar todos os usuários (Apenas para Admins)
+app.get('/api/users', async (req, res) => {
+  try {
+    await connectToDatabase();
+    const users = await User.find().select('-password'); // Não enviar senhas por segurança
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Promover Usuário a Admin
+app.post('/api/users/promote', async (req, res) => {
+  const { userId } = req.body;
+  try {
+    await connectToDatabase();
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
+
+    // Verificar se já é admin
+    const alreadyAdmin = await Admin.findOne({ email: user.email });
+    if (alreadyAdmin) return res.status(400).json({ error: 'Este usuário já é um administrador' });
+
+    // Adicionar à coleção de Admins
+    const newAdmin = new Admin({ email: user.email, password: user.password });
+    await newAdmin.save();
+
+    res.json({ success: true, message: `${user.name} foi promovido a Administrador!` });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Registro de Usuário (Cliente)
 app.post('/api/register', async (req, res) => {
   const { name, email, password, phone } = req.body;
@@ -361,5 +402,10 @@ app.post('/api/upload', async (req, res) => {
 app.get('/', (req, res) => {
     res.send('DOCA API is running...');
 });
+
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  const PORT = 5000;
+  app.listen(PORT, () => console.log(`🚀 Local Server running on port ${PORT}`));
+}
 
 module.exports = app;
