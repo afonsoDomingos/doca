@@ -1,0 +1,120 @@
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronRight } from 'lucide-react';
+
+const RotatingText = () => {
+  const words = ["Qualidade", "Segurança", "Inovação", "Excelência", "Compromisso"];
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex((prevIndex) => (prevIndex + 1) % words.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.span
+        key={words[index]}
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: -20, opacity: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        style={{ color: 'var(--accent-yellow)', display: 'inline-block', marginLeft: '10px' }}
+      >
+        {words[index]}
+      </motion.span>
+    </AnimatePresence>
+  );
+};
+
+const Hero = () => {
+  return (
+    <section 
+      id="home"
+      style={{
+        position: 'relative',
+        height: '100vh',
+        minHeight: '600px',
+        display: 'flex',
+        alignItems: 'center',
+        padding: 0,
+        overflow: 'hidden',
+        background: 'linear-gradient(rgba(0, 51, 102, 0.7), rgba(0, 51, 102, 0.4)), url("/hero_construction_banner_1774478893785.png")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        color: 'white',
+      }}
+    >
+      <div className="container" style={{ position: 'relative', zIndex: 10 }}>
+        <motion.div 
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8 }}
+          style={{ maxWidth: '800px' }}
+        >
+          <motion.h1 
+            style={{ 
+              fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', 
+              marginBottom: '20px',
+              fontFamily: 'Montserrat',
+              fontWeight: '800',
+              lineHeight: '1.2'
+            }}
+          >
+            Soluções Integradas em <br />
+            <span style={{ color: 'var(--accent-yellow)' }}>Construção e Manutenção</span>
+          </motion.h1>
+
+          <div style={{ 
+            fontSize: 'clamp(1.2rem, 3vw, 1.8rem)', 
+            fontWeight: '600',
+            marginBottom: '40px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '15px'
+          }}>
+            Nosso pilar é a <RotatingText />
+          </div>
+
+          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+            <motion.a 
+              href="#contacto"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 1 }}
+              className="btn btn-primary"
+              style={{ padding: '15px 35px', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '10px' }}
+            >
+              Contacte-nos <ChevronRight size={20} />
+            </motion.a>
+            <motion.a 
+              href="#servicos"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 1 }}
+              className="btn btn-outline"
+              style={{ padding: '15px 35px', fontSize: '1.1rem' }}
+            >
+              Ver Nossos Serviços
+            </motion.a>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Decorative SVG Overlay */}
+      <div style={{ 
+        position: 'absolute', 
+        bottom: '-2px', 
+        left: 0, 
+        width: '100%', 
+        zIndex: 5 
+      }}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+          <path fill="white" fillOpacity="1" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,122.7C960,117,1056,171,1152,197.3C1248,224,1344,224,1392,224L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+      </div>
+    </section>
+  );
+};
+
+export default Hero;
