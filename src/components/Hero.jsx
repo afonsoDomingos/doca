@@ -31,8 +31,9 @@ const RotatingText = () => {
 
 const DynamicTitle = () => {
   const titles = [
-    <>Soluções Integradas <br /> em <span style={{ color: 'var(--accent-yellow)' }}>Construção e</span> <br /><span style={{ color: 'var(--accent-yellow)' }}>Manutenção</span></>,
-    <>Construindo e fortalecendo <br /> o seu <br /><span style={{ color: 'var(--accent-yellow)' }}>Património</span></>
+    <>Soluções Integradas em <span style={{ color: 'var(--accent-yellow)' }}>Construção</span><br />
+    <span style={{ color: 'var(--accent-yellow)' }}>e Manutenção</span></>,
+    <>Construindo e fortalecendo <br /> o seu <span style={{ color: 'var(--accent-yellow)' }}>Património</span></>
   ];
   const [index, setIndex] = useState(0);
 
@@ -44,7 +45,7 @@ const DynamicTitle = () => {
   }, []);
 
   return (
-    <div style={{ minHeight: 'clamp(180px, 30vw, 300px)' }}>
+    <div style={{ minHeight: 'clamp(140px, 22vw, 260px)', marginBottom: '20px' }}>
       <AnimatePresence mode="wait">
         <motion.h1 
           key={index}
@@ -53,11 +54,10 @@ const DynamicTitle = () => {
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.6 }}
           style={{ 
-            fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', 
-            marginBottom: '20px',
+            fontSize: 'clamp(2rem, 6vw, 4rem)', 
             fontFamily: 'Montserrat',
             fontWeight: '800',
-            lineHeight: '1.2'
+            lineHeight: '1.25'
           }}
         >
           {titles[index]}

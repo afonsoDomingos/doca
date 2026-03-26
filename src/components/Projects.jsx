@@ -8,12 +8,12 @@ const Projects = () => {
   const categories = ['Todas', 'Construção', 'Manutenção', 'Consultoria', 'Antes/Depois'];
 
   const projectsData = [
-    { id: 1, title: 'Residencial MiraMar', category: 'Construção', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?fm=jpg&q=80&w=1000' },
-    { id: 2, title: 'Sede Bancária Maputo', category: 'Manutenção', image: 'https://images.unsplash.com/photo-1554435493-94764d99073e?fm=jpg&q=80&w=1000' },
+    { id: 1, title: 'Residencial MiraMar', category: 'Construção', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop' },
+    { id: 2, title: 'Sede Bancária Maputo', category: 'Manutenção', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&auto=format&fit=crop' },
     { id: 3, title: 'Reforma Comercial', category: 'Antes/Depois', image: '/project_before_after_1774479019694.png' },
-    { id: 4, title: 'Edifício Infinity', category: 'Construção', image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?fm=jpg&q=80&w=1000' },
-    { id: 5, title: 'Plano Diretor Industrial', category: 'Consultoria', image: 'https://images.unsplash.com/photo-1503387762-592dea58ef23?fm=jpg&q=80&w=1000' },
-    { id: 6, title: 'Manutenção Galeria Central', category: 'Manutenção', image: 'https://images.unsplash.com/photo-1449156059431-78705b74050d?fm=jpg&q=80&w=1000' }
+    { id: 4, title: 'Edifício Infinity', category: 'Construção', image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&auto=format&fit=crop' },
+    { id: 5, title: 'Plano Diretor Industrial', category: 'Consultoria', image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&auto=format&fit=crop' },
+    { id: 6, title: 'Manutenção Galeria Central', category: 'Manutenção', image: 'https://images.unsplash.com/photo-1590725121839-892b458a74fe?w=800&auto=format&fit=crop' }
   ];
 
   const filteredProjects = filter === 'Todas' 
