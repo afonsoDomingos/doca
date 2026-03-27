@@ -1514,13 +1514,9 @@ const Dashboard = () => {
                   </div>
                 </div>
               )}
-
-                </div>
-              )}
             </div>
           </div>
-        </div>
-      )}
+        )}
       {/* Modern Alert Component */}
       <ModernAlert 
         {...alertConfig} 
