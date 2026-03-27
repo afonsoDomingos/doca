@@ -13,6 +13,7 @@ import Dashboard from './pages/Dashboard';
 import QuoteModal from './components/QuoteModal';
 import CustomerAuth from './pages/CustomerAuth';
 import CustomerDashboard from './pages/CustomerDashboard';
+import WhatsAppContact from './components/WhatsAppContact';
 
 const Home = ({ onOpenQuote }) => (
   <div className="app-container">
@@ -27,6 +28,7 @@ const Home = ({ onOpenQuote }) => (
       <Contact />
     </main>
     <Footer />
+    <WhatsAppContact variant="floating" />
   </div>
 );
 
