@@ -52,7 +52,8 @@ const Dashboard = () => {
   const [isManageModalOpen, setIsManageModalOpen] = useState(false);
   const [selectedQuote, setSelectedQuote] = useState(null);
   const [manageTab, setManageTab] = useState('general');
-  const [editingProject, setEditingProject] = useState(null);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [adminPhoto, setAdminPhoto] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     category: '',
@@ -381,25 +382,49 @@ const Dashboard = () => {
     <div style={{ display: 'flex', minHeight: '100vh', background: '#f1f5f9', fontFamily: 'Inter, system-ui, sans-serif' }}>
       {/* Sidebar */}
       <aside style={{ 
-        width: '280px', 
+        width: isSidebarCollapsed ? '100px' : '280px', 
         background: '#000000', 
         color: 'white', 
-        padding: '2rem 1.5rem',
+        padding: isSidebarCollapsed ? '2rem 1rem' : '2rem 1.5rem',
         display: 'flex',
         flexDirection: 'column',
         position: 'fixed',
         height: '100vh',
-        zIndex: 10,
-        overflowY: 'auto'
+        zIndex: 50,
+        overflowY: 'auto',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        borderRight: '1px solid rgba(255, 255, 255, 0.05)'
       }}>
-        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '3rem', padding: '0 0.5rem' }}>
-          <img src="/LOGO SEM FUNDO.png" alt="DOCA" style={{ height: '40px', objectFit: 'contain' }} />
-          <span style={{ fontSize: '1.25rem', fontWeight: '700', letterSpacing: '0.5px', color: 'white' }}>DOCA ADMIN</span>
+        <div style={{ display: 'flex', justifyContent: isSidebarCollapsed ? 'center' : 'flex-end', marginBottom: '1rem' }}>
+          <button 
+            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            style={{ background: 'rgba(255, 255, 255, 0.05)', border: 'none', color: '#94a3b8', padding: '8px', borderRadius: '10px', cursor: 'pointer' }}
+          >
+            {isSidebarCollapsed ? <Plus size={20} style={{ transform: 'rotate(45deg)' }} /> : <X size={18} />}
+          </button>
+        </div>
+
+        <Link to="/" style={{ 
+          textDecoration: 'none', 
+          display: 'flex', 
+          flexDirection: isSidebarCollapsed ? 'row' : 'column', 
+          alignItems: 'center', 
+          gap: isSidebarCollapsed ? '0' : '10px', 
+          marginBottom: '3rem', 
+          padding: '0 0.5rem',
+          textAlign: 'center'
+        }}>
+          <img src="/LOGO SEM FUNDO.png" alt="DOCA" style={{ height: isSidebarCollapsed ? '32px' : '52px', objectFit: 'contain', transition: 'all 0.3s' }} />
+          {!isSidebarCollapsed && (
+            <span style={{ fontSize: '0.9rem', fontWeight: '800', letterSpacing: '2px', color: '#FFCC00', textTransform: 'uppercase', marginTop: '4px' }}>DOCA ADMIN</span>
+          )}
         </Link>
 
         <nav style={{ flex: 1 }}>
           <div style={{ marginBottom: '2rem' }}>
-            <p style={{ color: '#64748b', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '1rem', padding: '0 0.5rem' }}>Menu Principal</p>
+            {!isSidebarCollapsed && (
+              <p style={{ color: '#64748b', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '1rem', padding: '0 0.5rem' }}>Menu Principal</p>
+            )}
             <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <li 
                 onClick={() => setActiveTab('overview')}
@@ -410,12 +435,15 @@ const Dashboard = () => {
                   borderRadius: '12px', 
                   display: 'flex', 
                   alignItems: 'center', 
-                  gap: '12px',
+                  justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
+                  gap: isSidebarCollapsed ? '0' : '16px', 
                   cursor: 'pointer',
-                  fontWeight: '600',
-                  transition: 'all 0.2s'
-                }}>
-                <LayoutDashboard size={20} /> Visão Geral
+                  transition: 'all 0.2s',
+                  marginBottom: '4px'
+                }}
+              >
+                <LayoutDashboard size={20} />
+                {!isSidebarCollapsed && <span style={{ fontWeight: '600' }}>Visão Geral</span>}
               </li>
               <li 
                 onClick={() => setActiveTab('projects')}
@@ -426,12 +454,15 @@ const Dashboard = () => {
                   borderRadius: '12px', 
                   display: 'flex', 
                   alignItems: 'center', 
-                  gap: '12px',
+                  justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
+                  gap: isSidebarCollapsed ? '0' : '16px', 
                   cursor: 'pointer',
-                  fontWeight: '600',
-                  transition: 'all 0.2s'
-                }}>
-                <Briefcase size={20} /> Projetos
+                  transition: 'all 0.2s',
+                  marginBottom: '4px'
+                }}
+              >
+                <Briefcase size={20} />
+                {!isSidebarCollapsed && <span style={{ fontWeight: '600' }}>Projetos</span>}
               </li>
               <li 
                 onClick={() => setActiveTab('quotes')}
@@ -442,12 +473,15 @@ const Dashboard = () => {
                   borderRadius: '12px', 
                   display: 'flex', 
                   alignItems: 'center', 
-                  gap: '12px',
+                  justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
+                  gap: isSidebarCollapsed ? '0' : '16px', 
                   cursor: 'pointer',
-                  fontWeight: '600',
-                  transition: 'all 0.2s'
-                }}>
-                <MessageCircle size={20} /> Pedidos de Orçamento
+                  transition: 'all 0.2s',
+                  marginBottom: '4px'
+                }}
+              >
+                <MessageCircle size={20} />
+                {!isSidebarCollapsed && <span style={{ fontWeight: '600' }}>Pedidos de Orçamento</span>}
               </li>
               <li 
                 onClick={() => setActiveTab('users')}
@@ -458,12 +492,15 @@ const Dashboard = () => {
                   borderRadius: '12px', 
                   display: 'flex', 
                   alignItems: 'center', 
-                  gap: '12px',
+                  justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
+                  gap: isSidebarCollapsed ? '0' : '16px', 
                   cursor: 'pointer',
-                  fontWeight: '600',
-                  transition: 'all 0.2s'
-                }}>
-                <User size={20} /> Gestão de Usuários
+                  transition: 'all 0.2s',
+                  marginBottom: '4px'
+                }}
+              >
+                <User size={20} />
+                {!isSidebarCollapsed && <span style={{ fontWeight: '600' }}>Gestão de Usuários</span>}
               </li>
               <li 
                 onClick={() => setActiveTab('banners')}
@@ -474,12 +511,15 @@ const Dashboard = () => {
                   borderRadius: '12px', 
                   display: 'flex', 
                   alignItems: 'center', 
-                  gap: '12px',
+                  justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
+                  gap: isSidebarCollapsed ? '0' : '16px', 
                   cursor: 'pointer',
-                  fontWeight: '600',
-                  transition: 'all 0.2s'
-                }}>
-                <ImageIcon size={20} /> Conteúdo Institucional
+                  transition: 'all 0.2s',
+                  marginBottom: '4px'
+                }}
+              >
+                <ImageIcon size={20} />
+                {!isSidebarCollapsed && <span style={{ fontWeight: '600' }}>Conteúdo Institucional</span>}
               </li>
               <li 
                 onClick={() => setActiveTab('settings')}
@@ -490,55 +530,100 @@ const Dashboard = () => {
                   borderRadius: '12px', 
                   display: 'flex', 
                   alignItems: 'center', 
-                  gap: '12px',
+                  justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
+                  gap: isSidebarCollapsed ? '0' : '16px', 
                   cursor: 'pointer',
-                  fontWeight: '600',
-                  transition: 'all 0.2s'
-                }}>
-                <Settings size={20} /> Configurações
-              </li>
-              <li 
-                onClick={() => navigate('/')}
-                style={{ 
-                color: '#94a3b8', 
-                padding: '12px 16px', 
-                borderRadius: '12px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '12px',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                marginTop: '10px',
-                border: '1px solid rgba(255,255,255,0.05)'
-              }}>
-                <ExternalLink size={20} /> Ver Site Oficial
+                  transition: 'all 0.2s',
+                  marginBottom: '4px'
+                }}
+              >
+                <Settings size={20} />
+                {!isSidebarCollapsed && <span style={{ fontWeight: '600' }}>Configurações</span>}
               </li>
             </ul>
           </div>
+          <a 
+            href="/" 
+            target="_blank" 
+            style={{ 
+              textDecoration: 'none', 
+              color: '#94a3b8', 
+              padding: '12px 16px', 
+              borderRadius: '12px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
+              gap: isSidebarCollapsed ? '0' : '16px', 
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+          >
+            <ExternalLink size={20} />
+            {!isSidebarCollapsed && <span style={{ fontWeight: '600' }}>Ver Site Oficial</span>}
+          </a>
         </nav>
 
         <div style={{ 
           marginTop: 'auto', 
-          padding: '1.25rem', 
+          padding: isSidebarCollapsed ? '1rem 0' : '1.25rem', 
           background: 'rgba(255, 255, 255, 0.05)', 
           borderRadius: '20px',
           border: '1px solid rgba(255, 255, 255, 0.1)',
-          marginBottom: '2rem'
+          marginBottom: '2rem',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#334155', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <User size={20} color="#94a3b8" />
-            </div>
-            <div>
-              <p style={{ fontSize: '0.875rem', fontWeight: '600', margin: 0 }}>Geral DOCA</p>
-              <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>Administrador</p>
-            </div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: isSidebarCollapsed ? 'center' : 'flex-start', gap: '12px', marginBottom: '1rem', width: '100%', padding: isSidebarCollapsed ? '0' : '0 0.5rem' }}>
+            <label style={{ cursor: 'pointer', position: 'relative' }}>
+               <div style={{ 
+                 width: isSidebarCollapsed ? '45px' : '40px', 
+                 height: isSidebarCollapsed ? '45px' : '40px', 
+                 borderRadius: '50%', 
+                 background: '#334155', 
+                 display: 'flex', 
+                 alignItems: 'center', 
+                 justifyContent: 'center',
+                 overflow: 'hidden',
+                 border: '2px solid #FFCC00'
+               }}>
+                 {adminPhoto ? (
+                   <img src={adminPhoto} alt="Admin" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                 ) : (
+                   <User size={20} color="#94a3b8" />
+                 )}
+               </div>
+               <input 
+                 type="file" 
+                 accept="image/*" 
+                 style={{ display: 'none' }}
+                 onChange={async (e) => {
+                   const file = e.target.files[0];
+                   if (!file) return;
+                   const reader = new FileReader();
+                   reader.readAsDataURL(file);
+                   reader.onloadend = () => setAdminPhoto(reader.result);
+                 }}
+               />
+               {!isSidebarCollapsed && (
+                 <div style={{ position: 'absolute', bottom: -4, right: -4, background: '#FFCC00', borderRadius: '50%', width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                   <Camera size={10} color="black" />
+                 </div>
+               )}
+            </label>
+            {!isSidebarCollapsed && (
+              <div>
+                <p style={{ fontSize: '0.875rem', fontWeight: '600', margin: 0 }}>Geral DOCA</p>
+                <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>Administrador</p>
+              </div>
+            )}
           </div>
           <button 
             onClick={handleLogout}
             style={{ 
-              width: '100%', 
-              padding: '10px', 
+              width: isSidebarCollapsed ? '40px' : '100%', 
+              height: isSidebarCollapsed ? '40px' : 'auto',
+              padding: isSidebarCollapsed ? '0' : '10px', 
               background: 'transparent', 
               color: '#f87171', 
               border: '1px solid rgba(248, 113, 113, 0.2)', 
@@ -546,14 +631,15 @@ const Dashboard = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '8px',
+              gap: isSidebarCollapsed ? '0' : '8px',
               cursor: 'pointer',
               fontSize: '0.875rem',
               fontWeight: '600',
               transition: 'all 0.2s'
             }}
+            title="Sair"
           >
-            <LogOut size={16} /> Sair
+            <LogOut size={16} /> {!isSidebarCollapsed && 'Sair'}
           </button>
         </div>
       </aside>
@@ -683,7 +769,12 @@ const Dashboard = () => {
       )}
 
       {/* Main Content */}
-      <main style={{ marginLeft: '280px', flex: 1, padding: '2rem 3rem' }}>
+      <main style={{ 
+        marginLeft: isSidebarCollapsed ? '100px' : '280px', 
+        flex: 1, 
+        padding: '2rem 3rem',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+      }}>
         
         {/* TAB: OVERVIEW */}
         {activeTab === 'overview' && (
