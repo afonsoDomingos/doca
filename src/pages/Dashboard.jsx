@@ -389,9 +389,7 @@ const Dashboard = () => {
         overflowY: 'auto'
       }}>
         <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '3rem', padding: '0 0.5rem' }}>
-          <div style={{ background: '#FFCC00', width: '40px', height: '40px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <LayoutDashboard size={20} color="white" />
-          </div>
+          <img src="/LOGO SEM FUNDO.png" alt="DOCA" style={{ height: '40px', objectFit: 'contain' }} />
           <span style={{ fontSize: '1.25rem', fontWeight: '700', letterSpacing: '0.5px', color: 'white' }}>DOCA ADMIN</span>
         </Link>
 
@@ -1516,7 +1514,8 @@ const Dashboard = () => {
               )}
             </div>
           </div>
-        )}
+        )
+      }
       {/* Modern Alert Component */}
       <ModernAlert 
         {...alertConfig} 

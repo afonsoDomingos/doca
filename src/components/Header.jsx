@@ -87,16 +87,17 @@ const Header = ({ onOpenQuote }) => {
         marginTop: isScrolled ? '0' : '10px'
       }}>
         {/* Logo */}
-        <div style={{ 
-          fontSize: '1.5rem', 
-          fontWeight: '900', 
-          color: 'white', 
-          letterSpacing: '-1px',
-          display: 'flex',
-          alignItems: 'center'
-        }}>
-          DOCA <span style={{ color: 'var(--accent-yellow)', marginLeft: '8px' }}>MOZAMBIQUE</span>
-        </div>
+        <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
+          <img 
+            src="/LOGO SEM FUNDO.png" 
+            alt="DOCA MOZAMBIQUE" 
+            style={{ 
+              height: isScrolled ? '40px' : '50px', 
+              objectFit: 'contain',
+              transition: 'var(--transition-smooth)'
+            }} 
+          />
+        </Link>
 
         {/* Desktop Navigation */}
         <nav style={{ display: 'none' }} className="desktop-only">

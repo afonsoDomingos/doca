@@ -15,6 +15,12 @@ const Footer = () => {
     { title: 'Suporte', items: ['Termos e Condições', 'Política de Privacidade', 'FAQ', 'Ouvidoria'] }
   ];
 
+  const socialLinks = [
+    { Icon: FaFacebook, href: "https://web.facebook.com/profile.php?id=61580664191271" },
+    { Icon: FaInstagram, href: "https://www.instagram.com/docamozambique" },
+    { Icon: FaLinkedin, href: "https://www.linkedin.com/company/doca-mozambique/" }
+  ];
+
   return (
     <footer style={{ backgroundColor: '#002244', color: 'white', paddingTop: '80px', position: 'relative' }}>
       <div className="container">
@@ -22,18 +28,24 @@ const Footer = () => {
           
           {/* Brand/About */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
-            <div style={{ fontSize: '1.8rem', fontWeight: '800', fontFamily: 'Montserrat', color: 'white' }}>
-              DOCA <span style={{ color: 'var(--accent-yellow)' }}>MOZAMBIQUE</span>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <img src="/LOGO SEM FUNDO.png" alt="DOCA MOZAMBIQUE" style={{ height: '60px', objectFit: 'contain' }} />
             </div>
             <p style={{ color: '#E2E8F0', lineHeight: '1.8', fontSize: '1rem' }}>
               Soluções integradas em construção, manutenção e gestão de empreendimentos imobiliários de elite. Construindo o futuro com confiança e agilidade.
             </p>
             <div style={{ display: 'flex', gap: '15px' }}>
-              {[FaFacebook, FaInstagram, FaLinkedin, FaTwitter].map((Icon, i) => (
-                <a key={i} href="#" style={{ color: 'white', backgroundColor: 'rgba(255,255,255,0.1)', padding: '12px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: '0.3s' }}
+              {socialLinks.map((social, i) => (
+                <a 
+                   key={i} 
+                   href={social.href} 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   style={{ color: 'white', backgroundColor: 'rgba(255,255,255,0.1)', padding: '12px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: '0.3s' }}
                    onMouseEnter={(e) => {e.currentTarget.style.backgroundColor = 'var(--accent-yellow)'; e.currentTarget.style.color = 'var(--primary-blue)'}}
-                   onMouseLeave={(e) => {e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'white'}}>
-                  <Icon size={20} />
+                   onMouseLeave={(e) => {e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'white'}}
+                >
+                  <social.Icon size={20} />
                 </a>
               ))}
             </div>
