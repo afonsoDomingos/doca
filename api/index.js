@@ -439,7 +439,15 @@ app.post('/api/auth/login', async (req, res) => {
            return res.json({ 
              success: true, 
              role: 'customer', 
-             user: { id: user._id, name: user.name, email: user.email }
+             user: { 
+               id: user._id, 
+               name: user.name, 
+               email: user.email,
+               phone: user.phone || '',
+               nuit: user.nuit || '',
+               address: user.address || '',
+               photo: user.photo || ''
+             }
            });
         }
         console.log('❌ Senha Cliente Incorreta');

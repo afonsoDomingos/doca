@@ -119,7 +119,7 @@ const CustomerDashboard = () => {
       case 'Concluído': return '#10b981';
       case 'Em Análise': return '#3b82f6';
       case 'Cancelado': return '#ef4444';
-      default: return '#eb8923';
+      default: return '#F5B800';
     }
   };
 
@@ -149,8 +149,8 @@ const CustomerDashboard = () => {
             width: '100%',
             padding: '12px',
             background: 'transparent',
-            border: '2px solid #eb8923',
-            color: '#eb8923',
+            border: '2px solid #F5B800',
+            color: '#F5B800',
             borderRadius: '14px',
             display: 'flex',
             alignItems: 'center',
@@ -169,10 +169,10 @@ const CustomerDashboard = () => {
 
         <div style={{ marginBottom: '3rem', padding: '0 0.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ background: '#eb8923', width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ background: '#F5B800', width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <LayoutDashboard size={20} color="white" />
             </div>
-            <span style={{ fontSize: '1.25rem', fontWeight: '800', color: 'white', letterSpacing: '-0.5px' }}>DOCA <span style={{ color: '#eb8923' }}>PORTAL</span></span>
+            <span style={{ fontSize: '1.25rem', fontWeight: '800', color: 'white', letterSpacing: '-0.5px' }}>DOCA <span style={{ color: '#F5B800' }}>PORTAL</span></span>
           </div>
         </div>
 
@@ -182,7 +182,7 @@ const CustomerDashboard = () => {
             <li 
               onClick={() => setActiveTab('orders')}
               style={{ 
-                background: activeTab === 'orders' ? '#eb8923' : 'transparent', 
+                background: activeTab === 'orders' ? '#F5B800' : 'transparent', 
                 color: 'white', 
                 padding: '14px 18px', 
                 borderRadius: '16px', 
@@ -199,7 +199,7 @@ const CustomerDashboard = () => {
             <li 
               onClick={() => setActiveTab('profile')}
               style={{ 
-                background: activeTab === 'profile' ? '#eb8923' : 'transparent', 
+                background: activeTab === 'profile' ? '#F5B800' : 'transparent', 
                 color: 'white', 
                 padding: '14px 18px', 
                 borderRadius: '16px', 
@@ -223,7 +223,7 @@ const CustomerDashboard = () => {
              style={{ 
                width: '100%', 
                padding: '12px', 
-               background: '#eb8923', 
+               background: '#F5B800', 
                color: 'white', 
                border: 'none', 
                borderRadius: '14px', 
@@ -316,7 +316,7 @@ const CustomerDashboard = () => {
                 </div>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.9rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>
-                    Painel do Cliente DOCA <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#eb8923' }}></div> Online
+                    Painel do Cliente DOCA <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#F5B800' }}></div> Online
                   </div>
                   <h1 style={{ fontSize: '3rem', fontWeight: '900', color: '#0f172a', margin: 0, letterSpacing: '-2px', lineHeight: 1 }}>
                     Olá, {user.name.split(' ')[0]}
@@ -329,7 +329,7 @@ const CustomerDashboard = () => {
                 onClick={() => setIsQuoteModalOpen(true)}
                 style={{ 
                   padding: '18px 36px', 
-                  background: '#eb8923', 
+                  background: '#F5B800', 
                   color: 'white', 
                   border: 'none', 
                   borderRadius: '24px', 
@@ -350,15 +350,12 @@ const CustomerDashboard = () => {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2.5rem', marginBottom: '5rem' }}>
               {[
                 { label: 'Pedidos Realizados', val: quotes.length, icon: FileText, color: '#003366' },
-                { label: 'Obras em Análise', val: quotes.filter(q => q.status === 'Pendente' || q.status === 'Em Análise').length, icon: Clock, color: '#eb8923' },
+                { label: 'Obras em Análise', val: quotes.filter(q => q.status === 'Pendente' || q.status === 'Em Análise').length, icon: Clock, color: '#F5B800' },
                 { label: 'Projectos Concluídos', val: quotes.filter(q => q.status === 'Concluído').length, icon: CheckCircle, color: '#10b981' }
               ].map((stat, i) => (
-                <div key={i} style={{ background: 'white', padding: '2.5rem', borderRadius: '32px', border: '1px solid white', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.03)', position: 'relative', overflow: 'hidden' }}>
-                  <div style={{ position: 'absolute', top: '-10px', right: '-10px', opacity: 0.05, color: stat.color }}>
-                    <stat.icon size={100} />
-                  </div>
-                  <div style={{ color: stat.color, marginBottom: '1.5rem', background: `${stat.color}10`, width: '56px', height: '56px', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <stat.icon size={28} />
+                <div key={i} style={{ background: 'white', padding: '2.5rem', borderRadius: '32px', border: '1px solid white', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.03)' }}>
+                  <div style={{ color: stat.color, marginBottom: '1.5rem', background: `${stat.color}18`, width: '48px', height: '48px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <stat.icon size={22} />
                   </div>
                   <p style={{ color: '#64748b', fontSize: '0.8rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', margin: 0 }}>{stat.label}</p>
                   <h3 style={{ fontSize: '3rem', fontWeight: '950', color: '#0f172a', margin: '10px 0 0 0', letterSpacing: '-1px' }}>{stat.val}</h3>
@@ -370,7 +367,7 @@ const CustomerDashboard = () => {
             {quotes.some(q => q.percentage > 0 || q.status === 'Em Execução' || q.status === 'Finalização') && (
               <div style={{ marginBottom: '4rem' }}>
                 <h2 style={{ fontSize: '1.75rem', fontWeight: '900', color: '#1e293b', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <LayoutDashboard size={28} color="#eb8923" /> Acompanhamento de Obras
+                  <LayoutDashboard size={28} color="#F5B800" /> Acompanhamento de Obras
                 </h2>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '2rem' }}>
                   {quotes.filter(q => q.percentage > 0 || q.status === 'Em Execução' || q.status === 'Finalização').map((proj) => {
@@ -381,7 +378,7 @@ const CustomerDashboard = () => {
                           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)' }}></div>
                           <div style={{ position: 'absolute', bottom: '20px', left: '25px', right: '25px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                             <div>
-                              <span style={{ background: '#eb8923', color: 'white', padding: '6px 12px', borderRadius: '100px', fontSize: '0.7rem', fontWeight: '900' }}>{proj.status}</span>
+                              <span style={{ background: '#F5B800', color: 'white', padding: '6px 12px', borderRadius: '100px', fontSize: '0.7rem', fontWeight: '900' }}>{proj.status}</span>
                               <h3 style={{ color: 'white', margin: '8px 0 0', fontSize: '1.5rem', fontWeight: '900' }}>{proj.serviceType}</h3>
                             </div>
                             <div style={{ color: 'white', textAlign: 'right' }}>
@@ -394,10 +391,10 @@ const CustomerDashboard = () => {
                           <div style={{ marginBottom: '1.5rem' }}>
                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
                                <span style={{ fontWeight: '800', color: '#64748b', fontSize: '0.8rem' }}>PROGRESSO</span>
-                               <span style={{ fontWeight: '900', color: '#eb8923' }}>{proj.percentage || 0}%</span>
+                               <span style={{ fontWeight: '900', color: '#F5B800' }}>{proj.percentage || 0}%</span>
                              </div>
                              <div style={{ height: '8px', background: '#f1f5f9', borderRadius: '10px', overflow: 'hidden' }}>
-                               <motion.div initial={{ width: 0 }} animate={{ width: `${proj.percentage || 0}%` }} style={{ height: '100%', background: '#eb8923' }} />
+                               <motion.div initial={{ width: 0 }} animate={{ width: `${proj.percentage || 0}%` }} style={{ height: '100%', background: '#F5B800' }} />
                              </div>
                           </div>
                           <button 
@@ -474,7 +471,7 @@ const CustomerDashboard = () => {
                   position: 'relative'
                 }}>
                   {!profileForm.photo && <Camera size={40} />}
-                  <div style={{ position: 'absolute', bottom: '-10px', right: '-10px', background: '#eb8923', width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', border: '4px solid white' }}>
+                  <div style={{ position: 'absolute', bottom: '-10px', right: '-10px', background: '#F5B800', width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', border: '4px solid white' }}>
                     <Plus size={20} />
                   </div>
                 </div>
@@ -554,7 +551,7 @@ const CustomerDashboard = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 disabled={updatingProfile}
-                style={{ width: '100%', padding: '18px', background: '#eb8923', color: 'white', border: 'none', borderRadius: '20px', fontWeight: '900', fontSize: '1rem', cursor: 'pointer', boxShadow: '0 10px 20px -5px rgba(235, 137, 35, 0.4)' }}
+                style={{ width: '100%', padding: '18px', background: '#F5B800', color: 'white', border: 'none', borderRadius: '20px', fontWeight: '900', fontSize: '1rem', cursor: 'pointer', boxShadow: '0 10px 20px -5px rgba(235, 137, 35, 0.4)' }}
               >
                 {updatingProfile ? 'GUARDANDO ALTERAÇÕES...' : 'ATUALIZAR MEU PERFIL DOCA'}
               </motion.button>
