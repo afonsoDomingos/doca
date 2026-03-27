@@ -315,6 +315,12 @@ const Dashboard = () => {
     u.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const filteredQuotes = quotes.filter(q => 
+    q.clientName.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    q.serviceType.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    q.status.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#f1f5f9', fontFamily: 'Inter, system-ui, sans-serif' }}>
       {/* Sidebar */}
@@ -790,8 +796,10 @@ const Dashboard = () => {
                     <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
                     <input 
                       type="text" 
-                      placeholder="Filtrar por nome..."
-                      style={{ padding: '12px 16px 12px 48px', borderRadius: '16px', border: '1px solid #e2e8f0', background: 'white', outline: 'none' }}
+                      placeholder="Filtrar por nome, serviço ou status..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      style={{ padding: '12px 16px 12px 48px', borderRadius: '16px', border: '1px solid #e2e8f0', background: 'white', outline: 'none', width: '300px' }}
                     />
                   </div>
                 </div>
@@ -809,7 +817,7 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {quotes.map((quote) => (
+                  {filteredQuotes.map((quote) => (
                     <tr key={quote._id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                       <td style={{ padding: '1.5rem 2.5rem' }}>
                         <p style={{ fontWeight: '700', color: '#1e293b', margin: 0, fontSize: '1rem' }}>{quote.clientName}</p>
