@@ -325,7 +325,8 @@ const CustomerDashboard = () => {
             gap: '8px',
             cursor: 'pointer',
             fontSize: '0.875rem',
-            fontWeight: '700'
+            fontWeight: '700',
+            marginBottom: '2rem'
           }}
         >
           <LogOut size={16} /> Sair do Sistema

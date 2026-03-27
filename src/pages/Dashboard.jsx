@@ -320,7 +320,7 @@ const Dashboard = () => {
       {/* Sidebar */}
       <aside style={{ 
         width: '280px', 
-        background: '#1e293b', 
+        background: '#000000', 
         color: 'white', 
         padding: '2rem 1.5rem',
         display: 'flex',
@@ -454,10 +454,11 @@ const Dashboard = () => {
 
         <div style={{ 
           marginTop: 'auto', 
-          padding: '1rem', 
+          padding: '1.25rem', 
           background: 'rgba(255, 255, 255, 0.05)', 
-          borderRadius: '16px',
-          border: '1px solid rgba(255, 255, 255, 0.1)'
+          borderRadius: '20px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          marginBottom: '2rem'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
             <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#334155', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
