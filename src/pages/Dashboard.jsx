@@ -78,7 +78,7 @@ const Dashboard = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [projectsRes, quotesRes, usersRes] = await Promise.all([
+      const [projectsRes, quotesRes, usersRes, bannersRes] = await Promise.all([
         fetch(`${API_URL}/api/projects`),
         fetch(`${API_URL}/api/quotes`),
         fetch(`${API_URL}/api/users`),
