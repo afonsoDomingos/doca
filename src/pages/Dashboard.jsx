@@ -1399,6 +1399,7 @@ const Dashboard = () => {
                       <option value="Em Execução">Em Execução</option>
                       <option value="Finalização">Finalização</option>
                       <option value="Concluído">Concluído</option>
+                      <option value="Cancelado">Cancelado</option>
                     </select>
                   </div>
                   <div>

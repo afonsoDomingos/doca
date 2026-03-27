@@ -20,7 +20,11 @@ import {
   CreditCard,
   Camera,
   Home,
-  Menu
+  Menu,
+  TrendingUp,
+  List,
+  Activity,
+  Award
 } from 'lucide-react';
 import QuoteForm from '../components/QuoteForm';
 import WhatsAppContact from '../components/WhatsAppContact';
@@ -38,6 +42,7 @@ const CustomerDashboard = () => {
   const [selectedActiveProject, setSelectedActiveProject] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [reportTab, setReportTab] = useState('summary');
 
   // Profile Form State
   const [profileForm, setProfileForm] = useState({
@@ -625,39 +630,179 @@ const CustomerDashboard = () => {
         )}
       </AnimatePresence>
 
-      {/* PROJECT REPORT MODAL */}
+      {/* PROJECT REPORT MODAL (SYNCED WITH ADMIN) */}
       {selectedActiveProject && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0, 0, 0, 0.8)', backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100, padding: '2rem' }}>
-          <div style={{ background: 'white', width: '100%', maxWidth: '1000px', height: '90vh', borderRadius: '40px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ padding: '2rem', background: '#003366', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h2 style={{ margin: 0 }}>Monitoria de Obra DOCA</h2>
-              <X size={24} style={{ cursor: 'pointer' }} onClick={() => setSelectedActiveProject(null)} />
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0, 0, 0, 0.85)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100, padding: '2rem' }}>
+          <div style={{ background: '#f8fafc', width: '100%', maxWidth: '1000px', height: '85vh', borderRadius: '40px', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
+            
+            {/* Modal Header */}
+            <div style={{ padding: '2rem 3rem', background: '#000', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '950', color: '#FFCC00' }}>Relatório Dinâmico de Obra</h2>
+                <p style={{ margin: '4px 0 0', opacity: 0.7, fontSize: '0.8rem' }}>{selectedActiveProject.serviceType} | Ref: #DOCA-{selectedActiveProject._id.slice(-6).toUpperCase()}</p>
+              </div>
+              <X size={28} style={{ cursor: 'pointer', background: 'rgba(255,255,255,0.1)', padding: '6px', borderRadius: '10px' }} onClick={() => setSelectedActiveProject(null)} />
             </div>
+
+            {/* Modal Navigation */}
+            <div style={{ display: 'flex', background: 'white', padding: '0 3rem', gap: '2rem', borderBottom: '1px solid #e2e8f0' }}>
+              {[
+                { id: 'summary', label: 'Resumo', icon: Activity },
+                { id: 'timeline', label: 'Cronograma', icon: List },
+                { id: 'finance', label: 'Financeiro', icon: DollarSign },
+                { id: 'photos', label: 'Evolução', icon: Camera },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setReportTab(tab.id)}
+                  style={{
+                    padding: '1.25rem 0',
+                    background: 'none',
+                    border: 'none',
+                    color: reportTab === tab.id ? '#FFCC00' : '#64748b',
+                    fontWeight: '800',
+                    fontSize: '0.85rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    borderBottom: reportTab === tab.id ? '3px solid #FFCC00' : '3px solid transparent',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <tab.icon size={16} /> {tab.label}
+                </button>
+              ))}
+            </div>
+
             <div style={{ flex: 1, overflowY: 'auto', padding: '3rem' }}>
-               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem' }}>
-                  <div>
-                    <h3 style={{ fontWeight: '900', color: '#003366' }}>Resumo Executivo</h3>
-                    <p>Referência: {selectedActiveProject._id.slice(-8).toUpperCase()}</p>
-                    <p>Estado: {selectedActiveProject.status}</p>
-                    <p>Total: {selectedActiveProject.totalBudget?.toLocaleString()} MT</p>
-                    
-                    <h4 style={{ marginTop: '2rem' }}>Fotos da Evolução</h4>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                      {selectedActiveProject.workPhotos?.map((p, i) => <img key={i} src={p} style={{ width: '100%', borderRadius: '16px' }} />)}
-                    </div>
-                  </div>
-                  <div>
-                    <div style={{ padding: '2rem', background: '#f8fafc', borderRadius: '24px' }}>
-                       <h4 style={{ margin: 0, color: '#003366' }}>Pagamentos Efetuados</h4>
-                       {selectedActiveProject.payments?.map((p, i) => (
-                         <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #e2e8f0' }}>
-                           <span>{p.amount.toLocaleString()} MT</span>
-                           <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓ PAGO</span>
+               
+               {/* TAB: SUMMARY */}
+               {reportTab === 'summary' && (
+                 <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '3rem' }}>
+                    <div>
+                      <h4 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', fontWeight: '900', color: '#0f172a' }}>Estado da Empreitada</h4>
+                      <div style={{ background: 'white', padding: '2rem', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
+                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                           <span style={{ fontWeight: '800', color: '#64748b' }}>PROGRESSO GLOBAL</span>
+                           <span style={{ fontWeight: '900', color: '#FFCC00' }}>{selectedActiveProject.percentage || 0}%</span>
                          </div>
-                       ))}
+                         <div style={{ height: '12px', background: '#f1f5f9', borderRadius: '20px', overflow: 'hidden', marginBottom: '2rem' }}>
+                           <div style={{ width: `${selectedActiveProject.percentage || 0}%`, height: '100%', background: '#FFCC00', borderRadius: '20px' }} />
+                         </div>
+                         
+                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                            <div>
+                               <p style={{ margin: 0, fontSize: '0.7rem', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase' }}>Início da Obra</p>
+                               <p style={{ margin: '4px 0 0', fontWeight: '700', color: '#1e293b' }}>{selectedActiveProject.startDate ? new Date(selectedActiveProject.startDate).toLocaleDateString() : 'A definir'}</p>
+                            </div>
+                            <div>
+                               <p style={{ margin: 0, fontSize: '0.7rem', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase' }}>Estimativa de Entrega</p>
+                               <p style={{ margin: '4px 0 0', fontWeight: '700', color: '#FFCC00' }}>{selectedActiveProject.deadline ? new Date(selectedActiveProject.deadline).toLocaleDateString() : 'A definir'}</p>
+                            </div>
+                         </div>
+                      </div>
                     </div>
-                  </div>
-               </div>
+                    
+                    <div style={{ background: '#000', color: 'white', padding: '2rem', borderRadius: '24px' }}>
+                       <Award size={32} color="#FFCC00" style={{ marginBottom: '1rem' }} />
+                       <h4 style={{ margin: '0 0 1rem 0', color: '#FFCC00' }}>Garantia DOCA</h4>
+                       <p style={{ fontSize: '0.85rem', opacity: 0.8, lineHeight: '1.6' }}>
+                         Este relatório é sincronizado diretamente com a nossa gestão técnica. Quaisquer dúvidas sobre o cronograma podem ser esclarecidas via suporte WhatsApp.
+                       </p>
+                    </div>
+                 </div>
+               )}
+
+               {/* TAB: TIMELINE */}
+               {reportTab === 'timeline' && (
+                 <div>
+                   <h4 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', fontWeight: '900', color: '#0f172a' }}>Cronograma de Tarefas</h4>
+                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                     {!selectedActiveProject.tasks || selectedActiveProject.tasks.length === 0 ? (
+                       <div style={{ textAlign: 'center', padding: '4rem', color: '#94a3b8' }}>
+                         O gestor ainda está a elaborar o cronograma detalhado para esta fase.
+                       </div>
+                     ) : (
+                       selectedActiveProject.tasks.map((task, i) => (
+                         <div key={i} style={{ background: 'white', padding: '1.5rem', borderRadius: '20px', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                           <div>
+                             <h5 style={{ margin: 0, fontWeight: '800', color: '#1e293b' }}>{task.title}</h5>
+                             <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: '#64748b' }}>Fim planeado: {new Date(task.deadline).toLocaleDateString()}</p>
+                           </div>
+                           <div style={{ textAlign: 'right' }}>
+                             <span style={{ 
+                               background: task.status === 'Concluído' ? '#ecfdf5' : '#fff7ed', 
+                               color: task.status === 'Concluído' ? '#10b981' : '#f97316', 
+                               padding: '6px 12px', 
+                               borderRadius: '100px', 
+                               fontSize: '0.7rem', 
+                               fontWeight: '900' 
+                             }}>
+                               {task.status.toUpperCase()}
+                             </span>
+                           </div>
+                         </div>
+                       ))
+                     )}
+                   </div>
+                 </div>
+               )}
+
+               {/* TAB: FINANCE */}
+               {reportTab === 'finance' && (
+                 <div>
+                   <h4 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', fontWeight: '900', color: '#0f172a' }}>Extrato de Pagamentos</h4>
+                   <div style={{ background: 'white', borderRadius: '24px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead style={{ background: '#f8fafc' }}>
+                          <tr>
+                            <th style={{ padding: '1rem 2rem', textAlign: 'left', color: '#94a3b8', fontSize: '0.75rem' }}>DATA</th>
+                            <th style={{ padding: '1rem 2rem', textAlign: 'left', color: '#94a3b8', fontSize: '0.75rem' }}>VALOR</th>
+                            <th style={{ padding: '1rem 2rem', textAlign: 'right', color: '#94a3b8', fontSize: '0.75rem' }}>ESTADO</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {!selectedActiveProject.payments || selectedActiveProject.payments.length === 0 ? (
+                            <tr><td colSpan="3" style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>Sem registos financeiros até ao momento.</td></tr>
+                          ) : (
+                            selectedActiveProject.payments.map((p, i) => (
+                              <tr key={i} style={{ borderTop: '1px solid #f1f5f9' }}>
+                                <td style={{ padding: '1.25rem 2rem', fontWeight: '600' }}>{new Date(p.date).toLocaleDateString()}</td>
+                                <td style={{ padding: '1.25rem 2rem', fontWeight: '900', color: '#1e293b' }}>{p.amount.toLocaleString()} MT</td>
+                                <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
+                                  <span style={{ color: '#10b981', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end' }}>
+                                    <CheckCircle size={14} /> PAGO
+                                  </span>
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                   </div>
+                 </div>
+               )}
+
+               {/* TAB: PHOTOS */}
+               {reportTab === 'photos' && (
+                 <div>
+                    <h4 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', fontWeight: '900', color: '#0f172a' }}>Galeria de Execução</h4>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1.5rem' }}>
+                      {!selectedActiveProject.workPhotos || selectedActiveProject.workPhotos.length === 0 ? (
+                         <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '4rem', color: '#94a3b8' }}>Nenhuma foto registada ainda.</div>
+                      ) : (
+                        selectedActiveProject.workPhotos.map((p, i) => (
+                          <div key={i} style={{ height: '220px', borderRadius: '24px', overflow: 'hidden', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
+                            <img src={p} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          </div>
+                        ))
+                      )}
+                    </div>
+                 </div>
+               )}
             </div>
           </div>
         </div>
