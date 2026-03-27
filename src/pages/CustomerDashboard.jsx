@@ -266,51 +266,60 @@ const CustomerDashboard = () => {
           <Home size={18} /> Ir para a Página Inicial
         </motion.button>
 
-        <div style={{ marginBottom: '3rem', padding: '0 0.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ background: '#FFCC00', width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <LayoutDashboard size={20} color="white" />
-            </div>
-            <span style={{ fontSize: '1.25rem', fontWeight: '800', color: 'white', letterSpacing: '-0.5px' }}>DOCA <span style={{ color: '#FFCC00' }}>PORTAL</span></span>
-          </div>
-        </div>
+        <Link to="/" style={{ 
+          textDecoration: 'none', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          gap: '4px', 
+          marginBottom: '2rem', 
+          padding: '0 0.5rem',
+          textAlign: 'center'
+        }}>
+          <img src="/LOGO SEM FUNDO.png" alt="DOCA" style={{ height: '48px', objectFit: 'contain' }} />
+          <span style={{ fontSize: '0.8rem', fontWeight: '900', letterSpacing: '2px', color: '#FFCC00', textTransform: 'uppercase', marginTop: '4px' }}>DOCA PORTAL</span>
+        </Link>
 
         <nav style={{ flex: 1 }}>
-          <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '1.5rem', padding: '0 0.5rem' }}>Gestão</p>
-          <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.65rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '1.25rem', padding: '0 0.5rem' }}>AÇÕES RÁPIDAS</p>
+          <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <li 
               onClick={() => setActiveTab('orders')}
               style={{ 
-                background: activeTab === 'orders' ? '#FFCC00' : 'transparent', 
-                color: 'white', 
-                padding: '14px 18px', 
+                background: activeTab === 'orders' ? 'rgba(255, 204, 0, 0.15)' : 'transparent', 
+                color: activeTab === 'orders' ? '#FFCC00' : 'rgba(255,255,255,0.7)', 
+                padding: '12px 18px', 
                 borderRadius: '16px', 
                 display: 'flex', 
                 alignItems: 'center', 
                 gap: '12px',
                 cursor: 'pointer',
                 fontWeight: '700',
+                fontSize: '0.9rem',
+                border: activeTab === 'orders' ? '1px solid rgba(255, 204, 0, 0.2)' : '1px solid transparent',
                 transition: '0.3s'
               }}
             >
-              <FileText size={20} /> Meus Pedidos
+              <FileText size={18} /> Meus Pedidos
             </li>
             <li 
               onClick={() => setActiveTab('profile')}
               style={{ 
-                background: activeTab === 'profile' ? '#FFCC00' : 'transparent', 
-                color: 'white', 
-                padding: '14px 18px', 
+                background: activeTab === 'profile' ? 'rgba(255, 204, 0, 0.15)' : 'transparent', 
+                color: activeTab === 'profile' ? '#FFCC00' : 'rgba(255,255,255,0.7)', 
+                padding: '12px 18px', 
                 borderRadius: '16px', 
                 display: 'flex', 
                 alignItems: 'center', 
                 gap: '12px',
                 cursor: 'pointer',
                 fontWeight: '700',
+                fontSize: '0.9rem',
+                border: activeTab === 'profile' ? '1px solid rgba(255, 204, 0, 0.2)' : '1px solid transparent',
                 transition: '0.3s'
               }}
             >
-              <User size={20} /> Meu Perfil
+              <User size={18} /> Meu Perfil
             </li>
           </ul>
         </nav>
@@ -411,14 +420,14 @@ const CustomerDashboard = () => {
               ))}
             </div>
 
-            {/* ACTIVE PROJECTS */}
-            {quotes.some(q => q.percentage > 0 || q.status === 'Em Execução' || q.status === 'Finalização') && (
+            {/* ACTIVE PROJECTS (Synced with 'Aprovado' and 'Execução') */}
+            {quotes.some(q => q.percentage > 0 || q.status === 'Aprovado' || q.status === 'Em Execução' || q.status === 'Finalização') && (
               <div style={{ marginBottom: '4rem' }}>
                 <h2 style={{ fontSize: '1.75rem', fontWeight: '900', color: '#1e293b', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <LayoutDashboard size={28} color="#FFCC00" /> Acompanhamento de Obras
                 </h2>
                 <div className="dashboard-projects-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '2rem' }}>
-                  {quotes.filter(q => q.percentage > 0 || q.status === 'Em Execução' || q.status === 'Finalização').map((proj) => {
+                  {quotes.filter(q => q.percentage > 0 || q.status === 'Aprovado' || q.status === 'Em Execução' || q.status === 'Finalização').map((proj) => {
                     const totalPaid = (proj.payments || []).reduce((acc, curr) => acc + curr.amount, 0);
                     return (
                       <div key={proj._id} style={{ background: 'white', borderRadius: '32px', border: '1px solid white', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
