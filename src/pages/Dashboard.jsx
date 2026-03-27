@@ -70,7 +70,11 @@ const Dashboard = () => {
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [taskData, setTaskData] = useState({ title: '', resource: '', duration: '', deadline: '' });
   const [isAddingMaterial, setIsAddingMaterial] = useState(false);
-  const [materialData, setMaterialData] = useState({ name: '', cost: '' });
+  const [materialData, setMaterialData] = useState({ name: '', cost: '', receiptUrl: '' });
+  const [loadingMaterialReceipt, setLoadingMaterialReceipt] = useState(false);
+  const [editingTaskIndex, setEditingTaskIndex] = useState(null);
+  const [editingMaterialIndex, setEditingMaterialIndex] = useState(null);
+  const [planningView, setPlanningView] = useState('list'); // 'list' | 'gantt'
 
   const [alertConfig, setAlertConfig] = useState({ 
     isOpen: false, 
@@ -1348,9 +1352,17 @@ const Dashboard = () => {
                 <h3 style={{ fontSize: '1.5rem', fontWeight: '900', color: '#1e293b', margin: 0 }}>Gestão de Obra: {selectedQuote.serviceType}</h3>
                 <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '0.875rem' }}>Cliente: {selectedQuote.clientName} | Ref: #DOCA-{selectedQuote._id.slice(-6).toUpperCase()}</p>
               </div>
-              <button onClick={closeManageModal} style={{ background: '#f1f5f9', border: 'none', borderRadius: '12px', padding: '8px', cursor: 'pointer' }}>
-                <X size={24} />
-              </button>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button 
+                  onClick={() => window.print()}
+                  style={{ background: '#FFCC00', color: 'white', border: 'none', borderRadius: '12px', padding: '8px 16px', cursor: 'pointer', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '8px' }}
+                >
+                  <ImageIcon size={16} /> EXPORTAR PDF
+                </button>
+                <button onClick={closeManageModal} style={{ background: '#f1f5f9', border: 'none', borderRadius: '12px', padding: '8px', cursor: 'pointer' }}>
+                  <X size={24} />
+                </button>
+              </div>
             </div>
 
             {/* Modal Tabs */}
@@ -1453,15 +1465,30 @@ const Dashboard = () => {
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                     <div>
-                      <h4 style={{ margin: 0 }}>Cronograma e Planeamento (MS Project Style)</h4>
                       <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#64748b' }}>Defina tarefas, prazos e acompanhe a linha do tempo do projeto.</p>
                     </div>
-                    <button 
-                      onClick={() => setIsAddingTask(true)}
-                      style={{ background: '#1e293b', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '12px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
-                    >
-                      <Plus size={18} /> Adicionar Tarefa
-                    </button>
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', background: '#f1f5f9', padding: '4px', borderRadius: '10px' }}>
+                        <button 
+                          onClick={() => setPlanningView('list')}
+                          style={{ padding: '6px 12px', borderRadius: '8px', border: 'none', background: planningView === 'list' ? 'white' : 'transparent', fontWeight: '700', fontSize: '0.75rem', cursor: 'pointer' }}
+                        >
+                          Lista
+                        </button>
+                        <button 
+                          onClick={() => setPlanningView('gantt')}
+                          style={{ padding: '6px 12px', borderRadius: '8px', border: 'none', background: planningView === 'gantt' ? 'white' : 'transparent', fontWeight: '700', fontSize: '0.75rem', cursor: 'pointer' }}
+                        >
+                          Gantt
+                        </button>
+                      </div>
+                      <button 
+                        onClick={() => setIsAddingTask(true)}
+                        style={{ background: '#1e293b', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '12px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                      >
+                        <Plus size={18} /> Adicionar
+                      </button>
+                    </div>
                   </div>
 
                   {isAddingTask && (
@@ -1522,9 +1549,7 @@ const Dashboard = () => {
                           style={{ flex: 1, background: '#FFCC00', color: 'white', border: 'none', padding: '10px', borderRadius: '10px', fontWeight: '900', cursor: 'pointer' }}
                         >
                           GUARDAR TAREFA
-                        </button>
-                        <button 
-                          onClick={() => setIsAddingTask(false)}
+                  onClick={() => setIsAddingTask(false)}
                           style={{ padding: '10px 20px', background: '#e2e8f0', border: 'none', borderRadius: '10px', cursor: 'pointer' }}
                         >
                           Cancelar
@@ -1534,82 +1559,179 @@ const Dashboard = () => {
                   )}
 
                   <div style={{ background: '#f8fafc', borderRadius: '24px', padding: '1.5rem', border: '1px solid #e2e8f0' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                      {(selectedQuote.tasks || []).length === 0 && (
-                        <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
-                          <Calendar size={48} style={{ opacity: 0.2, marginBottom: '1rem' }} />
-                          <p>Nenhuma tarefa planeada. Comece a estruturar o seu projeto.</p>
-                        </div>
-                      )}
-                      {(selectedQuote.tasks || []).map((task, i) => (
-                        <div key={i} style={{ background: 'white', padding: '1.25rem', borderRadius: '16px', border: '1px solid #f1f5f9', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                            <div>
-                              <h5 style={{ margin: 0, fontSize: '1rem', fontWeight: '800', color: '#1e293b' }}>{task.title}</h5>
-                              <div style={{ display: 'flex', gap: '15px', color: '#64748b', fontSize: '0.75rem', marginTop: '4px', fontWeight: '700' }}>
-                                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                  <Clock size={12} /> {new Date(task.startDate).toLocaleDateString()} — {new Date(task.deadline).toLocaleDateString()}
-                                </span>
-                                {task.resource && (
-                                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#1e293b' }}>
-                                    <User size={12} /> {task.resource}
+                    {planningView === 'list' ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        {(selectedQuote.tasks || []).length === 0 && (
+                          <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
+                            <Calendar size={48} style={{ opacity: 0.2, marginBottom: '1rem' }} />
+                            <p>Nenhuma tarefa planeada. Comece a estruturar o seu projeto.</p>
+                          </div>
+                        )}
+                        {(selectedQuote.tasks || []).map((task, i) => (
+                          <div key={i} style={{ background: 'white', padding: '1.25rem', borderRadius: '16px', border: '1px solid #f1f5f9', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                              <div>
+                                <h5 style={{ margin: 0, fontSize: '1rem', fontWeight: '800', color: '#1e293b' }}>{task.title}</h5>
+                                <div style={{ display: 'flex', gap: '15px', color: '#64748b', fontSize: '0.75rem', marginTop: '4px', fontWeight: '700' }}>
+                                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <Clock size={12} /> {new Date(task.startDate).toLocaleDateString()} — {new Date(task.deadline).toLocaleDateString()}
                                   </span>
-                                )}
-                                {task.duration && (
-                                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#f97316' }}>
-                                    <Clock size={12} /> Duração: {task.duration}
-                                  </span>
-                                )}
+                                  {task.resource && (
+                                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#1e293b' }}>
+                                      <User size={12} /> {task.resource}
+                                    </span>
+                                  )}
+                                  {task.duration && (
+                                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#f97316' }}>
+                                      <Clock size={12} /> Duração: {task.duration}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              <div style={{ display: 'flex', gap: '8px' }}>
+                                <select 
+                                  value={task.status}
+                                  onChange={(e) => {
+                                    const newTasks = [...selectedQuote.tasks];
+                                    newTasks[i].status = e.target.value;
+                                    handleUpdateQuote({ tasks: newTasks });
+                                  }}
+                                  style={{ fontSize: '0.75rem', padding: '4px 8px', borderRadius: '8px', border: '1px solid #e2e8f0' }}
+                                >
+                                  <option value="Pendente">Pendente</option>
+                                  <option value="Em Curso">Em Curso</option>
+                                  <option value="Concluído">Concluído</option>
+                                </select>
+                                <button 
+                                  onClick={() => {
+                                    setEditingTaskIndex(i);
+                                    setTaskData({ ...task });
+                                  }}
+                                  style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }}
+                                >
+                                  <Edit size={16} />
+                                </button>
+                                <button 
+                                  onClick={() => {
+                                    const newTasks = selectedQuote.tasks.filter((_, idx) => idx !== i);
+                                    handleUpdateQuote({ tasks: newTasks });
+                                  }}
+                                  style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}
+                                >
+                                  <Trash2 size={16} />
+                                </button>
                               </div>
                             </div>
-                            <div style={{ display: 'flex', gap: '8px' }}>
-                              <select 
-                                value={task.status}
-                                onChange={(e) => {
-                                  const newTasks = [...selectedQuote.tasks];
-                                  newTasks[i].status = e.target.value;
-                                  handleUpdateQuote({ tasks: newTasks });
-                                }}
-                                style={{ fontSize: '0.75rem', padding: '4px 8px', borderRadius: '8px', border: '1px solid #e2e8f0' }}
-                              >
-                                <option value="Pendente">Pendente</option>
-                                <option value="Em Curso">Em Curso</option>
-                                <option value="Concluído">Concluído</option>
-                              </select>
-                              <button 
-                                onClick={() => {
-                                  const newTasks = selectedQuote.tasks.filter((_, idx) => idx !== i);
-                                  handleUpdateQuote({ tasks: newTasks });
-                                }}
-                                style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}
-                              >
-                                <Trash2 size={16} />
-                              </button>
+                            
+                            {editingTaskIndex === i ? (
+                              <div style={{ marginTop: '1rem', background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #FFCC00' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                                   <input 
+                                      value={taskData.title}
+                                      onChange={(e) => setTaskData({ ...taskData, title: e.target.value })}
+                                      placeholder="Título"
+                                      style={{ gridColumn: '1 / -1', padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                                   />
+                                   <input 
+                                      value={taskData.resource}
+                                      onChange={(e) => setTaskData({ ...taskData, resource: e.target.value })}
+                                      placeholder="Recurso"
+                                      style={{ padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                                   />
+                                   <input 
+                                      value={taskData.duration}
+                                      onChange={(e) => setTaskData({ ...taskData, duration: e.target.value })}
+                                      placeholder="Duração"
+                                      style={{ padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                                   />
+                                </div>
+                                <div style={{ marginTop: '1rem', display: 'flex', gap: '8px' }}>
+                                  <button 
+                                    onClick={() => {
+                                      const newTasks = [...selectedQuote.tasks];
+                                      newTasks[i] = { ...newTasks[i], ...taskData };
+                                      handleUpdateQuote({ tasks: newTasks });
+                                      setEditingTaskIndex(null);
+                                    }}
+                                    style={{ flex: 1, background: '#1e293b', color: 'white', border: 'none', padding: '8px', borderRadius: '8px', fontWeight: '800', cursor: 'pointer' }}
+                                  >
+                                    SALVAR ALTERAÇÕES
+                                  </button>
+                                  <button onClick={() => setEditingTaskIndex(null)} style={{ padding: '8px 15px', background: '#e2e8f0', borderRadius: '8px', border: 'none', cursor: 'pointer' }}>Cancelar</button>
+                                </div>
+                              </div>
+                            ) : (
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                <div style={{ flex: 1, height: '8px', background: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
+                                  <div style={{ width: `${task.progress}%`, height: '100%', background: task.status === 'Concluído' ? '#10b981' : '#FFCC00', transition: 'width 0.3s' }} />
+                                </div>
+                                <input 
+                                  type="number" 
+                                  value={task.progress} 
+                                  min="0" 
+                                  max="100"
+                                  onChange={(e) => {
+                                    const newTasks = [...selectedQuote.tasks];
+                                    newTasks[i].progress = Number(e.target.value);
+                                    if (newTasks[i].progress === 100) newTasks[i].status = 'Concluído';
+                                    handleUpdateQuote({ tasks: newTasks });
+                                  }}
+                                  style={{ width: '50px', fontSize: '0.75rem', border: 'none', fontWeight: '800', color: '#1e293b' }}
+                                />
+                                <span style={{ fontSize: '0.75rem', fontWeight: '800' }}>%</span>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div style={{ overflowX: 'auto', padding: '1rem 0' }}>
+                        {/* Custom Gantt Component */}
+                        <div style={{ minWidth: '800px' }}>
+                          <div style={{ display: 'flex', borderBottom: '2px solid #e2e8f0', paddingBottom: '10px', marginBottom: '10px' }}>
+                            <div style={{ width: '200px', fontWeight: '800', color: '#64748b', fontSize: '0.7rem' }}>TAREFA</div>
+                            <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', padding: '0 20px', fontWeight: '800', color: '#64748b', fontSize: '0.7rem' }}>
+                              <span>INÍCIO</span>
+                              <span>LINEA DO TEMPO (DIAS)</span>
+                              <span>FIM</span>
                             </div>
                           </div>
-                          
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                            <div style={{ flex: 1, height: '8px', background: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
-                              <div style={{ width: `${task.progress}%`, height: '100%', background: task.status === 'Concluído' ? '#10b981' : '#FFCC00', transition: 'width 0.3s' }} />
-                            </div>
-                            <input 
-                              type="number" 
-                              value={task.progress} 
-                              min="0" 
-                              max="100"
-                              onChange={(e) => {
-                                const newTasks = [...selectedQuote.tasks];
-                                newTasks[i].progress = Number(e.target.value);
-                                if (newTasks[i].progress === 100) newTasks[i].status = 'Concluído';
-                                handleUpdateQuote({ tasks: newTasks });
-                              }}
-                              style={{ width: '50px', fontSize: '0.75rem', border: 'none', fontWeight: '800', color: '#1e293b' }}
-                            />
-                            <span style={{ fontSize: '0.75rem', fontWeight: '800' }}>%</span>
-                          </div>
+                          {(selectedQuote.tasks || []).map((task, idx) => {
+                            const start = new Date(task.startDate);
+                            const end = new Date(task.deadline);
+                            const projStart = new Date(selectedQuote.startDate || task.startDate);
+                            const totalDays = 30; // 30 day view
+                            
+                            const offset = Math.max(0, Math.floor((start - projStart) / (1000 * 60 * 60 * 24)));
+                            const duration = Math.max(1, Math.floor((end - start) / (1000 * 60 * 60 * 24)));
+                            
+                            return (
+                              <div key={idx} style={{ display: 'flex', alignItems: 'center', height: '40px', marginBottom: '8px' }}>
+                                <div style={{ width: '200px', fontSize: '0.75rem', fontWeight: '700', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', paddingRight: '10px' }}>{task.title}</div>
+                                <div style={{ flex: 1, background: '#f1f5f9', height: '24px', borderRadius: '6px', position: 'relative', overflow: 'hidden' }}>
+                                  <div style={{ 
+                                    position: 'absolute', 
+                                    left: `${(offset / totalDays) * 100}%`, 
+                                    width: `${(duration / totalDays) * 100}%`, 
+                                    height: '100%', 
+                                    background: task.status === 'Concluído' ? '#10b981' : '#FFCC00',
+                                    borderRadius: '4px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    padding: '0 8px',
+                                    fontSize: '0.6rem',
+                                    fontWeight: '900',
+                                    color: task.status === 'Concluído' ? 'white' : '#1e293b'
+                                  }}>
+                                    {task.progress}%
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    )}
                   </div>
 
                   <div style={{ marginTop: '2rem', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
@@ -1717,7 +1839,7 @@ const Dashboard = () => {
                         <input 
                           placeholder="Descrição do material ou serviço" 
                           value={materialData.name}
-                          onChange={(e) => setMaterialData({ ...materialData, name: e.target.value })}
+                          onChange={(e) => setMaterialData({ ...materialData, name: e.target.value })} 
                           style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
                         />
                         <input 
@@ -1728,24 +1850,77 @@ const Dashboard = () => {
                           style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
                         />
                       </div>
-                      <div style={{ marginTop: '1rem', display: 'flex', gap: '8px' }}>
+                      
+                      <div style={{ marginTop: '1rem' }}>
+                        <label style={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: '8px', 
+                          background: materialData.receiptUrl ? '#ecfdf5' : '#f1f5f9', 
+                          color: materialData.receiptUrl ? '#10b981' : '#64748b',
+                          padding: '10px', 
+                          borderRadius: '10px', 
+                          fontSize: '0.8rem', 
+                          fontWeight: '800', 
+                          cursor: 'pointer',
+                          border: materialData.receiptUrl ? '1px solid #10b981' : '1px solid #e2e8f0',
+                          textAlign: 'center',
+                          justifyContent: 'center'
+                        }}>
+                          <Camera size={18} /> {loadingMaterialReceipt ? 'Carregando...' : (materialData.receiptUrl ? '✅ RECIBO ANEXADO' : '📸 ANEXAR RECIBO / FATURA')}
+                          <input 
+                            type="file" 
+                            accept="image/*" 
+                            style={{ display: 'none' }} 
+                            onChange={async (e) => {
+                              const file = e.target.files[0];
+                              if (!file) return;
+                              setLoadingMaterialReceipt(true);
+                              const reader = new FileReader();
+                              reader.readAsDataURL(file);
+                              reader.onloadend = async () => {
+                                try {
+                                  const res = await fetch(`${API_URL}/api/upload`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ data: reader.result })
+                                  });
+                                  const data = await res.json();
+                                  setMaterialData({ ...materialData, receiptUrl: data.url });
+                                } catch (error) {
+                                  showAlert('Erro', 'Falha no upload do recibo', 'error');
+                                } finally {
+                                  setLoadingMaterialReceipt(false);
+                                }
+                              };
+                            }}
+                          />
+                        </label>
+                      </div>
+
+                      <div style={{ marginTop: '1.5rem', display: 'flex', gap: '8px' }}>
                          <button 
                           onClick={() => {
                             if (!materialData.name || !materialData.cost) return showAlert('Atenção', 'Nome e custo são obrigatórios', 'warning');
-                            const newMaterials = [...(selectedQuote.materials || []), { name: materialData.name, cost: Number(materialData.cost), date: new Date() }];
+                            const newMaterials = [...(selectedQuote.materials || []), { 
+                              name: materialData.name, 
+                              cost: Number(materialData.cost), 
+                              receiptUrl: materialData.receiptUrl,
+                              date: new Date() 
+                            }];
                             handleUpdateQuote({ materials: newMaterials });
                             setIsAddingMaterial(false);
-                            setMaterialData({ name: '', cost: '' });
+                            setMaterialData({ name: '', cost: '', receiptUrl: '' });
                           }}
-                          style={{ flex: 1, background: '#1e293b', color: 'white', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: '800', cursor: 'pointer' }}
+                          style={{ flex: 1, background: '#1e293b', color: 'white', border: 'none', padding: '12px', borderRadius: '10px', fontWeight: '800', cursor: 'pointer' }}
                         >
-                          REGISTAR
+                          REGISTAR COMPRA
                         </button>
                         <button 
                           onClick={() => setIsAddingMaterial(false)}
-                          style={{ padding: '10px 15px', background: '#e2e8f0', border: 'none', borderRadius: '8px', cursor: 'pointer' }}
+                          style={{ padding: '10px 20px', background: '#e2e8f0', border: 'none', borderRadius: '10px', cursor: 'pointer', fontWeight: '800' }}
                         >
-                          X
+                          CANCELAR
                         </button>
                       </div>
                     </div>
@@ -1753,12 +1928,66 @@ const Dashboard = () => {
                   {/* Small materials list */}
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
                     {(selectedQuote.materials || []).map((mat, i) => (
-                      <div key={i} style={{ padding: '1rem', background: '#f8fafc', borderRadius: '16px', display: 'flex', justifyContent: 'space-between' }}>
-                        <div>
-                          <p style={{ margin: 0, fontWeight: '700' }}>{mat.name}</p>
-                          <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748b' }}>{new Date(mat.date).toLocaleDateString()}</p>
-                        </div>
-                        <p style={{ margin: 0, color: '#FFCC00', fontWeight: '800' }}>{mat.cost.toLocaleString()} MT</p>
+                      <div key={i} style={{ padding: '1rem', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        {editingMaterialIndex === i ? (
+                          <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
+                            <input 
+                              value={materialData.name}
+                              onChange={(e) => setMaterialData({ ...materialData, name: e.target.value })}
+                              style={{ flex: 2, padding: '6px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                            />
+                            <input 
+                              type="number"
+                              value={materialData.cost}
+                              onChange={(e) => setMaterialData({ ...materialData, cost: e.target.value })}
+                              style={{ flex: 1, padding: '6px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                            />
+                            <button onClick={() => {
+                               const newMaterials = [...selectedQuote.materials];
+                               newMaterials[i] = { ...newMaterials[i], name: materialData.name, cost: Number(materialData.cost) };
+                               handleUpdateQuote({ materials: newMaterials });
+                               setEditingMaterialIndex(null);
+                            }} style={{ background: '#FFCC00', border: 'none', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer' }}><Check size={14} color="white" /></button>
+                            <button onClick={() => setEditingMaterialIndex(null)} style={{ background: '#e2e8f0', border: 'none', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer' }}><X size={14} /></button>
+                          </div>
+                        ) : (
+                          <>
+                            <div>
+                              <p style={{ margin: 0, fontWeight: '700' }}>{mat.name}</p>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748b' }}>{new Date(mat.date).toLocaleDateString()}</p>
+                                {mat.receiptUrl && (
+                                  <a href={mat.receiptUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#ecfdf5', color: '#10b981', padding: '2px 6px', borderRadius: '4px', fontSize: '0.65rem', textDecoration: 'none', fontWeight: '800' }}>
+                                    <ImageIcon size={10} /> RECIBO
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                              <p style={{ margin: 0, color: '#1e293b', fontWeight: '900' }}>{mat.cost.toLocaleString()} MT</p>
+                              <div style={{ display: 'flex', gap: '4px' }}>
+                                <button 
+                                  onClick={() => {
+                                    setEditingMaterialIndex(i);
+                                    setMaterialData({ name: mat.name, cost: mat.cost });
+                                  }}
+                                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}
+                                >
+                                  <Edit size={14} />
+                                </button>
+                                <button 
+                                  onClick={() => {
+                                    const newMaterials = selectedQuote.materials.filter((_, idx) => idx !== i);
+                                    handleUpdateQuote({ materials: newMaterials });
+                                  }}
+                                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              </div>
+                            </div>
+                          </>
+                        )}
                       </div>
                     ))}
                   </div>
