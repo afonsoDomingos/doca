@@ -48,31 +48,43 @@ const CustomerAuth = () => {
     }
 
     const endpoint = isLogin ? '/api/auth/login' : '/api/register';
+    const fullUrl = `${API_URL}${endpoint}`;
     const payload = isLogin 
       ? { email: formData.email, password: formData.password }
       : { name: formData.name, email: formData.email, password: formData.password, phone: formData.phone };
 
+    console.group(`🔐 DOCA Auth — ${isLogin ? 'LOGIN' : 'REGISTO'}`);
+    console.log('📡 URL:', fullUrl);
+    console.log('📦 Payload (sem senha):', { ...payload, password: '***' });
+
     try {
-      const response = await fetch(`${API_URL}${endpoint}`, {
+      const response = await fetch(fullUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      
+
+      console.log('📬 Status HTTP:', response.status, response.statusText);
+      console.log('📋 Content-Type:', response.headers.get('content-type'));
+
+      const contentType = response.headers.get('content-type');
       let data = {};
-      const contentType = response.headers.get("content-type");
-      
-      if (contentType && contentType.indexOf("application/json") !== -1) {
+
+      if (contentType && contentType.includes('application/json')) {
         data = await response.json();
+        console.log('✅ Resposta JSON:', data);
       } else {
         const textError = await response.text();
-        console.error('Server returned non-JSON:', textError);
-        setError(`Erro do Servidor (Código ${response.status}). Verifique o console ou a base de dados.`);
+        console.error('❌ Servidor devolveu resposta não-JSON:', textError);
+        console.error('🔗 Verifique se a rota existe em: api/index.js');
+        setError(`Erro do Servidor (Código ${response.status}). Verifique o console.`);
         setLoading(false);
+        console.groupEnd();
         return;
       }
 
       if (response.ok) {
+        console.log('🎉 Autenticação bem-sucedida! Role:', data.role);
         if (isLogin) {
           if (data.role === 'admin') {
             localStorage.setItem('adminAuthenticated', 'true');
@@ -87,13 +99,15 @@ const CustomerAuth = () => {
           setFormData({ ...formData, password: '', confirmPassword: '' });
         }
       } else {
+        console.warn('⚠️ Autenticação falhou. Resposta do servidor:', data);
         setError(data.error || 'E-mail ou senha incorretos');
       }
     } catch (err) {
-      console.error('Fetch error:', err);
-      setError('Erro de conexão ou erro interno no servidor.');
+      console.error('🚨 Erro de rede / fetch:', err.message, err);
+      setError('Erro de conexão. Verifique o console para detalhes.');
     } finally {
       setLoading(false);
+      console.groupEnd();
     }
   };
 
