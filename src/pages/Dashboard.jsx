@@ -22,7 +22,11 @@ import {
   Image as ImageIcon,
   Save,
   Camera,
-  ShieldCheck
+  ShieldCheck,
+  Calendar,
+  Layers,
+  BarChart2,
+  AlertTriangle
 } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -1242,7 +1246,7 @@ const Dashboard = () => {
         </div>
       )}
       {/* PROJECT MANAGEMENT MODAL */}
-      {isManageModalOpen && selectedQuote && (
+      {isManageModalOpen && selectedQuote ? (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '2rem' }}>
           <div style={{ background: 'white', width: '100%', maxWidth: '900px', height: '80vh', borderRadius: '32px', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
             
@@ -1259,7 +1263,7 @@ const Dashboard = () => {
 
             {/* Modal Tabs */}
             <div style={{ display: 'flex', background: '#f8fafc', padding: '0 2.5rem', gap: '2rem' }}>
-              {['general', 'finance', 'execution', 'gallery'].map((tab) => (
+              {['general', 'planning', 'finance', 'execution', 'gallery'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setManageTab(tab)}
@@ -1278,6 +1282,7 @@ const Dashboard = () => {
                   }}
                 >
                   {tab === 'general' && 'Geral'}
+                  {tab === 'planning' && 'Planeamento'}
                   {tab === 'finance' && 'Financeiro'}
                   {tab === 'execution' && 'Execução'}
                   {tab === 'gallery' && 'Galeria'}
@@ -1351,23 +1356,152 @@ const Dashboard = () => {
                 </div>
               )}
 
+              {manageTab === 'planning' && (
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                    <div>
+                      <h4 style={{ margin: 0 }}>Cronograma e Planeamento (MS Project Style)</h4>
+                      <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#64748b' }}>Defina tarefas, prazos e acompanhe a linha do tempo do projeto.</p>
+                    </div>
+                    <button 
+                      onClick={() => {
+                        showAlert('Nova Tarefa', 'Nome da tarefa:', 'prompt', (title) => {
+                          if (title) {
+                            const newTask = { 
+                              title, 
+                              startDate: new Date(), 
+                              deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), 
+                              progress: 0,
+                              status: 'Pendente'
+                            };
+                            const newTasks = [...(selectedQuote.tasks || []), newTask];
+                            handleUpdateQuote({ tasks: newTasks });
+                          }
+                        });
+                      }}
+                      style={{ background: '#1e293b', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '12px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                    >
+                      <Plus size={18} /> Adicionar Tarefa
+                    </button>
+                  </div>
+
+                  <div style={{ background: '#f8fafc', borderRadius: '24px', padding: '1.5rem', border: '1px solid #e2e8f0' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      {(selectedQuote.tasks || []).length === 0 && (
+                        <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
+                          <Calendar size={48} style={{ opacity: 0.2, marginBottom: '1rem' }} />
+                          <p>Nenhuma tarefa planeada. Comece a estruturar o seu projeto.</p>
+                        </div>
+                      )}
+                      {(selectedQuote.tasks || []).map((task, i) => (
+                        <div key={i} style={{ background: 'white', padding: '1.25rem', borderRadius: '16px', border: '1px solid #f1f5f9', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                            <div>
+                              <h5 style={{ margin: 0, fontSize: '1rem', fontWeight: '800', color: '#1e293b' }}>{task.title}</h5>
+                              <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: '#64748b' }}>
+                                <Clock size={12} /> {new Date(task.startDate).toLocaleDateString()} — {new Date(task.deadline).toLocaleDateString()}
+                              </p>
+                            </div>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                              <select 
+                                value={task.status}
+                                onChange={(e) => {
+                                  const newTasks = [...selectedQuote.tasks];
+                                  newTasks[i].status = e.target.value;
+                                  handleUpdateQuote({ tasks: newTasks });
+                                }}
+                                style={{ fontSize: '0.75rem', padding: '4px 8px', borderRadius: '8px', border: '1px solid #e2e8f0' }}
+                              >
+                                <option value="Pendente">Pendente</option>
+                                <option value="Em Curso">Em Curso</option>
+                                <option value="Concluído">Concluído</option>
+                              </select>
+                              <button 
+                                onClick={() => {
+                                  const newTasks = selectedQuote.tasks.filter((_, idx) => idx !== i);
+                                  handleUpdateQuote({ tasks: newTasks });
+                                }}
+                                style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                          </div>
+                          
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                            <div style={{ flex: 1, height: '8px', background: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
+                              <div style={{ width: `${task.progress}%`, height: '100%', background: task.status === 'Concluído' ? '#10b981' : '#FFCC00', transition: 'width 0.3s' }} />
+                            </div>
+                            <input 
+                              type="number" 
+                              value={task.progress} 
+                              min="0" 
+                              max="100"
+                              onChange={(e) => {
+                                const newTasks = [...selectedQuote.tasks];
+                                newTasks[i].progress = Number(e.target.value);
+                                if (newTasks[i].progress === 100) newTasks[i].status = 'Concluído';
+                                handleUpdateQuote({ tasks: newTasks });
+                              }}
+                              style={{ width: '50px', fontSize: '0.75rem', border: 'none', fontWeight: '800', color: '#1e293b' }}
+                            />
+                            <span style={{ fontSize: '0.75rem', fontWeight: '800' }}>%</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop: '2rem', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
+                    <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+                      <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748b', fontWeight: '700' }}>TASKS TOTAIS</p>
+                      <h3 style={{ margin: '8px 0 0', fontWeight: '900' }}>{(selectedQuote.tasks || []).length}</h3>
+                    </div>
+                    <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+                      <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748b', fontWeight: '700' }}>CONCLUÍDAS</p>
+                      <h3 style={{ margin: '8px 0 0', fontWeight: '900', color: '#10b981' }}>{(selectedQuote.tasks || []).filter(t => t.status === 'Concluído').length}</h3>
+                    </div>
+                    <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+                      <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748b', fontWeight: '700' }}>EM ATRASO</p>
+                      <h3 style={{ margin: '8px 0 0', fontWeight: '900', color: '#ef4444' }}>
+                        {(selectedQuote.tasks || []).filter(t => t.status !== 'Concluído' && new Date(t.deadline) < new Date()).length}
+                      </h3>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {manageTab === 'finance' && (
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                     <h4 style={{ margin: 0 }}>Histórico de Pagamentos</h4>
-                    <button 
-                      onClick={() => {
-                        showAlert('Adicionar Pagamento', 'Introduza o valor da parcela (MT):', 'prompt', (val) => {
-                          if (val && !isNaN(val)) {
-                            const newPayments = [...(selectedQuote.payments || []), { amount: Number(val), status: 'Pago', date: new Date() }];
-                            handleUpdateQuote({ payments: newPayments });
-                          }
-                        });
-                      }}
-                      style={{ background: '#FFCC00', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: '700', cursor: 'pointer' }}
-                    >
-                      + Novo Pagamento
-                    </button>
+                    <div style={{ display: 'flex', gap: '1rem' }}>
+                       <div style={{ background: '#f8fafc', padding: '10px 20px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <BarChart2 size={18} color="#64748b" />
+                          <div>
+                            <p style={{ margin: 0, fontSize: '0.65rem', color: '#64748b', fontWeight: '700' }}>CUSTO REAL (MATERIAIS)</p>
+                            <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: '800', color: (selectedQuote.materials || []).reduce((acc, m) => acc + m.cost, 0) > selectedQuote.totalBudget ? '#ef4444' : '#1e293b' }}>
+                              {(selectedQuote.materials || []).reduce((acc, m) => acc + m.cost, 0).toLocaleString()} MT
+                            </p>
+                          </div>
+                          {(selectedQuote.materials || []).reduce((acc, m) => acc + m.cost, 0) > selectedQuote.totalBudget && (
+                            <AlertTriangle size={18} color="#ef4444" />
+                          )}
+                       </div>
+                       <button 
+                        onClick={() => {
+                          showAlert('Adicionar Pagamento', 'Introduza o valor da parcela (MT):', 'prompt', (val) => {
+                            if (val && !isNaN(val)) {
+                              const newPayments = [...(selectedQuote.payments || []), { amount: Number(val), status: 'Pago', date: new Date() }];
+                              handleUpdateQuote({ payments: newPayments });
+                            }
+                          });
+                        }}
+                        style={{ background: '#FFCC00', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: '700', cursor: 'pointer' }}
+                      >
+                        + Novo Pagamento
+                      </button>
+                    </div>
                   </div>
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead>
@@ -1514,8 +1648,9 @@ const Dashboard = () => {
               )}
             </div>
           </div>
-        )
-      }
+        </div>
+        ) : null}
+
       {/* Modern Alert Component */}
       <ModernAlert 
         {...alertConfig} 

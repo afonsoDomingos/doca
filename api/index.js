@@ -108,7 +108,17 @@ const QuoteSchema = new mongoose.Schema({
   
   workPhotos: [String], // URLs de fotos da obra
   
-  additionalDetails: { type: mongoose.Schema.Types.Mixed, default: {} }, // Guardar detalhes dinâmicos (m2, pisos, urgência, etc)
+  additionalDetails: { type: mongoose.Schema.Types.Mixed, default: {} }, 
+  
+  tasks: [{
+    title: String,
+    status: { type: String, default: 'Pendente' }, 
+    startDate: Date,
+    deadline: Date,
+    progress: { type: Number, default: 0 },
+    dependencies: [String],
+    resources: [String]
+  }],
   
   createdAt: { type: Date, default: Date.now }
 });
