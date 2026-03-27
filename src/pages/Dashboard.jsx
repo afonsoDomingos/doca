@@ -19,7 +19,10 @@ import {
   Clock,
   CheckCircle2,
   Users,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Save,
+  Camera,
+  ShieldCheck
 } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -33,6 +36,12 @@ const Dashboard = () => {
   const [quotes, setQuotes] = useState([]);
   const [users, setUsers] = useState([]);
   const [banners, setBanners] = useState([]);
+  const [settings, setSettings] = useState({
+    supportWhatsapp: '',
+    supportEmail: '',
+    address: 'Maputo, Moçambique',
+    companyName: 'DOCA MOZAMBIQUE'
+  });
   const [loading, setLoading] = useState(true);
   const [loadingImage, setLoadingImage] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -78,20 +87,25 @@ const Dashboard = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [projectsRes, quotesRes, usersRes, bannersRes] = await Promise.all([
+      const [projectsRes, quotesRes, usersRes, bannersRes, settingsRes] = await Promise.all([
         fetch(`${API_URL}/api/projects`),
         fetch(`${API_URL}/api/quotes`),
         fetch(`${API_URL}/api/users`),
-        fetch(`${API_URL}/api/banners?type=about`)
+        fetch(`${API_URL}/api/banners?type=about`),
+        fetch(`${API_URL}/api/settings`)
       ]);
       const projectsData = await projectsRes.json();
       const quotesData = await quotesRes.json();
       const usersData = await usersRes.json();
       const bannersData = await bannersRes.json();
+      const settingsData = await settingsRes.json();
       setProjects(projectsData);
       setQuotes(quotesData);
       setUsers(usersData);
       setBanners(bannersData);
+      if (Object.keys(settingsData).length > 0) {
+        setSettings(prev => ({ ...prev, ...settingsData }));
+      }
       
       // Calculate Stats
       setStats({
@@ -228,7 +242,22 @@ const Dashboard = () => {
         console.error('Error deleting banner:', err);
       }
     });
+  };
 
+  const handleUpdateSettings = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`${API_URL}/api/settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings)
+      });
+      if (res.ok) {
+        showAlert('Sucesso', 'Configurações atualizadas com sucesso!', 'success');
+      }
+    } catch (err) {
+      showAlert('Erro', 'Falha ao salvar configurações', 'error');
+    }
   };
 
   const handleDeleteUser = async (userId, name) => {
@@ -450,16 +479,20 @@ const Dashboard = () => {
                 }}>
                 <ImageIcon size={20} /> Conteúdo Institucional
               </li>
-              <li style={{ 
-                color: '#94a3b8', 
-                padding: '12px 16px', 
-                borderRadius: '12px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '12px',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}>
+              <li 
+                onClick={() => setActiveTab('settings')}
+                style={{ 
+                  background: activeTab === 'settings' ? 'rgba(235, 137, 35, 0.1)' : 'transparent', 
+                  color: activeTab === 'settings' ? '#FFCC00' : '#94a3b8', 
+                  padding: '12px 16px', 
+                  borderRadius: '12px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '12px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  transition: 'all 0.2s'
+                }}>
                 <Settings size={20} /> Configurações
               </li>
               <li 
@@ -1398,6 +1431,85 @@ const Dashboard = () => {
                         Nenhuma foto registada para esta obra.
                       </div>
                     )}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'settings' && (
+                <div>
+                  <header style={{ marginBottom: '3rem' }}>
+                    <div style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Administração <ChevronRight size={14} /> <span style={{ color: '#FFCC00', fontWeight: '600' }}>Configurações</span></div>
+                    <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: 0, letterSpacing: '-1px' }}>
+                      Configurações Globais
+                    </h1>
+                    <p style={{ color: '#64748b', marginTop: '1rem' }}>Gerencie as informações de contato e dados da empresa que aparecem no site.</p>
+                  </header>
+
+                  <div style={{ maxWidth: '800px' }}>
+                    <form onSubmit={handleUpdateSettings} style={{ background: 'white', padding: '3rem', borderRadius: '32px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)', border: '1px solid white' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                        <div>
+                          <label style={{ display: 'block', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' }}>Nome da Empresa</label>
+                          <input 
+                            type="text" 
+                            value={settings.companyName}
+                            onChange={(e) => setSettings({...settings, companyName: e.target.value})}
+                            style={{ width: '100%', padding: '14px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#f8fafc', outline: 'none' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' }}>WhatsApp de Suporte</label>
+                          <input 
+                            type="text" 
+                            value={settings.supportWhatsapp}
+                            placeholder="+258 8X XXX XXXX"
+                            onChange={(e) => setSettings({...settings, supportWhatsapp: e.target.value})}
+                            style={{ width: '100%', padding: '14px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#f8fafc', outline: 'none' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' }}>E-mail de Contato</label>
+                          <input 
+                            type="email" 
+                            value={settings.supportEmail}
+                            placeholder="geral@docacm.com"
+                            onChange={(e) => setSettings({...settings, supportEmail: e.target.value})}
+                            style={{ width: '100%', padding: '14px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#f8fafc', outline: 'none' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' }}>Endereço Principal</label>
+                          <input 
+                            type="text" 
+                            value={settings.address}
+                            onChange={(e) => setSettings({...settings, address: e.target.value})}
+                            style={{ width: '100%', padding: '14px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#f8fafc', outline: 'none' }}
+                          />
+                        </div>
+                      </div>
+
+                      <div style={{ marginTop: '3rem', display: 'flex', justifyContent: 'flex-end' }}>
+                        <button 
+                          type="submit"
+                          style={{ 
+                            background: 'linear-gradient(135deg, #FFCC00 0%, #d87a1d 100%)', 
+                            color: 'white', 
+                            padding: '16px 40px', 
+                            borderRadius: '18px', 
+                            border: 'none', 
+                            fontWeight: '800', 
+                            fontSize: '1rem', 
+                            cursor: 'pointer',
+                            boxShadow: '0 10px 15px -3px rgba(255, 204, 0, 0.3)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px'
+                          }}
+                        >
+                          <Save size={20} /> SALVAR ALTERAÇÕES
+                        </button>
+                      </div>
+                    </form>
                   </div>
                 </div>
               )}

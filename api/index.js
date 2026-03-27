@@ -120,11 +120,18 @@ const BannerSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
+const SettingSchema = new mongoose.Schema({
+  key: { type: String, required: true, unique: true },
+  value: { type: mongoose.Schema.Types.Mixed, required: true },
+  updatedAt: { type: Date, default: Date.now }
+});
+
 const Project = mongoose.models.Project || mongoose.model('Project', ProjectSchema);
 const Admin = mongoose.models.Admin || mongoose.model('Admin', AdminSchema);
 const Quote = mongoose.models.Quote || mongoose.model('Quote', QuoteSchema);
 const User = mongoose.models.User || mongoose.model('User', UserSchema);
 const Banner = mongoose.models.Banner || mongoose.model('Banner', BannerSchema);
+const Setting = mongoose.models.Setting || mongoose.model('Setting', SettingSchema);
 
 // Routes
 // Projects CRUD
@@ -557,6 +564,34 @@ app.post('/api/upload', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Erro ao fazer upload da imagem' });
+  }
+});
+
+// Settings Endpoints
+app.get('/api/settings', async (req, res) => {
+  try {
+    await connectToDatabase();
+    const settings = await Setting.find();
+    // Convert array to object for easier use
+    const config = {};
+    settings.forEach(s => config[s.key] = s.value);
+    res.json(config);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/settings', async (req, res) => {
+  try {
+    await connectToDatabase();
+    const updates = req.body; // { key: value, ... }
+    const promises = Object.entries(updates).map(([key, value]) => 
+      Setting.findOneAndUpdate({ key }, { value, updatedAt: new Date() }, { upsert: true, new: true })
+    );
+    await Promise.all(promises);
+    res.json({ message: 'Settings updated' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
