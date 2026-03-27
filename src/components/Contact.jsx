@@ -24,7 +24,7 @@ const Contact = () => {
 
             <ul style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
               <li style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
-                <div style={{ backgroundColor: '#eb892315', color: '#eb8923', width: '50px', height: '50px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div style={{ backgroundColor: '#FFCC0015', color: '#FFCC00', width: '50px', height: '50px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <Phone size={24} />
                 </div>
                 <div>
@@ -33,7 +33,7 @@ const Contact = () => {
                 </div>
               </li>
               <li style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
-                <div style={{ backgroundColor: '#eb892315', color: '#eb8923', width: '50px', height: '50px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div style={{ backgroundColor: '#FFCC0015', color: '#FFCC00', width: '50px', height: '50px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <Mail size={24} />
                 </div>
                 <div>
@@ -42,7 +42,7 @@ const Contact = () => {
                 </div>
               </li>
               <li style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
-                <div style={{ backgroundColor: '#eb892315', color: '#eb8923', width: '50px', height: '50px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div style={{ backgroundColor: '#FFCC0015', color: '#FFCC00', width: '50px', height: '50px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <MapPin size={24} />
                 </div>
                 <div>

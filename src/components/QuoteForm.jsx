@@ -133,7 +133,7 @@ const QuoteForm = ({ onComplete }) => {
           }}
           className="hover-card"
         >
-          <div style={{ background: '#eb892315', padding: '1rem', borderRadius: '50%', color: '#eb8923' }}>
+          <div style={{ background: '#FFCC0015', padding: '1rem', borderRadius: '50%', color: '#FFCC00' }}>
             <Calendar size={32} />
           </div>
           <span style={{ fontWeight: '600', color: '#1e293b' }}>Pela Plataforma</span>
@@ -175,8 +175,8 @@ const QuoteForm = ({ onComplete }) => {
             style={{ 
               padding: '1.25rem', 
               borderRadius: '16px', 
-              border: formData.serviceType === s.id ? '2px solid #eb8923' : '1px solid #e2e8f0',
-              background: formData.serviceType === s.id ? '#eb892305' : 'white',
+              border: formData.serviceType === s.id ? '2px solid #FFCC00' : '1px solid #e2e8f0',
+              background: formData.serviceType === s.id ? '#FFCC0005' : 'white',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -184,7 +184,7 @@ const QuoteForm = ({ onComplete }) => {
               transition: 'all 0.2s'
             }}
           >
-            <s.icon size={20} color={formData.serviceType === s.id ? '#eb8923' : '#64748b'} />
+            <s.icon size={20} color={formData.serviceType === s.id ? '#FFCC00' : '#64748b'} />
             <span style={{ fontWeight: '600', color: '#1e293b', fontSize: '0.9rem' }}>{s.label}</span>
           </button>
         ))}
@@ -241,7 +241,7 @@ const QuoteForm = ({ onComplete }) => {
               padding: '14px', 
               borderRadius: '12px', 
               border: 'none', 
-              background: '#eb8923', 
+              background: '#FFCC00', 
               fontWeight: '600', 
               color: 'white', 
               display: 'flex', 
@@ -282,13 +282,13 @@ const QuoteForm = ({ onComplete }) => {
               </select>
               {formData.additionalDetails?.propertyType === 'Outro' && (
                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ marginTop: '1rem' }}>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#eb8923', marginBottom: '0.5rem' }}>Especifique o Tipo de Obra</label>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#FFCC00', marginBottom: '0.5rem' }}>Especifique o Tipo de Obra</label>
                   <input 
                     type="text"
                     placeholder="Ex: Estaleiro, Ponte, etc..."
                     value={formData.additionalDetails?.customPropertyType || ''}
                     onChange={(e) => updateAdditionalDetail('customPropertyType', e.target.value)}
-                    style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #eb8923', background: 'white', outline: 'none' }}
+                    style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #FFCC00', background: 'white', outline: 'none' }}
                   />
                 </motion.div>
               )}
@@ -379,7 +379,7 @@ const QuoteForm = ({ onComplete }) => {
               padding: '14px', 
               borderRadius: '12px', 
               border: 'none', 
-              background: method === 'whatsapp' ? '#25D366' : '#eb8923', 
+              background: method === 'whatsapp' ? '#25D366' : '#FFCC00', 
               fontWeight: '600', 
               color: 'white', 
               display: 'flex', 
@@ -444,7 +444,7 @@ const QuoteForm = ({ onComplete }) => {
             <motion.div 
               initial={{ width: 0 }}
               animate={{ width: `${(step / 3) * 100}%` }}
-              style={{ height: '100%', background: '#eb8923', borderRadius: '100px' }}
+              style={{ height: '100%', background: '#FFCC00', borderRadius: '100px' }}
             />
           </div>
         </div>

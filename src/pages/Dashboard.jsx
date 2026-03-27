@@ -249,7 +249,7 @@ const Dashboard = () => {
         zIndex: 10
       }}>
         <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '3rem', padding: '0 0.5rem' }}>
-          <div style={{ background: '#eb8923', width: '40px', height: '40px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: '#FFCC00', width: '40px', height: '40px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <LayoutDashboard size={20} color="white" />
           </div>
           <span style={{ fontSize: '1.25rem', fontWeight: '700', letterSpacing: '0.5px', color: 'white' }}>DOCA ADMIN</span>
@@ -263,7 +263,7 @@ const Dashboard = () => {
                 onClick={() => setActiveTab('overview')}
                 style={{ 
                   background: activeTab === 'overview' ? 'rgba(235, 137, 35, 0.1)' : 'transparent', 
-                  color: activeTab === 'overview' ? '#eb8923' : '#94a3b8', 
+                  color: activeTab === 'overview' ? '#FFCC00' : '#94a3b8', 
                   padding: '12px 16px', 
                   borderRadius: '12px', 
                   display: 'flex', 
@@ -279,7 +279,7 @@ const Dashboard = () => {
                 onClick={() => setActiveTab('projects')}
                 style={{ 
                   background: activeTab === 'projects' ? 'rgba(235, 137, 35, 0.1)' : 'transparent', 
-                  color: activeTab === 'projects' ? '#eb8923' : '#94a3b8', 
+                  color: activeTab === 'projects' ? '#FFCC00' : '#94a3b8', 
                   padding: '12px 16px', 
                   borderRadius: '12px', 
                   display: 'flex', 
@@ -295,7 +295,7 @@ const Dashboard = () => {
                 onClick={() => setActiveTab('quotes')}
                 style={{ 
                   background: activeTab === 'quotes' ? 'rgba(235, 137, 35, 0.1)' : 'transparent', 
-                  color: activeTab === 'quotes' ? '#eb8923' : '#94a3b8', 
+                  color: activeTab === 'quotes' ? '#FFCC00' : '#94a3b8', 
                   padding: '12px 16px', 
                   borderRadius: '12px', 
                   display: 'flex', 
@@ -311,7 +311,7 @@ const Dashboard = () => {
                 onClick={() => setActiveTab('users')}
                 style={{ 
                   background: activeTab === 'users' ? 'rgba(235, 137, 35, 0.1)' : 'transparent', 
-                  color: activeTab === 'users' ? '#eb8923' : '#94a3b8', 
+                  color: activeTab === 'users' ? '#FFCC00' : '#94a3b8', 
                   padding: '12px 16px', 
                   borderRadius: '12px', 
                   display: 'flex', 
@@ -401,7 +401,7 @@ const Dashboard = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2rem' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
-                  Páginas <ChevronRight size={14} /> <span style={{ color: '#eb8923', fontWeight: '600' }}>Gestão de Usuários</span>
+                  Páginas <ChevronRight size={14} /> <span style={{ color: '#FFCC00', fontWeight: '600' }}>Gestão de Usuários</span>
                 </div>
                 <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: 0, letterSpacing: '-1px' }}>
                   Base de Clientes
@@ -432,7 +432,7 @@ const Dashboard = () => {
             {/* Micro Stats for Users */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
               <div style={{ background: 'white', padding: '1.5rem', borderRadius: '24px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                <div style={{ background: 'rgba(235, 137, 35, 0.1)', color: '#eb8923', padding: '15px', borderRadius: '18px' }}>
+                <div style={{ background: 'rgba(235, 137, 35, 0.1)', color: '#FFCC00', padding: '15px', borderRadius: '18px' }}>
                   <Users size={24} />
                 </div>
                 <div>
@@ -475,7 +475,7 @@ const Dashboard = () => {
                         onClick={() => handlePromote(user._id, user.name)}
                         style={{ 
                           background: 'rgba(235, 137, 35, 0.1)', 
-                          color: '#eb8923', 
+                          color: '#FFCC00', 
                           border: '1px solid rgba(235, 137, 35, 0.2)', 
                           padding: '10px 20px', 
                           borderRadius: '14px', 
@@ -519,7 +519,7 @@ const Dashboard = () => {
               </div>
 
               <div style={{ background: 'white', padding: '1.5rem', borderRadius: '24px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', border: '1px solid white' }}>
-                <div style={{ background: 'rgba(235, 137, 35, 0.1)', color: '#eb8923', width: '45px', height: '45px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+                <div style={{ background: 'rgba(235, 137, 35, 0.1)', color: '#FFCC00', width: '45px', height: '45px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
                   <Clock size={22} />
                 </div>
                 <p style={{ margin: 0, fontSize: '0.875rem', fontWeight: '600', color: '#64748b' }}>Orçamentos Pendentes</p>
@@ -540,7 +540,7 @@ const Dashboard = () => {
                 <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#1e293b' }}>Atividade Recente</h3>
                 <button 
                   onClick={() => setActiveTab('quotes')}
-                  style={{ background: 'none', border: 'none', color: '#eb8923', fontWeight: '700', fontSize: '0.875rem', cursor: 'pointer' }}
+                  style={{ background: 'none', border: 'none', color: '#FFCC00', fontWeight: '700', fontSize: '0.875rem', cursor: 'pointer' }}
                 >
                   Ver todos os orçamentos →
                 </button>
@@ -550,7 +550,7 @@ const Dashboard = () => {
                 {quotes.slice(0, 3).map((q, idx) => (
                   <div key={idx} style={{ padding: '1.25rem', background: '#f8fafc', borderRadius: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                      <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: q.status === 'Pendente' ? '#eb8923' : '#10b981' }} />
+                      <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: q.status === 'Pendente' ? '#FFCC00' : '#10b981' }} />
                       <div>
                         <p style={{ margin: 0, fontWeight: '700', color: '#1e293b', fontSize: '0.95rem' }}>{q.clientName}</p>
                         <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748b' }}>Solicitou: {q.serviceType}</p>
@@ -576,7 +576,7 @@ const Dashboard = () => {
             <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
-                  Páginas <ChevronRight size={14} /> <span style={{ color: '#eb8923', fontWeight: '600' }}>Portfolio</span>
+                  Páginas <ChevronRight size={14} /> <span style={{ color: '#FFCC00', fontWeight: '600' }}>Portfolio</span>
                 </div>
                 <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: 0, letterSpacing: '-1px' }}>
                   Gerenciar Projetos
@@ -596,7 +596,7 @@ const Dashboard = () => {
                 </div>
                 <button 
                   onClick={() => openModal()}
-                  style={{ background: 'linear-gradient(135deg, #eb8923 0%, #d87a1d 100%)', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '16px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 6px -1px rgba(235, 137, 35, 0.4)', cursor: 'pointer' }}
+                  style={{ background: 'linear-gradient(135deg, #FFCC00 0%, #d87a1d 100%)', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '16px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 6px -1px rgba(235, 137, 35, 0.4)', cursor: 'pointer' }}
                 >
                   <Plus size={20} /> Novo Projeto
                 </button>
@@ -608,7 +608,7 @@ const Dashboard = () => {
                 <div key={project._id} style={{ background: 'white', borderRadius: '28px', overflow: 'hidden', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.05)', border: '1px solid white', transition: 'transform 0.2s' }}>
                   <div style={{ position: 'relative', height: '200px' }}>
                     <img src={project.imageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <div style={{ position: 'absolute', top: '15px', right: '15px', background: 'rgba(255, 255, 255, 0.9)', padding: '6px 12px', borderRadius: '100px', fontSize: '0.7rem', fontWeight: '800', color: '#eb8923', textTransform: 'uppercase' }}>
+                    <div style={{ position: 'absolute', top: '15px', right: '15px', background: 'rgba(255, 255, 255, 0.9)', padding: '6px 12px', borderRadius: '100px', fontSize: '0.7rem', fontWeight: '800', color: '#FFCC00', textTransform: 'uppercase' }}>
                       {project.category}
                     </div>
                   </div>
@@ -637,7 +637,7 @@ const Dashboard = () => {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2rem' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
-                    Páginas <ChevronRight size={14} /> <span style={{ color: '#eb8923', fontWeight: '600' }}>Orçamentos</span>
+                    Páginas <ChevronRight size={14} /> <span style={{ color: '#FFCC00', fontWeight: '600' }}>Orçamentos</span>
                   </div>
                   <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: 0, letterSpacing: '-1px' }}>
                     Solicitações de Clientes
@@ -844,7 +844,7 @@ const Dashboard = () => {
                 </button>
                 <button 
                   type="submit"
-                  style={{ flex: 1, padding: '12px', borderRadius: '12px', border: 'none', background: '#eb8923', fontWeight: '600', color: 'white', cursor: 'pointer' }}
+                  style={{ flex: 1, padding: '12px', borderRadius: '12px', border: 'none', background: '#FFCC00', fontWeight: '600', color: 'white', cursor: 'pointer' }}
                 >
                   {editingProject ? 'Salvar Alterações' : 'Criar Projeto'}
                 </button>
@@ -879,13 +879,13 @@ const Dashboard = () => {
                     padding: '1rem 0',
                     border: 'none',
                     background: 'none',
-                    color: manageTab === tab ? '#eb8923' : '#64748b',
+                    color: manageTab === tab ? '#FFCC00' : '#64748b',
                     fontWeight: '800',
                     fontSize: '0.875rem',
                     textTransform: 'uppercase',
                     letterSpacing: '1px',
                     cursor: 'pointer',
-                    borderBottom: manageTab === tab ? '3px solid #eb8923' : '3px solid transparent',
+                    borderBottom: manageTab === tab ? '3px solid #FFCC00' : '3px solid transparent',
                     transition: 'all 0.2s'
                   }}
                 >
@@ -975,7 +975,7 @@ const Dashboard = () => {
                           handleUpdateQuote({ payments: newPayments });
                         }
                       }}
-                      style={{ background: '#eb8923', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: '700', cursor: 'pointer' }}
+                      style={{ background: '#FFCC00', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: '700', cursor: 'pointer' }}
                     >
                       + Novo Pagamento
                     </button>
@@ -1013,7 +1013,7 @@ const Dashboard = () => {
                       max="100"
                       value={selectedQuote.percentage || 0}
                       onChange={(e) => handleUpdateQuote({ percentage: Number(e.target.value) })}
-                      style={{ width: '100%', accentColor: '#eb8923', height: '10px' }}
+                      style={{ width: '100%', accentColor: '#FFCC00', height: '10px' }}
                     />
                   </div>
                   
@@ -1041,7 +1041,7 @@ const Dashboard = () => {
                           <p style={{ margin: 0, fontWeight: '700' }}>{mat.name}</p>
                           <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748b' }}>{new Date(mat.date).toLocaleDateString()}</p>
                         </div>
-                        <p style={{ margin: 0, color: '#eb8923', fontWeight: '800' }}>{mat.cost.toLocaleString()} MT</p>
+                        <p style={{ margin: 0, color: '#FFCC00', fontWeight: '800' }}>{mat.cost.toLocaleString()} MT</p>
                       </div>
                     ))}
                   </div>
@@ -1059,7 +1059,7 @@ const Dashboard = () => {
                           handleUpdateQuote({ workPhotos: newPhotos });
                         }
                       }}
-                      style={{ background: '#eb8923', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '16px', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                      style={{ background: '#FFCC00', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '16px', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
                     >
                       <Plus size={20} /> Adicionar Foto à Obra
                     </button>

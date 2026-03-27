@@ -124,7 +124,7 @@ const CustomerAuth = () => {
           style={{ position: 'relative', zIndex: 10 }}
         >
           <h1 style={{ fontSize: '3.5rem', fontWeight: '800', marginBottom: '1.5rem', lineHeight: '1.1', letterSpacing: '-1px' }}>
-            Portal do Cliente <br /> <span style={{ color: '#eb8923' }}>DOCA MOZAMBIQUE</span>
+            Portal do Cliente <br /> <span style={{ color: '#FFCC00' }}>DOCA MOZAMBIQUE</span>
           </h1>
           <p style={{ fontSize: '1.25rem', opacity: '0.8', lineHeight: '1.6', maxWidth: '500px' }}>
             Aceda para gerenciar os seus orçamentos, acompanhar o estado das suas obras e comunicar-se diretamente com a nossa equipa técnica.
