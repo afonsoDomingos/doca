@@ -323,6 +323,16 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
+app.delete('/api/users/:id', async (req, res) => {
+  try {
+    await connectToDatabase();
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ message: 'User deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Update User Profile
 app.put('/api/user/:id', async (req, res) => {
   try {

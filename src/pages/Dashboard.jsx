@@ -231,6 +231,29 @@ const Dashboard = () => {
 
   };
 
+  const handleDeleteUser = async (userId, name) => {
+    showAlert(
+      'Remover Usuário',
+      `Tens a certeza que desejas excluir permanentemente a conta de ${name}? Esta ação não pode ser desfeita.`,
+      'confirm',
+      async () => {
+        try {
+          const response = await fetch(`${API_URL}/api/users/${userId}`, {
+            method: 'DELETE'
+          });
+          if (response.ok) {
+            showAlert('Sucesso', 'Usuário removido com sucesso.', 'success');
+            fetchData();
+          } else {
+             showAlert('Erro', 'Não foi possível remover o usuário.', 'error');
+          }
+        } catch (err) {
+          console.error('Error deleting user:', err);
+        }
+      }
+    );
+  };
+
   const handlePromote = async (userId, name) => {
     showAlert(
       'Promover Usuário',
@@ -576,22 +599,45 @@ const Dashboard = () => {
                       <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>{user.phone || 'Sem telefone'}</p>
                     </td>
                     <td style={{ padding: '1.5rem 2.5rem', textAlign: 'center' }}>
-                      <button 
-                        onClick={() => handlePromote(user._id, user.name)}
-                        style={{ 
-                          background: 'rgba(235, 137, 35, 0.1)', 
-                          color: '#FFCC00', 
-                          border: '1px solid rgba(235, 137, 35, 0.2)', 
-                          padding: '10px 20px', 
-                          borderRadius: '14px', 
-                          fontSize: '0.875rem', 
-                          fontWeight: '700', 
-                          cursor: 'pointer',
-                          transition: 'all 0.2s'
-                        }}
-                      >
-                        Promover a Admin
-                      </button>
+                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                        <button 
+                          onClick={() => handlePromote(user._id, user.name)}
+                          style={{ 
+                            background: 'rgba(235, 137, 35, 0.1)', 
+                            color: '#FFCC00', 
+                            border: '1px solid rgba(235, 137, 35, 0.2)', 
+                            padding: '10px 20px', 
+                            borderRadius: '14px', 
+                            fontSize: '0.875rem', 
+                            fontWeight: '700', 
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                          }}
+                        >
+                          <ShieldCheck size={16} /> Promover
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteUser(user._id, user.name)}
+                          style={{ 
+                            background: 'rgba(239, 68, 68, 0.1)', 
+                            color: '#ef4444', 
+                            border: '1px solid rgba(239, 68, 68, 0.2)', 
+                            padding: '10px', 
+                            borderRadius: '14px', 
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                          title="Excluir Usuário"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
