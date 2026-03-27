@@ -1286,36 +1286,72 @@ const Dashboard = () => {
 
               {manageTab === 'gallery' && (
                 <div>
-                  <div style={{ marginBottom: '2rem' }}>
-                    <button 
-                      onClick={() => {
-                        showAlert('Foto da Obra', 'Introduza a URL da imagem (Dica: Use ImgBB ou Cloudinary):', 'prompt', (url) => {
-                          if (url) {
-                            const newPhotos = [...(selectedQuote.workPhotos || []), url];
-                            handleUpdateQuote({ workPhotos: newPhotos });
-                          }
-                        });
-                      }}
-                      style={{ background: '#FFCC00', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '16px', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
-                    >
-                      <Plus size={20} /> Adicionar Foto à Obra
-                    </button>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                    <h4 style={{ margin: 0 }}>Galeria de Evolução da Obra</h4>
+                    <label style={{ 
+                      background: 'linear-gradient(135deg, #FFCC00 0%, #d87a1d 100%)', 
+                      color: 'white', 
+                      padding: '12px 24px', 
+                      borderRadius: '16px', 
+                      fontWeight: '800', 
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}>
+                      <Camera size={20} /> {loadingImage ? 'Processando...' : 'Adicionar Foto à Obra'}
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        style={{ display: 'none' }} 
+                        disabled={loadingImage}
+                        onChange={async (e) => {
+                          const file = e.target.files[0];
+                          if (!file) return;
+                          setLoadingImage(true);
+                          const reader = new FileReader();
+                          reader.readAsDataURL(file);
+                          reader.onloadend = async () => {
+                            try {
+                              const res = await fetch(`${API_URL}/api/upload`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ data: reader.result })
+                              });
+                              const data = await res.json();
+                              const newPhotos = [...(selectedQuote.workPhotos || []), data.url];
+                              handleUpdateQuote({ workPhotos: newPhotos });
+                            } catch (err) {
+                               showAlert('Erro', 'Falha no upload', 'error');
+                            } finally {
+                              setLoadingImage(false);
+                            }
+                          };
+                        }}
+                      />
+                    </label>
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1.5rem' }}>
                     {(selectedQuote.workPhotos || []).map((photo, i) => (
-                      <div key={i} style={{ borderRadius: '16px', overflow: 'hidden', height: '150px', position: 'relative' }}>
-                        <img src={photo} alt="Progress" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <div key={i} style={{ borderRadius: '16px', overflow: 'hidden', height: '180px', position: 'relative', border: '1px solid #e2e8f0' }}>
+                        <img src={photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         <button 
                           onClick={() => {
                             const newPhotos = selectedQuote.workPhotos.filter((_, index) => index !== i);
                             handleUpdateQuote({ workPhotos: newPhotos });
                           }}
-                          style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: '8px', padding: '5px', cursor: 'pointer' }}
+                          style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: '8px', padding: '6px', cursor: 'pointer' }}
                         >
-                          <Trash2 size={14} color="red" />
+                          <Trash2 size={14} color="#ef4444" />
                         </button>
                       </div>
                     ))}
+                    {(selectedQuote.workPhotos || []).length === 0 && (
+                      <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '3rem', color: '#94a3b8', border: '2px dashed #e2e8f0', borderRadius: '24px' }}>
+                        Nenhuma foto registada para esta obra.
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
