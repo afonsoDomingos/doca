@@ -1016,6 +1016,86 @@ const Dashboard = () => {
             </div>
           </div>
         )}
+
+        {/* TAB: SETTINGS */}
+        {activeTab === 'settings' && (
+          <div>
+            <header style={{ marginBottom: '3rem' }}>
+              <div style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Administração <ChevronRight size={14} /> <span style={{ color: '#FFCC00', fontWeight: '600' }}>Configurações</span></div>
+              <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: 0, letterSpacing: '-1px' }}>
+                Configurações Globais
+              </h1>
+              <p style={{ color: '#64748b', marginTop: '1rem' }}>Gerencie as informações de contato e dados da empresa que aparecem no site.</p>
+            </header>
+
+            <div style={{ maxWidth: '800px' }}>
+              <form onSubmit={handleUpdateSettings} style={{ background: 'white', padding: '3rem', borderRadius: '32px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)', border: '1px solid white' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' }}>Nome da Empresa</label>
+                    <input 
+                      type="text" 
+                      value={settings.companyName}
+                      onChange={(e) => setSettings({...settings, companyName: e.target.value})}
+                      style={{ width: '100%', padding: '14px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#f8fafc', outline: 'none' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' }}>WhatsApp de Suporte</label>
+                    <input 
+                      type="text" 
+                      value={settings.supportWhatsapp}
+                      placeholder="+258 8X XXX XXXX"
+                      onChange={(e) => setSettings({...settings, supportWhatsapp: e.target.value})}
+                      style={{ width: '100%', padding: '14px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#f8fafc', outline: 'none' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' }}>E-mail de Contato</label>
+                    <input 
+                      type="email" 
+                      value={settings.supportEmail}
+                      placeholder="geral@docacm.com"
+                      onChange={(e) => setSettings({...settings, supportEmail: e.target.value})}
+                      style={{ width: '100%', padding: '14px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#f8fafc', outline: 'none' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' }}>Endereço Principal</label>
+                    <input 
+                      type="text" 
+                      value={settings.address}
+                      onChange={(e) => setSettings({...settings, address: e.target.value})}
+                      style={{ width: '100%', padding: '14px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#f8fafc', outline: 'none' }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ marginTop: '3rem', display: 'flex', justifyContent: 'flex-end' }}>
+                  <button 
+                    type="submit"
+                    style={{ 
+                      background: 'linear-gradient(135deg, #FFCC00 0%, #d87a1d 100%)', 
+                      color: 'white', 
+                      padding: '16px 40px', 
+                      borderRadius: '18px', 
+                      border: 'none', 
+                      fontWeight: '800', 
+                      fontSize: '1rem', 
+                      cursor: 'pointer',
+                      boxShadow: '0 10px 15px -3px rgba(255, 204, 0, 0.3)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px'
+                    }}
+                  >
+                    <Save size={20} /> SALVAR ALTERAÇÕES
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* CRUD Modal */}
@@ -1435,82 +1515,6 @@ const Dashboard = () => {
                 </div>
               )}
 
-              {activeTab === 'settings' && (
-                <div>
-                  <header style={{ marginBottom: '3rem' }}>
-                    <div style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Administração <ChevronRight size={14} /> <span style={{ color: '#FFCC00', fontWeight: '600' }}>Configurações</span></div>
-                    <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: 0, letterSpacing: '-1px' }}>
-                      Configurações Globais
-                    </h1>
-                    <p style={{ color: '#64748b', marginTop: '1rem' }}>Gerencie as informações de contato e dados da empresa que aparecem no site.</p>
-                  </header>
-
-                  <div style={{ maxWidth: '800px' }}>
-                    <form onSubmit={handleUpdateSettings} style={{ background: 'white', padding: '3rem', borderRadius: '32px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)', border: '1px solid white' }}>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-                        <div>
-                          <label style={{ display: 'block', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' }}>Nome da Empresa</label>
-                          <input 
-                            type="text" 
-                            value={settings.companyName}
-                            onChange={(e) => setSettings({...settings, companyName: e.target.value})}
-                            style={{ width: '100%', padding: '14px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#f8fafc', outline: 'none' }}
-                          />
-                        </div>
-                        <div>
-                          <label style={{ display: 'block', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' }}>WhatsApp de Suporte</label>
-                          <input 
-                            type="text" 
-                            value={settings.supportWhatsapp}
-                            placeholder="+258 8X XXX XXXX"
-                            onChange={(e) => setSettings({...settings, supportWhatsapp: e.target.value})}
-                            style={{ width: '100%', padding: '14px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#f8fafc', outline: 'none' }}
-                          />
-                        </div>
-                        <div>
-                          <label style={{ display: 'block', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' }}>E-mail de Contato</label>
-                          <input 
-                            type="email" 
-                            value={settings.supportEmail}
-                            placeholder="geral@docacm.com"
-                            onChange={(e) => setSettings({...settings, supportEmail: e.target.value})}
-                            style={{ width: '100%', padding: '14px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#f8fafc', outline: 'none' }}
-                          />
-                        </div>
-                        <div>
-                          <label style={{ display: 'block', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' }}>Endereço Principal</label>
-                          <input 
-                            type="text" 
-                            value={settings.address}
-                            onChange={(e) => setSettings({...settings, address: e.target.value})}
-                            style={{ width: '100%', padding: '14px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#f8fafc', outline: 'none' }}
-                          />
-                        </div>
-                      </div>
-
-                      <div style={{ marginTop: '3rem', display: 'flex', justifyContent: 'flex-end' }}>
-                        <button 
-                          type="submit"
-                          style={{ 
-                            background: 'linear-gradient(135deg, #FFCC00 0%, #d87a1d 100%)', 
-                            color: 'white', 
-                            padding: '16px 40px', 
-                            borderRadius: '18px', 
-                            border: 'none', 
-                            fontWeight: '800', 
-                            fontSize: '1rem', 
-                            cursor: 'pointer',
-                            boxShadow: '0 10px 15px -3px rgba(255, 204, 0, 0.3)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '10px'
-                          }}
-                        >
-                          <Save size={20} /> SALVAR ALTERAÇÕES
-                        </button>
-                      </div>
-                    </form>
-                  </div>
                 </div>
               )}
             </div>
