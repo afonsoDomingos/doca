@@ -21,6 +21,7 @@ import {
   Users,
   Image as ImageIcon
 } from 'lucide-react';
+import { PieChart, Pie, Cell, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:5000' : '');
 
@@ -223,6 +224,20 @@ const Dashboard = () => {
       console.error('Error updating quote:', err);
     }
   };
+
+  const getStatusData = () => {
+    const counts = { Pendente: 0, 'Em Análise': 0, 'Em Execução': 0, Finalização: 0, Concluído: 0, Cancelado: 0 };
+    quotes.forEach(q => { if (counts[q.status] !== undefined) counts[q.status]++; });
+    return Object.keys(counts).filter(k => counts[k] > 0).map(k => ({ name: k, value: counts[k] }));
+  };
+
+  const getServiceData = () => {
+    const counts = {};
+    quotes.forEach(q => { counts[q.serviceType] = (counts[q.serviceType] || 0) + 1; });
+    return Object.keys(counts).map(k => ({ name: k, valor: counts[k] })).sort((a,b) => b.valor - a.valor).slice(0, 5);
+  };
+
+  const COLORS = ['#FFCC00', '#3b82f6', '#8b5cf6', '#f59e0b', '#10b981', '#ef4444'];
 
   const filteredProjects = projects.filter(p => 
     p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -532,6 +547,49 @@ const Dashboard = () => {
                 </div>
                 <p style={{ margin: 0, fontSize: '0.875rem', fontWeight: '600', color: '#64748b' }}>Total de Clientes</p>
                 <h4 style={{ margin: '4px 0 0', fontSize: '2rem', fontWeight: '900', color: '#1e293b' }}>{stats.totalUsers}</h4>
+              </div>
+            </div>
+
+            {/* CHARTS GRID */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
+              <div style={{ background: 'white', padding: '2rem', borderRadius: '32px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', border: '1px solid white' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#1e293b', marginBottom: '1.5rem' }}>Distribuição de Pedidos por Estado</h3>
+                <div style={{ height: '300px' }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={getStatusData()}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        outerRadius={100}
+                        fill="#8884d8"
+                        dataKey="value"
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      >
+                        {getStatusData().map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <RechartsTooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              <div style={{ background: 'white', padding: '2rem', borderRadius: '32px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', border: '1px solid white' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#1e293b', marginBottom: '1.5rem' }}>Serviços Mais Solicitados</h3>
+                <div style={{ height: '300px' }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={getServiceData()}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                      <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                      <YAxis allowDecimals={false} />
+                      <RechartsTooltip cursor={{ fill: 'rgba(255,204,0,0.1)' }} />
+                      <Bar dataKey="valor" fill="#1e293b" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             </div>
 
