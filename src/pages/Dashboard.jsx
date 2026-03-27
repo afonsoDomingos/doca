@@ -409,136 +409,136 @@ const Dashboard = () => {
           display: 'flex', 
           flexDirection: isSidebarCollapsed ? 'row' : 'column', 
           alignItems: 'center', 
-          gap: isSidebarCollapsed ? '0' : '10px', 
-          marginBottom: '3rem', 
+          gap: isSidebarCollapsed ? '0' : '4px', 
+          marginBottom: '2rem', 
           padding: '0 0.5rem',
           textAlign: 'center'
         }}>
-          <img src="/LOGO SEM FUNDO.png" alt="DOCA" style={{ height: isSidebarCollapsed ? '32px' : '52px', objectFit: 'contain', transition: 'all 0.3s' }} />
+          <img src="/LOGO SEM FUNDO.png" alt="DOCA" style={{ height: isSidebarCollapsed ? '32px' : '44px', objectFit: 'contain', transition: 'all 0.3s' }} />
           {!isSidebarCollapsed && (
-            <span style={{ fontSize: '0.9rem', fontWeight: '800', letterSpacing: '2px', color: '#FFCC00', textTransform: 'uppercase', marginTop: '4px' }}>DOCA ADMIN</span>
+            <span style={{ fontSize: '0.75rem', fontWeight: '900', letterSpacing: '2px', color: 'rgba(255, 204, 0, 0.8)', textTransform: 'uppercase', marginTop: '4px' }}>DOCA ADMIN</span>
           )}
         </Link>
 
         <nav style={{ flex: 1 }}>
-          <div style={{ marginBottom: '2rem' }}>
+          <div style={{ marginBottom: '1.25rem' }}>
             {!isSidebarCollapsed && (
-              <p style={{ color: '#64748b', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '1rem', padding: '0 0.5rem' }}>Menu Principal</p>
+              <p style={{ color: '#475569', fontSize: '0.65rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.75rem', padding: '0 0.5rem', opacity: 0.6 }}>GERÊNCIA</p>
             )}
-            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
               <li 
                 onClick={() => setActiveTab('overview')}
                 style={{ 
-                  background: activeTab === 'overview' ? 'rgba(235, 137, 35, 0.1)' : 'transparent', 
-                  color: activeTab === 'overview' ? '#FFCC00' : '#94a3b8', 
-                  padding: '12px 16px', 
+                  background: activeTab === 'overview' ? 'rgba(255, 204, 0, 0.12)' : 'transparent', 
+                  color: activeTab === 'overview' ? '#FFCC00' : 'rgba(255,255,255,0.7)', 
+                  padding: '10px 14px', 
                   borderRadius: '12px', 
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
-                  gap: isSidebarCollapsed ? '0' : '16px', 
+                  gap: isSidebarCollapsed ? '0' : '12px', 
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  marginBottom: '4px'
+                  transition: 'all 0.2s ease',
+                  border: activeTab === 'overview' ? '1px solid rgba(255, 204, 0, 0.2)' : '1px solid transparent'
                 }}
               >
-                <LayoutDashboard size={20} />
-                {!isSidebarCollapsed && <span style={{ fontWeight: '600' }}>Visão Geral</span>}
+                <LayoutDashboard size={18} />
+                {!isSidebarCollapsed && <span style={{ fontWeight: '700', fontSize: '0.85rem' }}>Visão Geral</span>}
               </li>
               <li 
                 onClick={() => setActiveTab('projects')}
                 style={{ 
-                  background: activeTab === 'projects' ? 'rgba(235, 137, 35, 0.1)' : 'transparent', 
-                  color: activeTab === 'projects' ? '#FFCC00' : '#94a3b8', 
-                  padding: '12px 16px', 
+                  background: activeTab === 'projects' ? 'rgba(255, 204, 0, 0.12)' : 'transparent', 
+                  color: activeTab === 'projects' ? '#FFCC00' : 'rgba(255,255,255,0.7)', 
+                  padding: '10px 14px', 
                   borderRadius: '12px', 
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
-                  gap: isSidebarCollapsed ? '0' : '16px', 
+                  gap: isSidebarCollapsed ? '0' : '12px', 
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  marginBottom: '4px'
+                  transition: 'all 0.2s ease',
+                  border: activeTab === 'projects' ? '1px solid rgba(255, 204, 0, 0.2)' : '1px solid transparent'
                 }}
               >
-                <Briefcase size={20} />
-                {!isSidebarCollapsed && <span style={{ fontWeight: '600' }}>Projetos</span>}
+                <Briefcase size={18} />
+                {!isSidebarCollapsed && <span style={{ fontWeight: '700', fontSize: '0.85rem' }}>Projetos</span>}
               </li>
               <li 
                 onClick={() => setActiveTab('quotes')}
                 style={{ 
-                  background: activeTab === 'quotes' ? 'rgba(235, 137, 35, 0.1)' : 'transparent', 
-                  color: activeTab === 'quotes' ? '#FFCC00' : '#94a3b8', 
-                  padding: '12px 16px', 
+                  background: activeTab === 'quotes' ? 'rgba(255, 204, 0, 0.12)' : 'transparent', 
+                  color: activeTab === 'quotes' ? '#FFCC00' : 'rgba(255,255,255,0.7)', 
+                  padding: '10px 14px', 
                   borderRadius: '12px', 
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
-                  gap: isSidebarCollapsed ? '0' : '16px', 
+                  gap: isSidebarCollapsed ? '0' : '12px', 
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  marginBottom: '4px'
+                  transition: 'all 0.2s ease',
+                  border: activeTab === 'quotes' ? '1px solid rgba(255, 204, 0, 0.2)' : '1px solid transparent'
                 }}
               >
-                <MessageCircle size={20} />
-                {!isSidebarCollapsed && <span style={{ fontWeight: '600' }}>Pedidos de Orçamento</span>}
+                <MessageCircle size={18} />
+                {!isSidebarCollapsed && <span style={{ fontWeight: '700', fontSize: '0.85rem' }}>Orçamentos</span>}
               </li>
               <li 
                 onClick={() => setActiveTab('users')}
                 style={{ 
-                  background: activeTab === 'users' ? 'rgba(235, 137, 35, 0.1)' : 'transparent', 
-                  color: activeTab === 'users' ? '#FFCC00' : '#94a3b8', 
-                  padding: '12px 16px', 
+                  background: activeTab === 'users' ? 'rgba(255, 204, 0, 0.12)' : 'transparent', 
+                  color: activeTab === 'users' ? '#FFCC00' : 'rgba(255,255,255,0.7)', 
+                  padding: '10px 14px', 
                   borderRadius: '12px', 
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
-                  gap: isSidebarCollapsed ? '0' : '16px', 
+                  gap: isSidebarCollapsed ? '0' : '12px', 
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  marginBottom: '4px'
+                  transition: 'all 0.2s ease',
+                  border: activeTab === 'users' ? '1px solid rgba(255, 204, 0, 0.2)' : '1px solid transparent'
                 }}
               >
-                <User size={20} />
-                {!isSidebarCollapsed && <span style={{ fontWeight: '600' }}>Gestão de Usuários</span>}
+                <User size={18} />
+                {!isSidebarCollapsed && <span style={{ fontWeight: '700', fontSize: '0.85rem' }}>Usuários</span>}
               </li>
               <li 
                 onClick={() => setActiveTab('banners')}
                 style={{ 
-                  background: activeTab === 'banners' ? 'rgba(235, 137, 35, 0.1)' : 'transparent', 
-                  color: activeTab === 'banners' ? '#FFCC00' : '#94a3b8', 
-                  padding: '12px 16px', 
+                  background: activeTab === 'banners' ? 'rgba(255, 204, 0, 0.12)' : 'transparent', 
+                  color: activeTab === 'banners' ? '#FFCC00' : 'rgba(255,255,255,0.7)', 
+                  padding: '10px 14px', 
                   borderRadius: '12px', 
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
-                  gap: isSidebarCollapsed ? '0' : '16px', 
+                  gap: isSidebarCollapsed ? '0' : '12px', 
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  marginBottom: '4px'
+                  transition: 'all 0.2s ease',
+                  border: activeTab === 'banners' ? '1px solid rgba(255, 204, 0, 0.2)' : '1px solid transparent'
                 }}
               >
-                <ImageIcon size={20} />
-                {!isSidebarCollapsed && <span style={{ fontWeight: '600' }}>Conteúdo Institucional</span>}
+                <ImageIcon size={18} />
+                {!isSidebarCollapsed && <span style={{ fontWeight: '700', fontSize: '0.85rem' }}>Portal Banners</span>}
               </li>
               <li 
                 onClick={() => setActiveTab('settings')}
                 style={{ 
-                  background: activeTab === 'settings' ? 'rgba(235, 137, 35, 0.1)' : 'transparent', 
-                  color: activeTab === 'settings' ? '#FFCC00' : '#94a3b8', 
-                  padding: '12px 16px', 
+                  background: activeTab === 'settings' ? 'rgba(255, 204, 0, 0.12)' : 'transparent', 
+                  color: activeTab === 'settings' ? '#FFCC00' : 'rgba(255,255,255,0.7)', 
+                  padding: '10px 14px', 
                   borderRadius: '12px', 
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
-                  gap: isSidebarCollapsed ? '0' : '16px', 
+                  gap: isSidebarCollapsed ? '0' : '12px', 
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  marginBottom: '4px'
+                  transition: 'all 0.2s ease',
+                  border: activeTab === 'settings' ? '1px solid rgba(255, 204, 0, 0.2)' : '1px solid transparent'
                 }}
               >
-                <Settings size={20} />
-                {!isSidebarCollapsed && <span style={{ fontWeight: '600' }}>Configurações</span>}
+                <Settings size={18} />
+                {!isSidebarCollapsed && <span style={{ fontWeight: '700', fontSize: '0.85rem' }}>Ajustes de Site</span>}
               </li>
             </ul>
           </div>
@@ -547,50 +547,51 @@ const Dashboard = () => {
             target="_blank" 
             style={{ 
               textDecoration: 'none', 
-              color: '#94a3b8', 
-              padding: '12px 16px', 
+              color: 'rgba(255,255,255,0.5)', 
+              padding: '10px 14px', 
               borderRadius: '12px', 
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
-              gap: isSidebarCollapsed ? '0' : '16px', 
+              gap: isSidebarCollapsed ? '0' : '12px', 
               cursor: 'pointer',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              border: '1px solid rgba(255,255,255,0.05)'
             }}
           >
-            <ExternalLink size={20} />
-            {!isSidebarCollapsed && <span style={{ fontWeight: '600' }}>Ver Site Oficial</span>}
+            <ExternalLink size={16} />
+            {!isSidebarCollapsed && <span style={{ fontSize: '0.8rem', fontWeight: '700' }}>Visualizar Site</span>}
           </a>
         </nav>
 
         <div style={{ 
           marginTop: 'auto', 
-          padding: isSidebarCollapsed ? '1rem 0' : '1.25rem', 
-          background: 'rgba(255, 255, 255, 0.05)', 
+          padding: isSidebarCollapsed ? '0.75rem 0' : '1rem', 
+          background: 'rgba(255, 255, 255, 0.03)', 
           borderRadius: '20px',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          marginBottom: '2rem',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          marginBottom: '1rem',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: isSidebarCollapsed ? 'center' : 'flex-start', gap: '12px', marginBottom: '1rem', width: '100%', padding: isSidebarCollapsed ? '0' : '0 0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: isSidebarCollapsed ? 'center' : 'flex-start', gap: '10px', marginBottom: '0.75rem', width: '100%', padding: isSidebarCollapsed ? '0' : '0 0.5rem' }}>
             <label style={{ cursor: 'pointer', position: 'relative' }}>
                <div style={{ 
-                 width: isSidebarCollapsed ? '45px' : '40px', 
-                 height: isSidebarCollapsed ? '45px' : '40px', 
+                 width: isSidebarCollapsed ? '40px' : '36px', 
+                 height: isSidebarCollapsed ? '40px' : '36px', 
                  borderRadius: '50%', 
-                 background: '#334155', 
+                 background: '#1e293b', 
                  display: 'flex', 
                  alignItems: 'center', 
                  justifyContent: 'center',
                  overflow: 'hidden',
-                 border: '2px solid #FFCC00'
+                 border: '1px solid rgba(255, 204, 0, 0.4)'
                }}>
                  {adminPhoto ? (
                    <img src={adminPhoto} alt="Admin" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                  ) : (
-                   <User size={20} color="#94a3b8" />
+                   <User size={16} color="#94a3b8" />
                  )}
                </div>
                <input 
@@ -605,41 +606,36 @@ const Dashboard = () => {
                    reader.onloadend = () => setAdminPhoto(reader.result);
                  }}
                />
-               {!isSidebarCollapsed && (
-                 <div style={{ position: 'absolute', bottom: -4, right: -4, background: '#FFCC00', borderRadius: '50%', width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                   <Camera size={10} color="black" />
-                 </div>
-               )}
             </label>
             {!isSidebarCollapsed && (
               <div>
-                <p style={{ fontSize: '0.875rem', fontWeight: '600', margin: 0 }}>Geral DOCA</p>
-                <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>Administrador</p>
+                <p style={{ fontSize: '0.8rem', fontWeight: '800', margin: 0, color: 'white' }}>Geral DOCA</p>
+                <p style={{ fontSize: '0.65rem', color: '#64748b', margin: 0, fontWeight: '700' }}>MASTER ADMIN</p>
               </div>
             )}
           </div>
           <button 
             onClick={handleLogout}
             style={{ 
-              width: isSidebarCollapsed ? '40px' : '100%', 
-              height: isSidebarCollapsed ? '40px' : 'auto',
-              padding: isSidebarCollapsed ? '0' : '10px', 
+              width: isSidebarCollapsed ? '36px' : '100%', 
+              height: isSidebarCollapsed ? '36px' : 'auto',
+              padding: isSidebarCollapsed ? '0' : '8px', 
               background: 'transparent', 
-              color: '#f87171', 
-              border: '1px solid rgba(248, 113, 113, 0.2)', 
-              borderRadius: '10px',
+              color: 'rgba(248, 113, 113, 0.8)', 
+              border: '1px solid rgba(248, 113, 113, 0.1)', 
+              borderRadius: '8px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: isSidebarCollapsed ? '0' : '8px',
+              gap: isSidebarCollapsed ? '0' : '6px',
               cursor: 'pointer',
-              fontSize: '0.875rem',
-              fontWeight: '600',
+              fontSize: '0.75rem',
+              fontWeight: '700',
               transition: 'all 0.2s'
             }}
             title="Sair"
           >
-            <LogOut size={16} /> {!isSidebarCollapsed && 'Sair'}
+            <LogOut size={14} /> {!isSidebarCollapsed && 'Sair'}
           </button>
         </div>
       </aside>
