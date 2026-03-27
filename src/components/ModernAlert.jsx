@@ -6,7 +6,8 @@ import {
   AlertCircle, 
   HelpCircle, 
   Info,
-  AlertTriangle 
+  AlertTriangle,
+  Edit
 } from 'lucide-react';
 
 const ModernAlert = ({ 
