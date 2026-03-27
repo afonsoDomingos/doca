@@ -67,6 +67,11 @@ const Dashboard = () => {
     totalUsers: 0
   });
 
+  const [isAddingTask, setIsAddingTask] = useState(false);
+  const [taskData, setTaskData] = useState({ title: '', resource: '', duration: '', deadline: '' });
+  const [isAddingMaterial, setIsAddingMaterial] = useState(false);
+  const [materialData, setMaterialData] = useState({ name: '', cost: '' });
+
   const [alertConfig, setAlertConfig] = useState({ 
     isOpen: false, 
     type: 'info', 
@@ -1452,26 +1457,81 @@ const Dashboard = () => {
                       <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#64748b' }}>Defina tarefas, prazos e acompanhe a linha do tempo do projeto.</p>
                     </div>
                     <button 
-                      onClick={() => {
-                        showAlert('Nova Tarefa', 'Nome da tarefa:', 'prompt', (title) => {
-                          if (title) {
-                            const newTask = { 
-                              title, 
-                              startDate: new Date(), 
-                              deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), 
-                              progress: 0,
-                              status: 'Pendente'
-                            };
-                            const newTasks = [...(selectedQuote.tasks || []), newTask];
-                            handleUpdateQuote({ tasks: newTasks });
-                          }
-                        });
-                      }}
+                      onClick={() => setIsAddingTask(true)}
                       style={{ background: '#1e293b', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '12px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
                     >
                       <Plus size={18} /> Adicionar Tarefa
                     </button>
                   </div>
+
+                  {isAddingTask && (
+                    <div style={{ background: '#f1f5f9', padding: '1.5rem', borderRadius: '24px', marginBottom: '1.5rem', border: '2px solid #FFCC00' }}>
+                      <h5 style={{ margin: '0 0 1rem 0' }}>📋 Detalhes da Nova Tarefa</h5>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div style={{ gridColumn: '1 / -1' }}>
+                          <input 
+                            placeholder="Nome da Tarefa (ex: Pintura, Fundações...)" 
+                            value={taskData.title}
+                            onChange={(e) => setTaskData({ ...taskData, title: e.target.value })}
+                            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Quem vai realizar? (Recurso)</label>
+                          <input 
+                            placeholder="Nome da equipa/pessoa" 
+                            value={taskData.resource}
+                            onChange={(e) => setTaskData({ ...taskData, resource: e.target.value })}
+                            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Tempo Estimado (ex: 2 dias, 1 semana)</label>
+                          <input 
+                            placeholder="Duração" 
+                            value={taskData.duration}
+                            onChange={(e) => setTaskData({ ...taskData, duration: e.target.value })}
+                            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                          />
+                        </div>
+                        <div style={{ gridColumn: '1 / -1' }}>
+                          <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Deadline (Data Limite)</label>
+                          <input 
+                            type="date"
+                            value={taskData.deadline}
+                            onChange={(e) => setTaskData({ ...taskData, deadline: e.target.value })}
+                            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                          />
+                        </div>
+                      </div>
+                      <div style={{ marginTop: '1.5rem', display: 'flex', gap: '8px' }}>
+                        <button 
+                          onClick={() => {
+                            if (!taskData.title) return showAlert('Atenção', 'O nome da tarefa é obrigatório', 'warning');
+                            const newTask = { 
+                              ...taskData,
+                              startDate: new Date(), 
+                              progress: 0,
+                              status: 'Pendente'
+                            };
+                            const newTasks = [...(selectedQuote.tasks || []), newTask];
+                            handleUpdateQuote({ tasks: newTasks });
+                            setIsAddingTask(false);
+                            setTaskData({ title: '', resource: '', duration: '', deadline: '' });
+                          }}
+                          style={{ flex: 1, background: '#FFCC00', color: 'white', border: 'none', padding: '10px', borderRadius: '10px', fontWeight: '900', cursor: 'pointer' }}
+                        >
+                          GUARDAR TAREFA
+                        </button>
+                        <button 
+                          onClick={() => setIsAddingTask(false)}
+                          style={{ padding: '10px 20px', background: '#e2e8f0', border: 'none', borderRadius: '10px', cursor: 'pointer' }}
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
                   <div style={{ background: '#f8fafc', borderRadius: '24px', padding: '1.5rem', border: '1px solid #e2e8f0' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -1486,9 +1546,21 @@ const Dashboard = () => {
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
                             <div>
                               <h5 style={{ margin: 0, fontSize: '1rem', fontWeight: '800', color: '#1e293b' }}>{task.title}</h5>
-                              <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: '#64748b' }}>
-                                <Clock size={12} /> {new Date(task.startDate).toLocaleDateString()} — {new Date(task.deadline).toLocaleDateString()}
-                              </p>
+                              <div style={{ display: 'flex', gap: '15px', color: '#64748b', fontSize: '0.75rem', marginTop: '4px', fontWeight: '700' }}>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                  <Clock size={12} /> {new Date(task.startDate).toLocaleDateString()} — {new Date(task.deadline).toLocaleDateString()}
+                                </span>
+                                {task.resource && (
+                                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#1e293b' }}>
+                                    <User size={12} /> {task.resource}
+                                  </span>
+                                )}
+                                {task.duration && (
+                                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#f97316' }}>
+                                    <Clock size={12} /> Duração: {task.duration}
+                                  </span>
+                                )}
+                              </div>
                             </div>
                             <div style={{ display: 'flex', gap: '8px' }}>
                               <select 
@@ -1631,23 +1703,53 @@ const Dashboard = () => {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                     <h4 style={{ margin: 0 }}>Materiais Adquiridos</h4>
                     <button 
-                      onClick={() => {
-                        showAlert('Nome do Material', 'Introduza o nome do material ou serviço:', 'prompt', (name) => {
-                          if (name) {
-                            showAlert('Custo do Material', `Introduza o custo de "${name}" (MT):`, 'prompt', (cost) => {
-                               if (cost && !isNaN(cost)) {
-                                 const newMaterials = [...(selectedQuote.materials || []), { name, cost: Number(cost), date: new Date() }];
-                                 handleUpdateQuote({ materials: newMaterials });
-                               }
-                            });
-                          }
-                        });
-                      }}
+                      onClick={() => setIsAddingMaterial(true)}
                       style={{ background: '#1e293b', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: '700', cursor: 'pointer' }}
                     >
                       + Registar Material
                     </button>
                   </div>
+
+                  {isAddingMaterial && (
+                    <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '20px', marginBottom: '2rem', border: '1px solid #FFCC00' }}>
+                      <h5 style={{ margin: '0 0 1rem 0' }}>🛒 Registar Compra/Serviço</h5>
+                      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem' }}>
+                        <input 
+                          placeholder="Descrição do material ou serviço" 
+                          value={materialData.name}
+                          onChange={(e) => setMaterialData({ ...materialData, name: e.target.value })}
+                          style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                        />
+                        <input 
+                          type="number" 
+                          placeholder="Custo (MT)" 
+                          value={materialData.cost}
+                          onChange={(e) => setMaterialData({ ...materialData, cost: e.target.value })}
+                          style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                        />
+                      </div>
+                      <div style={{ marginTop: '1rem', display: 'flex', gap: '8px' }}>
+                         <button 
+                          onClick={() => {
+                            if (!materialData.name || !materialData.cost) return showAlert('Atenção', 'Nome e custo são obrigatórios', 'warning');
+                            const newMaterials = [...(selectedQuote.materials || []), { name: materialData.name, cost: Number(materialData.cost), date: new Date() }];
+                            handleUpdateQuote({ materials: newMaterials });
+                            setIsAddingMaterial(false);
+                            setMaterialData({ name: '', cost: '' });
+                          }}
+                          style={{ flex: 1, background: '#1e293b', color: 'white', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: '800', cursor: 'pointer' }}
+                        >
+                          REGISTAR
+                        </button>
+                        <button 
+                          onClick={() => setIsAddingMaterial(false)}
+                          style={{ padding: '10px 15px', background: '#e2e8f0', border: 'none', borderRadius: '8px', cursor: 'pointer' }}
+                        >
+                          X
+                        </button>
+                      </div>
+                    </div>
+                  )}
                   {/* Small materials list */}
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
                     {(selectedQuote.materials || []).map((mat, i) => (
