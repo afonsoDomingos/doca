@@ -333,7 +333,8 @@ const Dashboard = () => {
         flexDirection: 'column',
         position: 'fixed',
         height: '100vh',
-        zIndex: 10
+        zIndex: 10,
+        overflowY: 'auto'
       }}>
         <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '3rem', padding: '0 0.5rem' }}>
           <div style={{ background: '#FFCC00', width: '40px', height: '40px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
