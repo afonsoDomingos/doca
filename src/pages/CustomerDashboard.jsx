@@ -210,7 +210,7 @@ const CustomerDashboard = () => {
       <aside className={`dashboard-sidebar ${isMobileMenuOpen ? 'sidebar-open' : ''}`} style={{ 
         width: '280px', 
         background: '#000000', 
-        padding: '2.5rem 1.8rem',
+        padding: '2.5rem 1.8rem 5rem 1.8rem',
         display: 'flex',
         flexDirection: 'column',
         position: 'fixed',
@@ -219,7 +219,9 @@ const CustomerDashboard = () => {
         boxShadow: '4px 0 24px rgba(0,0,0,0.1)',
         color: 'white',
         top: 0,
-        left: 0
+        left: 0,
+        overflowY: 'auto',
+        overflowX: 'hidden'
       }}>
         {/* Ir para o Site Button - High Visibility */}
         <motion.button 
