@@ -290,6 +290,16 @@ app.get('/api/quotes', async (req, res) => {
   }
 });
 
+app.get('/api/quotes/user/:userId', async (req, res) => {
+  try {
+    await connectToDatabase();
+    const quotes = await Quote.find({ userId: req.params.userId }).sort({ createdAt: -1 });
+    res.json(quotes);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.delete('/api/quotes/:id', async (req, res) => {
   try {
     await connectToDatabase();
