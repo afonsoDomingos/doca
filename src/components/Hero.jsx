@@ -45,7 +45,7 @@ const DynamicTitle = () => {
   }, []);
 
   return (
-    <div style={{ minHeight: 'clamp(120px, 18vw, 240px)', marginBottom: '40px', marginTop: '50px' }}>
+    <div style={{ minHeight: 'clamp(100px, 15vw, 200px)', marginBottom: '20px', marginTop: '20px' }}>
       <AnimatePresence mode="wait">
         <motion.h1
           key={index}
@@ -112,32 +112,32 @@ const Hero = ({ onOpenQuote }) => {
           <DynamicTitle />
 
           <div style={{
-            fontSize: 'clamp(1.2rem, 3vw, 1.8rem)',
+            fontSize: 'clamp(1rem, 2.5vw, 1.4rem)',
             fontWeight: '600',
-            marginBottom: '40px',
+            marginBottom: '24px',
             display: 'flex',
             alignItems: 'center',
-            gap: '15px'
+            gap: '10px'
           }}>
             Nosso pilar é o <RotatingText />
           </div>
 
-          <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', marginBottom: '50px' }}>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '30px' }}>
             <motion.button
               onClick={onOpenQuote}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 1 }}
               className="btn btn-primary"
-              style={{ padding: '10px 22px', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '8px', border: 'none', cursor: 'pointer' }}
+              style={{ padding: '10px 20px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px', border: 'none', cursor: 'pointer' }}
             >
-              Solicitar Orçamento <ChevronRight size={18} />
+              Solicitar Orçamento <ChevronRight size={16} />
             </motion.button>
             <motion.a
               href="#servicos"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 1 }}
               className="btn btn-outline"
-              style={{ padding: '10px 22px', fontSize: '1rem' }}
+              style={{ padding: '10px 20px', fontSize: '0.9rem' }}
             >
               Ver Nossos Serviços
             </motion.a>
