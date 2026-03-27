@@ -130,7 +130,7 @@ const CustomerDashboard = () => {
       {/* Sidebar */}
       <aside style={{ 
         width: '280px', 
-        background: '#003366', 
+        background: '#000000', 
         padding: '2.5rem 1.8rem',
         display: 'flex',
         flexDirection: 'column',
@@ -299,7 +299,7 @@ const CustomerDashboard = () => {
                 <div style={{ 
                   width: '80px', 
                   height: '80px', 
-                  background: user.photo ? `url(${user.photo})` : '#003366',
+                  background: user.photo ? `url(${user.photo})` : '#000000',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   borderRadius: '24px', 
@@ -309,7 +309,7 @@ const CustomerDashboard = () => {
                   color: 'white',
                   fontSize: '2rem',
                   fontWeight: '900',
-                  boxShadow: '0 20px 25px -5px rgba(0, 51, 102, 0.2)',
+                  boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)',
                   border: '4px solid white'
                 }}>
                   {!user.photo && user.name.charAt(0)}
@@ -329,7 +329,7 @@ const CustomerDashboard = () => {
                 onClick={() => setIsQuoteModalOpen(true)}
                 style={{ 
                   padding: '18px 36px', 
-                  background: '#FFCC00', 
+                  background: '#000000', 
                   color: 'white', 
                   border: 'none', 
                   borderRadius: '24px', 
@@ -338,7 +338,7 @@ const CustomerDashboard = () => {
                   alignItems: 'center', 
                   gap: '12px', 
                   cursor: 'pointer',
-                  boxShadow: '0 20px 30px -10px rgba(235, 137, 35, 0.4)',
+                  boxShadow: '0 20px 30px -10px rgba(0, 0, 0, 0.4)',
                   fontSize: '1rem'
                 }}
               >
