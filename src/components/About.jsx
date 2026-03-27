@@ -51,6 +51,34 @@ const CounterStat = ({ target, label, icon: Icon, suffix = '+' }) => {
 
 const About = () => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [banners, setBanners] = useState([]);
+  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+
+  const API_URL = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:5000' : '');
+
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/banners?type=about`);
+        if (res.ok) {
+          const data = await res.json();
+          setBanners(data);
+        }
+      } catch (err) {
+        console.error('Error fetching banners:', err);
+      }
+    };
+    fetchBanners();
+  }, []);
+
+  // Auto-play slider
+  useEffect(() => {
+    if (banners.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentBannerIndex(prev => (prev + 1) % banners.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [banners]);
 
   return (
     <section id="sobre" style={{ backgroundColor: '#F9FAFB' }}>
@@ -128,16 +156,52 @@ const About = () => {
           >
             <div style={{
               width: '100%',
-              height: '450px',
-              borderRadius: '20px',
+              aspectRatio: '1/1',
+              borderRadius: '24px',
               overflow: 'hidden',
-              boxShadow: 'var(--shadow-lg)'
+              boxShadow: 'var(--shadow-xl)',
+              background: '#f1f5f9'
             }}>
-              <img 
-                src="/docasobrenoss.jpeg" 
-                alt="Equipa DOCA" 
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
+              <AnimatePresence mode="wait">
+                {banners.length > 0 ? (
+                  <motion.img 
+                    key={banners[currentBannerIndex]._id}
+                    src={banners[currentBannerIndex].imageUrl} 
+                    alt="Doca Mozambique" 
+                    initial={{ opacity: 0, scale: 1.1 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.8 }}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  <img 
+                    src="/docasobrenoss.jpeg" 
+                    alt="Equipa DOCA" 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                )}
+              </AnimatePresence>
+
+              {/* Slider Dots */}
+              {banners.length > 1 && (
+                <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '8px', zIndex: 10 }}>
+                  {banners.map((_, idx) => (
+                    <div 
+                      key={idx}
+                      onClick={() => setCurrentBannerIndex(idx)}
+                      style={{ 
+                        width: idx === currentBannerIndex ? '20px' : '8px', 
+                        height: '8px', 
+                        borderRadius: '10px', 
+                        background: idx === currentBannerIndex ? 'var(--accent-yellow)' : 'rgba(255,255,255,0.5)',
+                        transition: 'all 0.3s',
+                        cursor: 'pointer'
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
             {/* Stats Card Overlay */}
             <div style={{

@@ -113,12 +113,18 @@ const QuoteSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-
+// Banner / Carousel Schema
+const BannerSchema = new mongoose.Schema({
+  imageUrl: String,
+  type: { type: String, default: 'about' },
+  createdAt: { type: Date, default: Date.now }
+});
 
 const Project = mongoose.models.Project || mongoose.model('Project', ProjectSchema);
 const Admin = mongoose.models.Admin || mongoose.model('Admin', AdminSchema);
 const Quote = mongoose.models.Quote || mongoose.model('Quote', QuoteSchema);
 const User = mongoose.models.User || mongoose.model('User', UserSchema);
+const Banner = mongoose.models.Banner || mongoose.model('Banner', BannerSchema);
 
 // Routes
 // Projects CRUD
@@ -158,6 +164,40 @@ app.delete('/api/projects/:id', async (req, res) => {
     await connectToDatabase();
     await Project.findByIdAndDelete(req.params.id);
     res.json({ message: 'Project deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Banners CRUD
+app.get('/api/banners', async (req, res) => {
+  try {
+    await connectToDatabase();
+    const { type } = req.query;
+    const filter = type ? { type } : {};
+    const banners = await Banner.find(filter).sort({ createdAt: -1 });
+    res.json(banners);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/banners', async (req, res) => {
+  try {
+    await connectToDatabase();
+    const banner = new Banner(req.body);
+    await banner.save();
+    res.json(banner);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/banners/:id', async (req, res) => {
+  try {
+    await connectToDatabase();
+    await Banner.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Banner deleted' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -22,6 +22,8 @@ import {
   Image as ImageIcon
 } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { motion, AnimatePresence } from 'framer-motion';
+import ModernAlert from '../components/ModernAlert';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:5000' : '');
 
@@ -30,6 +32,7 @@ const Dashboard = () => {
   const [projects, setProjects] = useState([]);
   const [quotes, setQuotes] = useState([]);
   const [users, setUsers] = useState([]);
+  const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingImage, setLoadingImage] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -49,6 +52,18 @@ const Dashboard = () => {
     pendingQuotes: 0,
     totalUsers: 0
   });
+
+  const [alertConfig, setAlertConfig] = useState({ 
+    isOpen: false, 
+    type: 'info', 
+    title: '', 
+    message: '', 
+    onConfirm: null 
+  });
+
+  const showAlert = (title, message, type = 'info', onConfirm = null) => {
+    setAlertConfig({ isOpen: true, title, message, type, onConfirm });
+  };
   
   const navigate = useNavigate();
 
@@ -66,14 +81,17 @@ const Dashboard = () => {
       const [projectsRes, quotesRes, usersRes] = await Promise.all([
         fetch(`${API_URL}/api/projects`),
         fetch(`${API_URL}/api/quotes`),
-        fetch(`${API_URL}/api/users`)
+        fetch(`${API_URL}/api/users`),
+        fetch(`${API_URL}/api/banners?type=about`)
       ]);
       const projectsData = await projectsRes.json();
       const quotesData = await quotesRes.json();
       const usersData = await usersRes.json();
+      const bannersData = await bannersRes.json();
       setProjects(projectsData);
       setQuotes(quotesData);
       setUsers(usersData);
+      setBanners(bannersData);
       
       // Calculate Stats
       setStats({
@@ -90,7 +108,7 @@ const Dashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('adminAuthenticated');
-    navigate('/admin/login');
+    navigate('/portal/login');
   };
 
   const handleInputChange = (e) => {
@@ -125,29 +143,43 @@ const Dashboard = () => {
   };
 
   const handleDeleteProject = async (id) => {
-    if (window.confirm('Tem certeza que deseja excluir este projeto?')) {
-      try {
-        await fetch(`${API_URL}/api/projects/${id}`, {
-          method: 'DELETE',
-        });
-        fetchData();
-      } catch (err) {
-        console.error('Error deleting project:', err);
+    showAlert(
+      'Confirmar Exclusão', 
+      'Tem certeza que deseja excluir este projeto permanentemente?', 
+      'confirm',
+      async () => {
+        try {
+          await fetch(`${API_URL}/api/projects/${id}`, {
+            method: 'DELETE',
+          });
+          fetchData();
+          showAlert('Sucesso', 'Projeto removido com sucesso!', 'success');
+        } catch (err) {
+          console.error('Error deleting project:', err);
+          showAlert('Erro', 'Não foi possível excluir o projeto.', 'error');
+        }
       }
-    }
+    );
   };
 
   const handleDeleteQuote = async (id) => {
-    if (window.confirm('Tem certeza que deseja excluir este pedido?')) {
-      try {
-        await fetch(`${API_URL}/api/quotes/${id}`, {
-          method: 'DELETE',
-        });
-        fetchData();
-      } catch (err) {
-        console.error('Error deleting quote:', err);
+    showAlert(
+      'Confirmar remoção', 
+      'Tem certeza que deseja excluir este pedido de orçamento?', 
+      'confirm',
+      async () => {
+        try {
+          await fetch(`${API_URL}/api/quotes/${id}`, {
+            method: 'DELETE',
+          });
+          fetchData();
+          showAlert('Sucesso', 'Pedido removido.', 'success');
+        } catch (err) {
+          console.error('Error deleting quote:', err);
+          showAlert('Erro', 'Não foi possível excluir o pedido.', 'error');
+        }
       }
-    }
+    );
   };
 
   const openModal = (project = null) => {
@@ -171,25 +203,59 @@ const Dashboard = () => {
     setIsModalOpen(true);
   };
 
-  const handlePromote = async (userId, name) => {
-    if (window.confirm(`Tens a certeza que desejas promover ${name} a Administrador? Ele terá acesso total ao painel.`)) {
-      try {
-        const response = await fetch(`${API_URL}/api/users/promote`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId })
-        });
-        if (response.ok) {
-          alert(`${name} agora é um Administrador!`);
-          fetchData();
-        } else {
-          const data = await response.json();
-          alert(data.error || 'Erro ao promover usuário');
-        }
-      } catch (err) {
-        console.error('Error promoting user:', err);
-      }
+  const handleAddBanner = async (imageUrl) => {
+    try {
+      await fetch(`${API_URL}/api/banners`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageUrl, type: 'about' })
+      });
+      fetchData();
+      showAlert('Sucesso', 'Criativo adicionado com sucesso à seção Sobre!', 'success');
+    } catch (err) {
+      console.error('Error adding banner:', err);
+      showAlert('Erro', 'Falha ao salvar criativo.', 'error');
     }
+  };
+
+  const handleDeleteBanner = async (id) => {
+    showAlert('Confirmar Exclusão', 'Eliminar este criativo da seção Sobre?', 'confirm', async () => {
+      try {
+        await fetch(`${API_URL}/api/banners/${id}`, { method: 'DELETE' });
+        fetchData();
+        showAlert('Sucesso', 'Removido.', 'success');
+      } catch (err) {
+        console.error('Error deleting banner:', err);
+      }
+    });
+
+  };
+
+  const handlePromote = async (userId, name) => {
+    showAlert(
+      'Promover Usuário',
+      `Tens a certeza que desejas promover ${name} a Administrador? Ele terá acesso total ao painel.`,
+      'confirm',
+      async () => {
+        try {
+          const response = await fetch(`${API_URL}/api/users/promote`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId })
+          });
+          if (response.ok) {
+            showAlert('Sucesso', `${name} agora é um Administrador!`, 'success');
+            fetchData();
+          } else {
+            const data = await response.json();
+            showAlert('Erro', data.error || 'Erro ao promover usuário', 'error');
+          }
+        } catch (err) {
+          console.error('Error promoting user:', err);
+          showAlert('Erro de Conexão', 'Não foi possível contactar o servidor.', 'error');
+        }
+      }
+    );
   };
 
   const closeModal = () => {
@@ -337,6 +403,22 @@ const Dashboard = () => {
                   transition: 'all 0.2s'
                 }}>
                 <User size={20} /> Gestão de Usuários
+              </li>
+              <li 
+                onClick={() => setActiveTab('banners')}
+                style={{ 
+                  background: activeTab === 'banners' ? 'rgba(235, 137, 35, 0.1)' : 'transparent', 
+                  color: activeTab === 'banners' ? '#FFCC00' : '#94a3b8', 
+                  padding: '12px 16px', 
+                  borderRadius: '12px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '12px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  transition: 'all 0.2s'
+                }}>
+                <ImageIcon size={20} /> Conteúdo Institucional
               </li>
               <li style={{ 
                 color: '#94a3b8', 
@@ -764,6 +846,87 @@ const Dashboard = () => {
             </div>
           </div>
         )}
+
+        {/* TAB: BANNERS */}
+        {activeTab === 'banners' && (
+          <div>
+            <header style={{ marginBottom: '3rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+                Páginas <ChevronRight size={14} /> <span style={{ color: '#FFCC00', fontWeight: '600' }}>Conteúdo Institucional</span>
+              </div>
+              <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: 0, letterSpacing: '-1px' }}>
+                Criativos da Seção "Sobre"
+              </h1>
+              <p style={{ color: '#64748b', marginTop: '1rem' }}>Gerencie as imagens que aparecem na apresentação da empresa. Garante que sejam quadradas (1:1).</p>
+            </header>
+
+            <div style={{ background: 'white', padding: '2rem', borderRadius: '32px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', marginBottom: '2rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                <h3 style={{ margin: 0 }}>Imagens Atuais</h3>
+                <label style={{ 
+                  background: 'linear-gradient(135deg, #FFCC00 0%, #d87a1d 100%)', 
+                  color: 'white', 
+                  padding: '12px 24px', 
+                  borderRadius: '16px', 
+                  fontWeight: '800', 
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <Plus size={20} /> {loadingImage ? 'Processando...' : 'Adicionar Criativo (1:1)'}
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    style={{ display: 'none' }} 
+                    disabled={loadingImage}
+                    onChange={async (e) => {
+                      const file = e.target.files[0];
+                      if (!file) return;
+                      setLoadingImage(true);
+                      const reader = new FileReader();
+                      reader.readAsDataURL(file);
+                      reader.onloadend = async () => {
+                        try {
+                          const res = await fetch(`${API_URL}/api/upload`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ data: reader.result })
+                          });
+                          const data = await res.json();
+                          await handleAddBanner(data.url);
+                        } catch (err) {
+                           showAlert('Erro', 'Falha no upload', 'error');
+                        } finally {
+                          setLoadingImage(false);
+                        }
+                      };
+                    }}
+                  />
+                </label>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1.5rem' }}>
+                {banners.map(b => (
+                  <div key={b._id} style={{ position: 'relative', aspectRatio: '1/1', borderRadius: '20px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
+                    <img src={b.imageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <button 
+                      onClick={() => handleDeleteBanner(b._id)}
+                      style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: '10px', padding: '8px', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+                    >
+                      <Trash2 size={16} color="#ef4444" />
+                    </button>
+                  </div>
+                ))}
+                {banners.length === 0 && (
+                  <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '4rem', color: '#94a3b8', border: '2px dashed #e2e8f0', borderRadius: '24px' }}>
+                    Nenhuma imagem personalizada adicionada. O sistema usará a imagem padrão.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* CRUD Modal */}
@@ -865,7 +1028,7 @@ const Dashboard = () => {
                               const data = await response.json();
                               setFormData({ ...formData, imageUrl: data.url });
                             } catch (err) {
-                              alert('Erro ao fazer upload da imagem');
+                              showAlert('Erro', 'Não foi possível carregar a imagem selecionada.', 'error');
                             } finally {
                               setLoadingImage(false);
                             }
@@ -1027,11 +1190,12 @@ const Dashboard = () => {
                     <h4 style={{ margin: 0 }}>Histórico de Pagamentos</h4>
                     <button 
                       onClick={() => {
-                        const amount = prompt('Valor da Parcela (MT):');
-                        if (amount) {
-                          const newPayments = [...(selectedQuote.payments || []), { amount: Number(amount), status: 'Pago', date: new Date() }];
-                          handleUpdateQuote({ payments: newPayments });
-                        }
+                        showAlert('Adicionar Pagamento', 'Introduza o valor da parcela (MT):', 'prompt', (val) => {
+                          if (val && !isNaN(val)) {
+                            const newPayments = [...(selectedQuote.payments || []), { amount: Number(val), status: 'Pago', date: new Date() }];
+                            handleUpdateQuote({ payments: newPayments });
+                          }
+                        });
                       }}
                       style={{ background: '#FFCC00', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: '700', cursor: 'pointer' }}
                     >
@@ -1079,12 +1243,16 @@ const Dashboard = () => {
                     <h4 style={{ margin: 0 }}>Materiais Adquiridos</h4>
                     <button 
                       onClick={() => {
-                        const name = prompt('Nome do Material:');
-                        const cost = prompt('Custo (MT):');
-                        if (name && cost) {
-                          const newMaterials = [...(selectedQuote.materials || []), { name, cost: Number(cost), date: new Date() }];
-                          handleUpdateQuote({ materials: newMaterials });
-                        }
+                        showAlert('Nome do Material', 'Introduza o nome do material ou serviço:', 'prompt', (name) => {
+                          if (name) {
+                            showAlert('Custo do Material', `Introduza o custo de "${name}" (MT):`, 'prompt', (cost) => {
+                               if (cost && !isNaN(cost)) {
+                                 const newMaterials = [...(selectedQuote.materials || []), { name, cost: Number(cost), date: new Date() }];
+                                 handleUpdateQuote({ materials: newMaterials });
+                               }
+                            });
+                          }
+                        });
                       }}
                       style={{ background: '#1e293b', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: '700', cursor: 'pointer' }}
                     >
@@ -1111,11 +1279,12 @@ const Dashboard = () => {
                   <div style={{ marginBottom: '2rem' }}>
                     <button 
                       onClick={() => {
-                        const url = prompt('URL da Foto da Obra (Dica: Upload para ImgBB/Cloudinary):');
-                        if (url) {
-                          const newPhotos = [...(selectedQuote.workPhotos || []), url];
-                          handleUpdateQuote({ workPhotos: newPhotos });
-                        }
+                        showAlert('Foto da Obra', 'Introduza a URL da imagem (Dica: Use ImgBB ou Cloudinary):', 'prompt', (url) => {
+                          if (url) {
+                            const newPhotos = [...(selectedQuote.workPhotos || []), url];
+                            handleUpdateQuote({ workPhotos: newPhotos });
+                          }
+                        });
                       }}
                       style={{ background: '#FFCC00', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '16px', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
                     >
@@ -1144,6 +1313,11 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+      {/* Modern Alert Component */}
+      <ModernAlert 
+        {...alertConfig} 
+        onClose={() => setAlertConfig({ ...alertConfig, isOpen: false })} 
+      />
     </div>
   );
 };

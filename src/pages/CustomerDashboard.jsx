@@ -25,6 +25,7 @@ import {
 import QuoteForm from '../components/QuoteForm';
 import WhatsAppContact from '../components/WhatsAppContact';
 import { motion, AnimatePresence } from 'framer-motion';
+import ModernAlert from '../components/ModernAlert';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:5000' : '');
 
@@ -48,6 +49,17 @@ const CustomerDashboard = () => {
     photo: ''
   });
   const [updatingProfile, setUpdatingProfile] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({ 
+    isOpen: false, 
+    type: 'info', 
+    title: '', 
+    message: '', 
+    onConfirm: null 
+  });
+
+  const showAlert = (title, message, type = 'info', onConfirm = null) => {
+    setAlertConfig({ isOpen: true, title, message, type, onConfirm });
+  };
 
   const navigate = useNavigate();
 
@@ -96,11 +108,11 @@ const CustomerDashboard = () => {
         const newUser = { ...user, ...updated };
         localStorage.setItem('customerUser', JSON.stringify(newUser));
         setUser(newUser);
-        alert('Perfil atualizado com sucesso!');
+        showAlert('Sucesso', 'Perfil atualizado com sucesso!', 'success');
       }
     } catch (err) {
       console.error('Error updating profile:', err);
-      alert('Erro ao atualizar perfil.');
+      showAlert('Erro', 'Ocorreu um erro ao atualizar o seu perfil.', 'error');
     } finally {
       setUpdatingProfile(false);
     }
@@ -108,7 +120,7 @@ const CustomerDashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('customerUser');
-    navigate('/');
+    navigate('/portal/login');
   };
 
   const filteredQuotes = quotes.filter(q => 
@@ -469,7 +481,7 @@ const CustomerDashboard = () => {
                           </span>
                         </td>
                         <td style={{ padding: '1.5rem 1rem', textAlign: 'right', borderTopRightRadius: '20px', borderBottomRightRadius: '20px' }}>
-                          <button onClick={() => alert(`Detalhes: ${quote.description}`)} style={{ background: 'white', border: '1px solid #e2e8f0', padding: '8px 16px', borderRadius: '12px', fontWeight: '700', cursor: 'pointer' }}>Detalhes</button>
+                          <button onClick={() => showAlert('Detalhes do Pedido', quote.description, 'info')} style={{ background: 'white', border: '1px solid #e2e8er0', padding: '8px 16px', borderRadius: '12px', fontWeight: '700', cursor: 'pointer' }}>Detalhes</button>
                         </td>
                       </tr>
                     ))}
@@ -649,6 +661,12 @@ const CustomerDashboard = () => {
           </div>
         </div>
       )}
+
+      {/* Modern Alert Component */}
+      <ModernAlert 
+        {...alertConfig} 
+        onClose={() => setAlertConfig({ ...alertConfig, isOpen: false })} 
+      />
     </div>
   );
 };
