@@ -14,9 +14,9 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 // Configurations
 const resend = new Resend(process.env.RESEND_API_KEY);
 cloudinary.config({
-  cloud_name: process.env.VITE_CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.VITE_CLOUDINARY_API_KEY,
-  api_secret: process.env.VITE_CLOUDINARY_API_SECRET
+  cloud_name: process.env.VITE_CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.VITE_CLOUDINARY_API_KEY || process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.VITE_CLOUDINARY_API_SECRET || process.env.CLOUDINARY_API_SECRET
 });
 
 // MongoDB Connection Strategy for Vercel
@@ -558,7 +558,7 @@ app.post('/api/upload', async (req, res) => {
     await connectToDatabase();
     const fileStr = req.body.data;
     const uploadResponse = await cloudinary.uploader.upload(fileStr, {
-      upload_preset: 'doca_portfolio',
+      folder: 'doca_portfolio',
     });
     res.json({ url: uploadResponse.secure_url });
   } catch (err) {
