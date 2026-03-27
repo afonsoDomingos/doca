@@ -19,7 +19,8 @@ import {
   MapPin,
   CreditCard,
   Camera,
-  Home
+  Home,
+  Menu
 } from 'lucide-react';
 import QuoteForm from '../components/QuoteForm';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -36,6 +37,7 @@ const CustomerDashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showWpOptions, setShowWpOptions] = useState(false);
   const [selectedWpMsg, setSelectedWpMsg] = useState(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Profile Form State
   const [profileForm, setProfileForm] = useState({
@@ -127,9 +129,85 @@ const CustomerDashboard = () => {
   if (!user) return null;
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc', fontFamily: 'Inter, sans-serif' }}>
+    <div className="dashboard-wrapper" style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc', fontFamily: 'Inter, sans-serif' }}>
+      <style dangerouslySetInnerHTML={{__html: `
+        .mobile-header { display: none; }
+        .overlay { display: none; }
+        @media (max-width: 1024px) {
+          .dashboard-sidebar {
+             transform: translateX(-100%) !important;
+             transition: transform 0.3s ease !important;
+             width: 280px !important;
+          }
+          .dashboard-sidebar.sidebar-open {
+             transform: translateX(0) !important;
+          }
+          .dashboard-main {
+             margin-left: 0 !important;
+             padding: 100px 1.5rem 2rem 1.5rem !important;
+             width: 100% !important;
+          }
+          .mobile-header {
+             display: flex !important;
+             align-items: center;
+             justify-content: space-between;
+             padding: 1rem 1.5rem;
+             background: #000;
+             color: white;
+             position: fixed;
+             top: 0;
+             left: 0;
+             width: 100%;
+             z-index: 90;
+             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+          }
+          .dashboard-stats-grid {
+             grid-template-columns: 1fr !important;
+             gap: 1.5rem !important;
+          }
+          .dashboard-projects-grid {
+             grid-template-columns: 1fr !important;
+          }
+          .header-actions {
+             flex-direction: column !important;
+             align-items: center !important;
+             text-align: center !important;
+             gap: 1.5rem !important;
+          }
+          .dashboard-profile-flex {
+             grid-template-columns: 1fr !important;
+          }
+          .overlay.sidebar-open {
+             display: block !important;
+             position: fixed !important;
+             top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+             background: rgba(0,0,0,0.5) !important;
+             z-index: 99 !important;
+          }
+        }
+      `}} />
+
+      {/* Overlay */}
+      <div 
+        className={`overlay ${isMobileMenuOpen ? 'sidebar-open' : ''}`} 
+        onClick={() => setIsMobileMenuOpen(false)}
+      ></div>
+
+      {/* Mobile Header */}
+      <div className="mobile-header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ background: '#FFCC00', width: '32px', height: '32px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <LayoutDashboard size={18} color="white" />
+          </div>
+          <span style={{ fontSize: '1.2rem', fontWeight: '800', color: 'white', letterSpacing: '-0.5px' }}>DOCA <span style={{ color: '#FFCC00' }}>PORTAL</span></span>
+        </div>
+        <button onClick={() => setIsMobileMenuOpen(true)} style={{ color: 'white', background: 'transparent', border: 'none' }}>
+          <Menu size={28} />
+        </button>
+      </div>
+
       {/* Sidebar */}
-      <aside style={{ 
+      <aside className={`dashboard-sidebar ${isMobileMenuOpen ? 'sidebar-open' : ''}`} style={{ 
         width: '280px', 
         background: '#000000', 
         padding: '2.5rem 1.8rem',
@@ -139,7 +217,9 @@ const CustomerDashboard = () => {
         height: '100vh',
         zIndex: 100,
         boxShadow: '4px 0 24px rgba(0,0,0,0.1)',
-        color: 'white'
+        color: 'white',
+        top: 0,
+        left: 0
       }}>
         {/* Ir para o Site Button - High Visibility */}
         <motion.button 
@@ -348,11 +428,11 @@ const CustomerDashboard = () => {
       </aside>
 
       {/* Main Content */}
-      <main style={{ marginLeft: '280px', flex: 1, padding: '3rem 5rem', background: '#f1f5f9', minHeight: '100vh' }}>
+      <main className="dashboard-main" style={{ marginLeft: '280px', flex: 1, padding: '3rem 5rem', background: '#f1f5f9', minHeight: '100vh' }}>
         {activeTab === 'orders' ? (
           <>
-            <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+            <header className="header-actions" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4rem' }}>
+              <div className="desktop-profile" style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
                 <div style={{ 
                   width: '80px', 
                   height: '80px', 
@@ -404,7 +484,7 @@ const CustomerDashboard = () => {
             </header>
 
             {/* Stats Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2.5rem', marginBottom: '5rem' }}>
+            <div className="dashboard-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2.5rem', marginBottom: '5rem' }}>
               {[
                 { label: 'Pedidos Realizados', val: quotes.length, icon: FileText, color: '#003366' },
                 { label: 'Obras em Análise', val: quotes.filter(q => q.status === 'Pendente' || q.status === 'Em Análise').length, icon: Clock, color: '#FFCC00' },
@@ -426,7 +506,7 @@ const CustomerDashboard = () => {
                 <h2 style={{ fontSize: '1.75rem', fontWeight: '900', color: '#1e293b', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <LayoutDashboard size={28} color="#FFCC00" /> Acompanhamento de Obras
                 </h2>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '2rem' }}>
+                <div className="dashboard-projects-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '2rem' }}>
                   {quotes.filter(q => q.percentage > 0 || q.status === 'Em Execução' || q.status === 'Finalização').map((proj) => {
                     const totalPaid = (proj.payments || []).reduce((acc, curr) => acc + curr.amount, 0);
                     return (
@@ -541,7 +621,7 @@ const CustomerDashboard = () => {
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+              <div className="dashboard-profile-flex" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
                 <div>
                   <label style={{ display: 'block', fontWeight: '800', color: '#64748b', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '8px' }}>Nome Completo / Empresa</label>
                   <div style={{ position: 'relative' }}>
@@ -567,7 +647,7 @@ const CustomerDashboard = () => {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+              <div className="dashboard-profile-flex" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
                 <div>
                   <label style={{ display: 'block', fontWeight: '800', color: '#64748b', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '8px' }}>Contacto Telefónico</label>
                   <input 
