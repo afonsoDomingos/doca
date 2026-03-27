@@ -108,7 +108,7 @@ const QuoteForm = ({ onComplete }) => {
 
   const handleSubmitWhatsApp = () => {
     const text = `Olá DOCA Construção! Gostaria de pedir um orçamento.%0A%0A*Detalhes do Pedido:*%0A- *Nome:* ${formData.clientName}%0A- *Serviço:* ${formData.serviceType}%0A- *Orçamento:* ${formData.budgetRange}%0A- *Descrição:* ${formData.description}%0A%0A*Contato:*%0A- *E-mail:* ${formData.email}%0A- *Telefone:* ${formData.phone}`;
-    window.open(`https://wa.me/258840000000?text=${text}`, '_blank');
+    window.open(`https://wa.me/258848580244?text=${text}`, '_blank');
     setSubmitted(true);
   };
 

@@ -255,7 +255,7 @@ const CustomerDashboard = () => {
                     ].map((whatsapp, i) => (
                       <a
                         key={i}
-                        href={`https://wa.me/258842183204?text=${encodeURIComponent(whatsapp.msg)}`}
+                        href={`https://wa.me/258848580244?text=${encodeURIComponent(whatsapp.msg)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{ display: 'block', padding: '10px', background: 'rgba(255,255,255,0.1)', borderRadius: '12px', color: 'white', fontSize: '0.7rem', textDecoration: 'none', fontWeight: '700', border: '1px solid rgba(255,255,255,0.05)' }}
