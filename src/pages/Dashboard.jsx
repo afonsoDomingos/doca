@@ -889,12 +889,6 @@ const Dashboard = () => {
           </div>
         )}
 
-        {activeTab === 'users' && (
-          <div>
-            {/* Users list content (already defined above) */}
-          </div>
-        )}
-
         {/* TAB: PROJECTS */}
         {activeTab === 'projects' && (
           <div>
@@ -1344,10 +1338,10 @@ const Dashboard = () => {
       {/* PROJECT MANAGEMENT MODAL */}
       {isManageModalOpen && selectedQuote ? (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '2rem' }}>
-          <div style={{ background: 'white', width: '100%', maxWidth: '900px', height: '80vh', borderRadius: '32px', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
+          <div className="manage-modal-content" style={{ background: 'white', width: '100%', maxWidth: '900px', height: '80vh', borderRadius: '32px', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
             
             {/* Modal Header */}
-            <div className="manage-modal-content" style={{ padding: '2rem 2.5rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', background: '#f8fafc' }}>
+            <div style={{ padding: '2rem 2.5rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', background: '#f8fafc' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                 <img src="/LOGO SEM FUNDO.png" alt="DOCA" style={{ height: '60px', objectFit: 'contain' }} />
                 <div>
@@ -1371,10 +1365,13 @@ const Dashboard = () => {
                     const printStyles = document.createElement('style');
                     printStyles.innerHTML = `
                       @media print {
-                        body * { visibility: hidden; }
-                        .manage-modal-content, .manage-modal-content * { visibility: visible; }
-                        .manage-modal-content { position: fixed; left: 0; top: 0; width: 100%; border: none; box-shadow: none; background: white !important; z-index: 9999; }
-                        button, select, input[type="range"], .modal-tabs-header, label { display: none !important; }
+                        body * { visibility: hidden !important; }
+                        .manage-modal-content, .manage-modal-content * { visibility: visible !important; }
+                        .manage-modal-content { position: absolute; left: 0; top: 0; width: 100%; height: auto !important; border: none; box-shadow: none; background: white !important; z-index: 9999; padding: 0 !important; overflow: visible !important; }
+                        .no-print, button, select, input[type="range"], .modal-tabs-header, label { display: none !important; }
+                        .tab-panel { display: block !important; margin-bottom: 40px; page-break-inside: avoid; border-bottom: 2px solid #f1f5f9; padding-bottom: 20px; }
+                        .modal-tabs-header { display: none !important; }
+                        div[style*="overflow-y: auto"] { overflow: visible !important; height: auto !important; }
                       }
                     `;
                     document.head.appendChild(printStyles);
@@ -1384,7 +1381,7 @@ const Dashboard = () => {
                   className="no-print"
                   style={{ background: '#FFCC00', color: 'white', border: 'none', borderRadius: '12px', padding: '10px 20px', cursor: 'pointer', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '8px' }}
                 >
-                  <ImageIcon size={18} /> GERAR RELATÓRIO PDF
+                  <ImageIcon size={18} /> GERAR RELATÓRIO COMPLETO (PDF)
                 </button>
                 <button onClick={closeManageModal} className="no-print" style={{ background: '#f1f5f9', border: 'none', borderRadius: '12px', padding: '8px', cursor: 'pointer' }}>
                   <X size={24} />
@@ -1393,7 +1390,7 @@ const Dashboard = () => {
             </div>
 
             {/* Modal Tabs */}
-            <div style={{ display: 'flex', background: '#f8fafc', padding: '0 2.5rem', gap: '2rem' }}>
+            <div className="modal-tabs-header no-print" style={{ display: 'flex', background: '#f8fafc', padding: '0 2.5rem', gap: '2rem' }}>
               {['general', 'planning', 'finance', 'execution', 'gallery'].map((tab) => (
                 <button
                   key={tab}
@@ -1424,7 +1421,8 @@ const Dashboard = () => {
             {/* Modal Content */}
             <div style={{ flex: 1, overflowY: 'auto', padding: '2.5rem' }}>
               
-              {manageTab === 'general' && (
+              <div className="tab-panel" style={{ display: manageTab === 'general' ? 'block' : 'none' }}>
+                <h4 className="only-print" style={{ display: 'none', margin: '0 0 1.5rem 0', color: '#FFCC00' }}>Dados Gerais</h4>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
                   <div>
                     <label style={{ display: 'block', fontWeight: '700', marginBottom: '0.5rem' }}>Status da Obra</label>
@@ -1486,9 +1484,10 @@ const Dashboard = () => {
                     </div>
                   )}
                 </div>
-              )}
+              </div>
 
-              {manageTab === 'planning' && (
+              <div className="tab-panel" style={{ display: manageTab === 'planning' ? 'block' : 'none' }}>
+                <h4 className="only-print" style={{ display: 'none', margin: '2rem 0 1.5rem 0', color: '#FFCC00' }}>Cronograma de Atividades</h4>
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                     <div>
@@ -1763,9 +1762,12 @@ const Dashboard = () => {
                           </div>
                           {(selectedQuote.tasks || []).map((task, idx) => {
                             const start = new Date(task.startDate);
-                            const end = new Date(task.deadline);
+                            const end = new Date(task.deadline || new Date());
                             const projStart = new Date(selectedQuote.startDate || task.startDate);
-                            const totalDays = 30; // 30 day view
+                            const projEnd = new Date(selectedQuote.deadline || new Date());
+                            
+                            // Calculate timeline window (min 14 days, max based on actual project)
+                            const totalDays = Math.max(14, Math.floor((projEnd - projStart) / (1000 * 60 * 60 * 24)) + 5); 
                             
                             const offset = Math.max(0, Math.floor((start - projStart) / (1000 * 60 * 60 * 24)));
                             const duration = Math.max(1, Math.floor((end - start) / (1000 * 60 * 60 * 24)));
@@ -1816,9 +1818,10 @@ const Dashboard = () => {
                     </div>
                   </div>
                 </div>
-              )}
+              </div>
 
-              {manageTab === 'finance' && (
+              <div className="tab-panel" style={{ display: manageTab === 'finance' ? 'block' : 'none' }}>
+                <h4 className="only-print" style={{ display: 'none', margin: '2rem 0 1.5rem 0', color: '#FFCC00' }}>Histórico Financeiro</h4>
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                     <h4 style={{ margin: 0 }}>Histórico de Pagamentos</h4>
@@ -1893,9 +1896,10 @@ const Dashboard = () => {
                     </tbody>
                   </table>
                 </div>
-              )}
+              </div>
 
-              {manageTab === 'execution' && (
+              <div className="tab-panel" style={{ display: manageTab === 'execution' ? 'block' : 'none' }}>
+                <h4 className="only-print" style={{ display: 'none', margin: '2rem 0 1.5rem 0', color: '#FFCC00' }}>Controle de Execução e Materiais</h4>
                 <div>
                   <div style={{ marginBottom: '3rem' }}>
                     <label style={{ display: 'block', fontWeight: '700', marginBottom: '1rem' }}>Estado da Obra: {selectedQuote.percentage || 0}%</label>
@@ -2103,9 +2107,10 @@ const Dashboard = () => {
                     ))}
                   </div>
                 </div>
-              )}
+              </div>
 
-              {manageTab === 'gallery' && (
+              <div className="tab-panel" style={{ display: manageTab === 'gallery' ? 'block' : 'none' }}>
+                <h4 className="only-print" style={{ display: 'none', margin: '2rem 0 1.5rem 0', color: '#FFCC00' }}>Evidências Fotográficas</h4>
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                     <h4 style={{ margin: 0 }}>Galeria de Evolução da Obra</h4>
@@ -2175,11 +2180,11 @@ const Dashboard = () => {
                     )}
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
-        ) : null}
+      ) : null}
 
       {/* Modern Alert Component */}
       <ModernAlert 

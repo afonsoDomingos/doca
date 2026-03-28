@@ -54,6 +54,7 @@ const CustomerDashboard = () => {
     photo: ''
   });
   const [updatingProfile, setUpdatingProfile] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [alertConfig, setAlertConfig] = useState({ 
     isOpen: false, 
     type: 'info', 
@@ -121,6 +122,32 @@ const CustomerDashboard = () => {
     } finally {
       setUpdatingProfile(false);
     }
+  };
+
+  const handlePhotoFile = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploadingPhoto(true);
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/upload`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: reader.result })
+        });
+        const data = await res.json();
+        setProfileForm({ ...profileForm, photo: data.url });
+        showAlert('Sucesso', 'Foto carregada! Não se esqueça de guardar as alterações no final.', 'success');
+      } catch (error) {
+        console.error('Error uploading photo:', error);
+        showAlert('Erro', 'Falha no upload da foto.', 'error');
+      } finally {
+        setUploadingPhoto(false);
+      }
+    };
   };
 
   const handleLogout = () => {
@@ -348,170 +375,275 @@ const CustomerDashboard = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="dashboard-main" style={{ marginLeft: '280px', flex: 1, padding: '3rem 5rem', background: '#f1f5f9', minHeight: '100vh' }}>
+      <main className="dashboard-main" style={{ marginLeft: '280px', flex: 1, padding: '2rem 3rem', background: '#f8fafc', minHeight: '100vh', transition: 'all 0.3s' }}>
         {activeTab === 'orders' ? (
-          <>
-            <header className="header-actions" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4rem' }}>
-              <div className="desktop-profile" style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-                <div style={{ 
-                  width: '80px', 
-                  height: '80px', 
-                  background: user.photo ? `url(${user.photo})` : '#000000',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  borderRadius: '24px', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  color: 'white',
-                  fontSize: '2rem',
-                  fontWeight: '900',
-                  boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)',
-                  border: '4px solid white'
-                }}>
+          <motion.div initial="hidden" animate="visible" variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+          }}>
+            {/* Professional Welcome Bar */}
+            <header className="header-actions" style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              marginBottom: '2.5rem',
+              background: 'linear-gradient(135deg, #000 0%, #1a1a1a 100%)',
+              padding: '2rem 2.5rem',
+              borderRadius: '32px',
+              color: 'white',
+              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              {/* Decorative Background Pattern */}
+              <div style={{ position: 'absolute', top: '-10%', right: '-5%', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(255,204,0,0.1) 0%, transparent 70%)' }}></div>
+              
+              <div className="desktop-profile" style={{ display: 'flex', alignItems: 'center', gap: '20px', position: 'relative', zIndex: 2 }}>
+                <motion.div 
+                  whileHover={{ scale: 1.05, rotate: 5 }}
+                  style={{ 
+                    width: '64px', 
+                    height: '64px', 
+                    background: user.photo ? `url(${user.photo})` : '#FFCC00',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    borderRadius: '18px', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    color: '#000',
+                    fontSize: '1.5rem',
+                    fontWeight: '900',
+                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)',
+                    border: '3px solid rgba(255,255,255,0.1)'
+                  }}
+                >
                   {!user.photo && user.name.charAt(0)}
-                </div>
+                </motion.div>
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.9rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>
-                    Painel do Cliente DOCA <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#FFCC00' }}></div> Online
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(255,255,255,0.5)', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '4px' }}>
+                    Bem-vindo ao Portal <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#FFCC00' }}></div> Online
                   </div>
-                  <h1 style={{ fontSize: '3rem', fontWeight: '900', color: '#0f172a', margin: 0, letterSpacing: '-2px', lineHeight: 1 }}>
-                    Olá, {user.name.split(' ')[0]}
+                  <h1 style={{ fontSize: '2rem', fontWeight: '900', color: '#fff', margin: 0, letterSpacing: '-1.5px', lineHeight: 1 }}>
+                    {user.name.split(' ')[0]}, <span style={{ color: '#FFCC00' }}>sua obra em boas mãos.</span>
                   </h1>
                 </div>
               </div>
+
               <motion.button 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02, boxShadow: '0 0 20px rgba(255,204,0,0.4)' }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => setIsQuoteModalOpen(true)}
                 style={{ 
-                  padding: '18px 36px', 
-                  background: '#000000', 
-                  color: 'white', 
+                  padding: '14px 28px', 
+                  background: '#FFCC00', 
+                  color: '#000', 
                   border: 'none', 
-                  borderRadius: '24px', 
+                  borderRadius: '16px', 
                   fontWeight: '900', 
                   display: 'flex', 
                   alignItems: 'center', 
-                  gap: '12px', 
+                  gap: '10px', 
                   cursor: 'pointer',
-                  boxShadow: '0 20px 30px -10px rgba(0, 0, 0, 0.4)',
-                  fontSize: '1rem'
+                  fontSize: '0.9rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                  boxShadow: '0 10px 15px -3px rgba(255, 204, 0, 0.2)',
+                  zIndex: 2
                 }}
               >
-                SOLICITAR ORÇAMENTO <ArrowRight size={22} />
+                NOVO PROJETO <Plus size={18} />
               </motion.button>
             </header>
 
-            {/* Stats Grid */}
-            <div className="dashboard-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2.5rem', marginBottom: '5rem' }}>
+            {/* Compact Stats Bar */}
+            <div className="dashboard-stats-grid" style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(3, 1fr)', 
+              gap: '1.5rem', 
+              marginBottom: '3rem' ,
+              marginTop: '-1rem',
+              zIndex: 3,
+              position: 'relative',
+              padding: '0 1.5rem'
+            }}>
               {[
-                { label: 'Pedidos Realizados', val: quotes.length, icon: FileText, color: '#003366' },
-                { label: 'Obras em Análise', val: quotes.filter(q => q.status === 'Pendente' || q.status === 'Em Análise').length, icon: Clock, color: '#FFCC00' },
-                { label: 'Projectos Concluídos', val: quotes.filter(q => q.status === 'Concluído').length, icon: CheckCircle, color: '#10b981' }
+                { label: 'Pedidos Ativos', val: quotes.filter(q => q.status !== 'Concluído' && q.status !== 'Cancelado').length, icon: FileText, color: '#FFCC00', bg: 'white' },
+                { label: 'Obras em Curso', val: quotes.filter(q => q.status === 'Em Execução' || q.status === 'Finalização').length, icon: Activity, color: '#1a1a1a', bg: 'white' },
+                { label: 'Projectos Finalizados', val: quotes.filter(q => q.status === 'Concluído').length, icon: Award, color: '#10b981', bg: 'white' }
               ].map((stat, i) => (
-                <div key={i} style={{ background: 'white', padding: '2.5rem', borderRadius: '32px', border: '1px solid white', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.03)' }}>
-                  <div style={{ color: stat.color, marginBottom: '1.5rem', background: `${stat.color}18`, width: '48px', height: '48px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <stat.icon size={22} />
+                <motion.div 
+                  key={i}
+                  variants={{ hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1 } }}
+                  whileHover={{ y: -5 }}
+                  style={{ 
+                    background: 'white', 
+                    padding: '1.25rem 1.75rem', 
+                    borderRadius: '24px', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '1.25rem',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.02)',
+                    border: '1px solid rgba(255,255,255,0.8)'
+                  }}
+                >
+                  <div style={{ 
+                    color: stat.color, 
+                    background: `${stat.color}15`, 
+                    width: '42px', 
+                    height: '42px', 
+                    borderRadius: '12px', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center' 
+                  }}>
+                    <stat.icon size={20} />
                   </div>
-                  <p style={{ color: '#64748b', fontSize: '0.8rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', margin: 0 }}>{stat.label}</p>
-                  <h3 style={{ fontSize: '3rem', fontWeight: '950', color: '#0f172a', margin: '10px 0 0 0', letterSpacing: '-1px' }}>{stat.val}</h3>
-                </div>
+                  <div>
+                    <p style={{ color: '#64748b', fontSize: '0.65rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', margin: 0 }}>{stat.label}</p>
+                    <h3 style={{ fontSize: '1.5rem', fontWeight: '950', color: '#0f172a', margin: 0 }}>{stat.val}</h3>
+                  </div>
+                </motion.div>
               ))}
             </div>
 
             {/* ACTIVE PROJECTS (Synced with 'Aprovado' and 'Execução') */}
             {quotes.some(q => q.percentage > 0 || q.status === 'Aprovado' || q.status === 'Em Execução' || q.status === 'Finalização') && (
-              <div style={{ marginBottom: '4rem' }}>
-                <h2 style={{ fontSize: '1.75rem', fontWeight: '900', color: '#1e293b', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <LayoutDashboard size={28} color="#FFCC00" /> Acompanhamento de Obras
+              <div style={{ marginBottom: '3rem' }}>
+                <h2 style={{ fontSize: '1.25rem', fontWeight: '950', color: '#1e293b', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                  <LayoutDashboard size={22} color="#FFCC00" /> Acompanhamento de Obras
                 </h2>
-                <div className="dashboard-projects-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '2rem' }}>
+                <div className="dashboard-projects-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '1.5rem' }}>
                   {quotes.filter(q => q.percentage > 0 || q.status === 'Aprovado' || q.status === 'Em Execução' || q.status === 'Finalização').map((proj) => {
-                    const totalPaid = (proj.payments || []).reduce((acc, curr) => acc + curr.amount, 0);
                     return (
-                      <div key={proj._id} style={{ background: 'white', borderRadius: '32px', border: '1px solid white', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
-                        <div style={{ height: '220px', background: proj.workPhotos?.length > 0 ? `url(${proj.workPhotos[proj.workPhotos.length - 1]})` : '#003366', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}>
-                          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)' }}></div>
-                          <div style={{ position: 'absolute', bottom: '20px', left: '25px', right: '25px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                      <motion.div 
+                        key={proj._id} 
+                        variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1 } }}
+                        whileHover={{ y: -8, boxShadow: '0 30px 60px -12px rgba(0,0,0,0.15)' }}
+                        style={{ background: 'white', borderRadius: '28px', border: '1px solid rgba(0,0,0,0.03)', overflow: 'hidden', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.04)', transition: 'all 0.4s' }}
+                      >
+                        <div style={{ height: '180px', background: proj.workPhotos?.length > 0 ? `url(${proj.workPhotos[proj.workPhotos.length - 1]})` : '#1a1a1a', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}>
+                          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9), transparent)' }}></div>
+                          <div style={{ position: 'absolute', bottom: '15px', left: '20px', right: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                             <div>
-                              <span style={{ background: '#FFCC00', color: 'white', padding: '6px 12px', borderRadius: '100px', fontSize: '0.7rem', fontWeight: '900' }}>{proj.status}</span>
-                              <h3 style={{ color: 'white', margin: '8px 0 0', fontSize: '1.5rem', fontWeight: '900' }}>{proj.serviceType}</h3>
+                               <div style={{ display: 'flex', gap: '6px', marginBottom: '6px' }}>
+                                  <span style={{ background: '#FFCC00', color: '#000', padding: '4px 10px', borderRadius: '100px', fontSize: '0.6rem', fontWeight: '900', textTransform: 'uppercase' }}>{proj.status}</span>
+                               </div>
+                               <h3 style={{ color: 'white', margin: 0, fontSize: '1.25rem', fontWeight: '900', letterSpacing: '-0.5px' }}>{proj.serviceType}</h3>
                             </div>
                             <div style={{ color: 'white', textAlign: 'right' }}>
-                               <p style={{ margin: 0, fontSize: '0.7rem', opacity: 0.6 }}>TOTAL</p>
-                               <p style={{ margin: 0, fontSize: '1rem', fontWeight: '900' }}>{(proj.totalBudget || 0).toLocaleString()} MT</p>
+                               <p style={{ margin: 0, fontSize: '0.6rem', opacity: 0.6, fontWeight: '800' }}>TOTAL</p>
+                               <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: '900', color: '#FFCC00' }}>{(proj.totalBudget || 0).toLocaleString()} MT</p>
                             </div>
                           </div>
                         </div>
-                        <div style={{ padding: '2rem' }}>
-                          <div style={{ marginBottom: '1.5rem' }}>
-                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                               <span style={{ fontWeight: '800', color: '#64748b', fontSize: '0.8rem' }}>PROGRESSO</span>
-                               <span style={{ fontWeight: '900', color: '#FFCC00' }}>{proj.percentage || 0}%</span>
+                        <div style={{ padding: '1.5rem' }}>
+                          <div style={{ marginBottom: '1.25rem' }}>
+                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                               <span style={{ fontWeight: '800', color: '#64748b', fontSize: '0.7rem', textTransform: 'uppercase' }}>PROGRESSO TÉCNICO</span>
+                               <span style={{ fontWeight: '900', color: '#000', fontSize: '0.85rem' }}>{proj.percentage || 0}%</span>
                              </div>
-                             <div style={{ height: '8px', background: '#f1f5f9', borderRadius: '10px', overflow: 'hidden' }}>
-                               <motion.div initial={{ width: 0 }} animate={{ width: `${proj.percentage || 0}%` }} style={{ height: '100%', background: '#FFCC00' }} />
+                             <div style={{ height: '6px', background: '#f1f5f9', borderRadius: '10px', overflow: 'hidden' }}>
+                               <motion.div initial={{ width: 0 }} animate={{ width: `${proj.percentage || 0}%` }} transition={{ duration: 1, ease: "easeOut" }} style={{ height: '100%', background: 'linear-gradient(90deg, #FFCC00, #f97316)', borderRadius: '10px' }} />
                              </div>
                           </div>
-                          <button 
+                          <motion.button 
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
                             onClick={() => setSelectedActiveProject(proj)}
-                            style={{ width: '100%', background: '#003366', color: 'white', border: 'none', padding: '14px', borderRadius: '16px', fontWeight: '800', cursor: 'pointer' }}
+                            style={{ width: '100%', background: '#1a1a1a', color: 'white', border: 'none', padding: '12px', borderRadius: '14px', fontWeight: '800', cursor: 'pointer', fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                           >
-                            VER RELATÓRIO
-                          </button>
+                            <TrendingUp size={16} /> ACEDER AO RELATÓRIO
+                          </motion.button>
                         </div>
-                      </div>
+                      </motion.div>
                     );
                   })}
                 </div>
               </div>
             )}
 
-            {/* QUOTES TABLE */}
-            <div style={{ background: 'white', borderRadius: '32px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.03)', padding: '2.5rem' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '900', color: '#0f172a', marginBottom: '2rem' }}>Histórico de Pedidos</h2>
+            {/* Redesigned Quotes Table Section */}
+            <div style={{ 
+              background: 'white', 
+              borderRadius: '28px', 
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)', 
+              padding: '2rem',
+              border: '1px solid rgba(0,0,0,0.02)'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <h2 style={{ fontSize: '1.1rem', fontWeight: '950', color: '#0f172a', textTransform: 'uppercase', letterSpacing: '1px', margin: 0 }}>Histórico de Pedidos</h2>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                   <div style={{ color: '#64748b', fontSize: '0.75rem', fontWeight: '700' }}>{filteredQuotes.length} Entradas Encontradas</div>
+                </div>
+              </div>
+              
               <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 12px', textAlign: 'left' }}>
+                <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 8px', textAlign: 'left' }}>
                   <thead>
                     <tr>
-                      <th style={{ padding: '0 1rem', color: '#94a3b8', fontSize: '0.75rem', fontWeight: '800' }}>SERVIÇO</th>
-                      <th style={{ padding: '0 1rem', color: '#94a3b8', fontSize: '0.75rem', fontWeight: '800' }}>DATA</th>
-                      <th style={{ padding: '0 1rem', color: '#94a3b8', fontSize: '0.75rem', fontWeight: '800' }}>ESTADO</th>
-                      <th style={{ padding: '0 1rem', color: '#94a3b8', fontSize: '0.75rem', fontWeight: '800', textAlign: 'right' }}>AÇÕES</th>
+                      <th style={{ padding: '0 1rem', color: '#94a3b8', fontSize: '0.65rem', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1px' }}>SERVIÇO SOLICITADO</th>
+                      <th style={{ padding: '0 1rem', color: '#94a3b8', fontSize: '0.65rem', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1px' }}>DATA DO REGISTO</th>
+                      <th style={{ padding: '0 1rem', color: '#94a3b8', fontSize: '0.65rem', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1px' }}>ESTADO ATUAL</th>
+                      <th style={{ padding: '0 1rem', color: '#94a3b8', fontSize: '0.65rem', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1px', textAlign: 'right' }}>AÇÕES</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredQuotes.map((quote) => (
-                      <tr key={quote._id} style={{ background: '#f8fafc' }}>
-                        <td style={{ padding: '1.5rem 1rem', borderTopLeftRadius: '20px', borderBottomLeftRadius: '20px' }}>
-                          <span style={{ fontWeight: '800', color: '#0f172a' }}>{quote.serviceType}</span>
+                      <motion.tr 
+                        key={quote._id} 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        whileHover={{ scale: 1.002, x: 5 }}
+                        style={{ background: '#fafafa', borderRadius: '14px', cursor: 'pointer', transition: 'all 0.2s' }}
+                      >
+                        <td style={{ padding: '1.25rem 1rem', borderTopLeftRadius: '14px', borderBottomLeftRadius: '14px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                             <div style={{ background: '#fff', padding: '8px', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
+                                <FileText size={16} color="#0f172a" />
+                             </div>
+                             <span style={{ fontWeight: '800', color: '#0f172a', fontSize: '0.9rem' }}>{quote.serviceType}</span>
+                          </div>
                         </td>
-                        <td style={{ padding: '1.5rem 1rem' }}>
-                          <span style={{ color: '#64748b', fontWeight: '600' }}>{new Date(quote.createdAt).toLocaleDateString()}</span>
+                        <td style={{ padding: '1.25rem 1rem' }}>
+                          <span style={{ color: '#64748b', fontWeight: '700', fontSize: '0.85rem' }}>{new Date(quote.createdAt).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
                         </td>
-                        <td style={{ padding: '1.5rem 1rem' }}>
-                          <span style={{ background: `${getStatusColor(quote.status)}15`, color: getStatusColor(quote.status), padding: '6px 14px', borderRadius: '100px', fontSize: '0.7rem', fontWeight: '900' }}>
+                        <td style={{ padding: '1.25rem 1rem' }}>
+                          <span style={{ 
+                            background: getStatusColor(quote.status), 
+                            color: 'white', 
+                            padding: '4px 12px', 
+                            borderRadius: '100px', 
+                            fontSize: '0.65rem', 
+                            fontWeight: '900',
+                            boxShadow: `0 4px 10px ${getStatusColor(quote.status)}40`
+                          }}>
                             {quote.status.toUpperCase()}
                           </span>
                         </td>
-                        <td style={{ padding: '1.5rem 1rem', textAlign: 'right', borderTopRightRadius: '20px', borderBottomRightRadius: '20px' }}>
-                          <button onClick={() => showAlert('Detalhes do Pedido', quote.description, 'info')} style={{ background: 'white', border: '1px solid #e2e8er0', padding: '8px 16px', borderRadius: '12px', fontWeight: '700', cursor: 'pointer' }}>Detalhes</button>
+                        <td style={{ padding: '1.25rem 1rem', textAlign: 'right', borderTopRightRadius: '14px', borderBottomRightRadius: '14px' }}>
+                          <motion.button 
+                            whileHover={{ scale: 1.1 }}
+                            onClick={() => showAlert('Detalhes do Pedido', quote.description, 'info')} 
+                            style={{ background: 'white', border: '1px solid #e2e8f0', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#0f172a' }}
+                          >
+                            <ChevronRight size={18} />
+                          </motion.button>
                         </td>
-                      </tr>
+                      </motion.tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             </div>
-          </>
+          </motion.div>
         ) : (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ maxWidth: '800px', margin: '0 auto' }}>
             <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#0f172a', marginBottom: '2rem' }}>Configurações do Perfil</h1>
             
             <form onSubmit={handleUpdateProfile} style={{ background: 'white', padding: '3rem', borderRadius: '32px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)' }}>
               <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-                <div style={{ 
+                <label style={{ 
                   width: '120px', 
                   height: '120px', 
                   margin: '0 auto 1.5rem', 
@@ -525,20 +657,35 @@ const CustomerDashboard = () => {
                   justifyContent: 'center',
                   color: 'white',
                   cursor: 'pointer',
-                  position: 'relative'
+                  position: 'relative',
+                  overflow: 'hidden'
                 }}>
-                  {!profileForm.photo && <Camera size={40} />}
-                  <div style={{ position: 'absolute', bottom: '-10px', right: '-10px', background: '#FFCC00', width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', border: '4px solid white' }}>
-                    <Plus size={20} />
+                  <input 
+                    type="file" 
+                    onChange={handlePhotoFile} 
+                    accept="image/*" 
+                    style={{ display: 'none' }} 
+                  />
+                  {uploadingPhoto && (
+                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} style={{ width: '20px', height: '20px', border: '2px solid white', borderTopColor: 'transparent', borderRadius: '50%' }} />
+                    </div>
+                  )}
+                  {!profileForm.photo && !uploadingPhoto && <Camera size={40} />}
+                  <div style={{ position: 'absolute', bottom: '-5px', right: '-5px', background: '#FFCC00', width: '36px', height: '36px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', border: '3px solid white', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+                    <Plus size={18} />
                   </div>
+                </label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
+                  <p style={{ margin: 0, fontSize: '0.75rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase' }}>Clique no ícone para carregar foto</p>
+                  <input 
+                    type="text" 
+                    placeholder="Ou cole o link da foto aqui..."
+                    value={profileForm.photo}
+                    onChange={(e) => setProfileForm({...profileForm, photo: e.target.value})}
+                    style={{ width: '100%', maxWidth: '400px', padding: '10px', borderRadius: '100px', border: '1px solid #e2e8f0', fontSize: '0.75rem', textAlign: 'center', background: '#f8fafc' }}
+                  />
                 </div>
-                <input 
-                  type="text" 
-                  placeholder="URL da Foto de Perfil"
-                  value={profileForm.photo}
-                  onChange={(e) => setProfileForm({...profileForm, photo: e.target.value})}
-                  style={{ width: '100%', maxWidth: '400px', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '0.8rem', textAlign: 'center' }}
-                />
               </div>
 
               <div className="dashboard-profile-flex" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
