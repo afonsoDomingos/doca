@@ -1347,12 +1347,22 @@ const Dashboard = () => {
           <div style={{ background: 'white', width: '100%', maxWidth: '900px', height: '80vh', borderRadius: '32px', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
             
             {/* Modal Header */}
-            <div className="manage-modal-content" style={{ padding: '2rem 2.5rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc' }}>
+            <div className="manage-modal-content" style={{ padding: '2rem 2.5rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', background: '#f8fafc' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                <img src="/LOGO SEM FUNDO.png" alt="DOCA" style={{ height: '50px', objectFit: 'contain' }} />
+                <img src="/LOGO SEM FUNDO.png" alt="DOCA" style={{ height: '60px', objectFit: 'contain' }} />
                 <div>
                    <h3 style={{ fontSize: '1.5rem', fontWeight: '900', color: '#1e293b', margin: 0 }}>Portal de Gestão de Obra</h3>
-                   <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '0.875rem' }}>DOCA MOZAMBIQUE — {selectedQuote.serviceType} | Ref: #DOCA-{selectedQuote._id.slice(-6).toUpperCase()}</p>
+                   <div style={{ display: 'flex', gap: '20px', marginTop: '4px' }}>
+                     <div>
+                       <p style={{ margin: 0, color: '#64748b', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase' }}>DADOS DA OBRA</p>
+                       <p style={{ margin: 0, color: '#1e293b', fontSize: '0.875rem', fontWeight: '700' }}>{selectedQuote.serviceType} | Ref: #DOCA-{selectedQuote._id.slice(-6).toUpperCase()}</p>
+                     </div>
+                     <div style={{ borderLeft: '1px solid #e2e8f0', paddingLeft: '20px' }}>
+                       <p style={{ margin: 0, color: '#64748b', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase' }}>CLIENTE</p>
+                       <p style={{ margin: 0, color: '#1e293b', fontSize: '0.875rem', fontWeight: '700' }}>{selectedQuote.clientName}</p>
+                       <p style={{ margin: 0, color: '#64748b', fontSize: '0.75rem' }}>{selectedQuote.phone} | {selectedQuote.email}</p>
+                     </div>
+                   </div>
                 </div>
               </div>
               <div style={{ display: 'flex', gap: '8px' }}>
