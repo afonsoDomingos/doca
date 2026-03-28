@@ -1347,19 +1347,36 @@ const Dashboard = () => {
           <div style={{ background: 'white', width: '100%', maxWidth: '900px', height: '80vh', borderRadius: '32px', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
             
             {/* Modal Header */}
-            <div style={{ padding: '2rem 2.5rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc' }}>
-              <div>
-                <h3 style={{ fontSize: '1.5rem', fontWeight: '900', color: '#1e293b', margin: 0 }}>Gestão de Obra: {selectedQuote.serviceType}</h3>
-                <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '0.875rem' }}>Cliente: {selectedQuote.clientName} | Ref: #DOCA-{selectedQuote._id.slice(-6).toUpperCase()}</p>
+            <div className="manage-modal-content" style={{ padding: '2rem 2.5rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                <img src="/LOGO SEM FUNDO.png" alt="DOCA" style={{ height: '50px', objectFit: 'contain' }} />
+                <div>
+                   <h3 style={{ fontSize: '1.5rem', fontWeight: '900', color: '#1e293b', margin: 0 }}>Portal de Gestão de Obra</h3>
+                   <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '0.875rem' }}>DOCA MOZAMBIQUE — {selectedQuote.serviceType} | Ref: #DOCA-{selectedQuote._id.slice(-6).toUpperCase()}</p>
+                </div>
               </div>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <button 
-                  onClick={() => window.print()}
-                  style={{ background: '#FFCC00', color: 'white', border: 'none', borderRadius: '12px', padding: '8px 16px', cursor: 'pointer', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '8px' }}
+                  onClick={() => {
+                    const printStyles = document.createElement('style');
+                    printStyles.innerHTML = `
+                      @media print {
+                        body * { visibility: hidden; }
+                        .manage-modal-content, .manage-modal-content * { visibility: visible; }
+                        .manage-modal-content { position: fixed; left: 0; top: 0; width: 100%; border: none; box-shadow: none; background: white !important; z-index: 9999; }
+                        button, select, input[type="range"], .modal-tabs-header, label { display: none !important; }
+                      }
+                    `;
+                    document.head.appendChild(printStyles);
+                    window.print();
+                    document.head.removeChild(printStyles);
+                  }}
+                  className="no-print"
+                  style={{ background: '#FFCC00', color: 'white', border: 'none', borderRadius: '12px', padding: '10px 20px', cursor: 'pointer', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '8px' }}
                 >
-                  <ImageIcon size={16} /> EXPORTAR PDF
+                  <ImageIcon size={18} /> GERAR RELATÓRIO PDF
                 </button>
-                <button onClick={closeManageModal} style={{ background: '#f1f5f9', border: 'none', borderRadius: '12px', padding: '8px', cursor: 'pointer' }}>
+                <button onClick={closeManageModal} className="no-print" style={{ background: '#f1f5f9', border: 'none', borderRadius: '12px', padding: '8px', cursor: 'pointer' }}>
                   <X size={24} />
                 </button>
               </div>
