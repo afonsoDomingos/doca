@@ -1549,7 +1549,9 @@ const Dashboard = () => {
                           style={{ flex: 1, background: '#FFCC00', color: 'white', border: 'none', padding: '10px', borderRadius: '10px', fontWeight: '900', cursor: 'pointer' }}
                         >
                           GUARDAR TAREFA
-                  onClick={() => setIsAddingTask(false)}
+                        </button>
+                        <button 
+                          onClick={() => setIsAddingTask(false)}
                           style={{ padding: '10px 20px', background: '#e2e8f0', border: 'none', borderRadius: '10px', cursor: 'pointer' }}
                         >
                           Cancelar
