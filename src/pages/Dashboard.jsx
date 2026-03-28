@@ -650,128 +650,207 @@ const Dashboard = () => {
       </aside>
 
       {activeTab === 'users' && (
-        <div style={{ marginLeft: '280px', flex: 1, padding: '2rem 3rem' }}>
-          <header style={{ marginBottom: '3rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2rem' }}>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          style={{ marginLeft: isSidebarCollapsed ? '100px' : '280px', flex: 1, padding: '3rem', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}
+        >
+          <header style={{ marginBottom: '3.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2.5rem' }}>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
-                  Páginas <ChevronRight size={14} /> <span style={{ color: '#FFCC00', fontWeight: '600' }}>Gestão de Usuários</span>
-                </div>
-                <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: 0, letterSpacing: '-1px' }}>
-                  Base de Clientes
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.1 }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.8rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.75rem' }}
+                >
+                  Gestão Geral <ChevronRight size={12} /> <span style={{ color: '#FFCC00' }}>Base de Clientes</span>
+                </motion.div>
+                <h1 style={{ fontSize: '3rem', fontWeight: '900', color: '#1e293b', margin: 0, letterSpacing: '-1.5px', lineHeight: 1 }}>
+                  Base de <span style={{ color: '#FFCC00' }}>Clientes</span>
                 </h1>
+                <p style={{ color: '#64748b', marginTop: '1rem', fontSize: '1rem', fontWeight: '500' }}>
+                  Gerencie permissões, consulte dados de contacto e monitore o crescimento da sua base profissional.
+                </p>
               </div>
               
-              <div style={{ position: 'relative' }}>
-                <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+              <div style={{ position: 'relative', width: '380px' }}>
+                <Search size={20} style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
                 <input 
                   type="text" 
-                  placeholder="Pesquisar por nome ou email..."
+                  placeholder="Pesquisar por nome, email ou ID..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   style={{ 
-                    padding: '12px 16px 12px 48px', 
-                    borderRadius: '16px', 
-                    border: '1px solid #e2e8f0', 
+                    padding: '16px 20px 16px 56px', 
+                    borderRadius: '24px', 
+                    border: '1px solid rgba(226, 232, 240, 0.8)', 
                     background: 'white',
-                    width: '320px',
+                    width: '100%',
                     outline: 'none',
-                    fontSize: '0.9rem',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
+                    fontSize: '0.95rem',
+                    fontWeight: '500',
+                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.03)',
+                    transition: 'all 0.2s ease'
                   }}
+                  onFocus={(e) => e.target.style.borderColor = '#FFCC00'}
+                  onBlur={(e) => e.target.style.borderColor = 'rgba(226, 232, 240, 0.8)'}
                 />
               </div>
             </div>
 
-            {/* Micro Stats for Users */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
-              <div style={{ background: 'white', padding: '1.5rem', borderRadius: '24px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                <div style={{ background: 'rgba(235, 137, 35, 0.1)', color: '#FFCC00', padding: '15px', borderRadius: '18px' }}>
-                  <Users size={24} />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem' }}>
+              <motion.div 
+                whileHover={{ y: -5 }}
+                style={{ background: 'white', padding: '1.5rem', borderRadius: '28px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)', border: '1px solid white', display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+                <div style={{ background: 'rgba(235, 137, 35, 0.1)', color: '#FFCC00', width: '56px', height: '56px', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Users size={28} />
                 </div>
                 <div>
-                  <p style={{ margin: 0, fontSize: '0.875rem', fontWeight: '600', color: '#64748b' }}>Total de Clientes</p>
-                  <h4 style={{ margin: '4px 0 0', fontSize: '1.5rem', fontWeight: '800', color: '#1e293b' }}>{users.length}</h4>
+                  <p style={{ margin: 0, fontSize: '0.75rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px' }}>Total de Clientes</p>
+                  <h4 style={{ margin: '2px 0 0', fontSize: '1.75rem', fontWeight: '900', color: '#1e293b' }}>{users.length}</h4>
                 </div>
-              </div>
+              </motion.div>
+              
+              <motion.div 
+                whileHover={{ y: -5 }}
+                style={{ background: 'white', padding: '1.5rem', borderRadius: '28px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)', border: '1px solid white', display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+                <div style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', width: '56px', height: '56px', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <ShieldCheck size={28} />
+                </div>
+                <div>
+                  <p style={{ margin: 0, fontSize: '0.75rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px' }}>Administradores</p>
+                  <h4 style={{ margin: '2px 0 0', fontSize: '1.75rem', fontWeight: '900', color: '#16a34a' }}>
+                    {users.filter(u => u.isAdmin).length}
+                  </h4>
+                </div>
+              </motion.div>
             </div>
           </header>
 
-          <div style={{ background: 'white', borderRadius: '28px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.05)', border: '1px solid rgba(226, 232, 240, 0.5)', overflow: 'hidden' }}>
+          <div style={{ background: 'white', borderRadius: '32px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.05)', border: '1px solid white', overflow: 'hidden' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead>
                 <tr style={{ background: '#f8fafc' }}>
-                  <th style={{ padding: '1.5rem 2.5rem', color: '#475569', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px' }}>Usuário</th>
-                  <th style={{ padding: '1.5rem 2.5rem', color: '#475569', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px' }}>Contato</th>
-                  <th style={{ padding: '1.5rem 2.5rem', color: '#475569', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', textAlign: 'center' }}>Operações</th>
+                  <th style={{ padding: '1.75rem 2.5rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1.5px', width: '40%' }}>Perfil do Usuário</th>
+                  <th style={{ padding: '1.75rem 2.5rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1.5px' }}>Informação de Contato</th>
+                  <th style={{ padding: '1.75rem 2.5rem', color: '#64748b', fontSize: '0.75rem', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1.5px', textAlign: 'right' }}>Ações de Gestão</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredUsers.map(user => (
-                  <tr key={user._id} style={{ borderBottom: '1px solid #f1f5f9', transition: 'all 0.2s' }} className="table-row-hover">
-                    <td style={{ padding: '1.5rem 2.5rem' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        <div style={{ width: '52px', height: '52px', borderRadius: '16px', background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#334155', border: '1px solid #e2e8f0' }}>
-                          <User size={22} />
+                <AnimatePresence mode="popLayout">
+                  {filteredUsers.map((u, idx) => (
+                    <motion.tr 
+                      key={u._id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ delay: idx * 0.03 }}
+                      whileHover={{ backgroundColor: '#fcfcfc' }}
+                      style={{ borderBottom: '1px solid #f1f5f9', transition: 'all 0.2s ease' }}>
+                      <td style={{ padding: '1.5rem 2.5rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                          <div style={{ 
+                            width: '64px', 
+                            height: '64px', 
+                            borderRadius: '20px', 
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                            backgroundImage: u.photo ? `url(${u.photo})` : 'none',
+                            backgroundColor: '#f1f5f9',
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            color: '#94a3b8', 
+                            border: '2px solid white',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.04)',
+                            overflow: 'hidden'
+                          }}>
+                            {!u.photo && <User size={28} />}
+                          </div>
+                          <div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                              <p style={{ fontWeight: '800', color: '#1e293b', margin: 0, fontSize: '1.1rem' }}>{u.name}</p>
+                              {u.isAdmin && (
+                                <span style={{ background: '#FFCC00', color: 'white', fontSize: '0.65rem', fontWeight: '900', padding: '2px 8px', borderRadius: '100px', textTransform: 'uppercase' }}>
+                                  ADMIN
+                                </span>
+                              )}
+                            </div>
+                            <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#94a3b8', fontWeight: '600' }}>REGISTO: #DOCA-{u._id.slice(-6).toUpperCase()}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p style={{ fontWeight: '700', color: '#1e293b', margin: 0, fontSize: '1rem' }}>{user.name}</p>
-                          <p style={{ margin: 0, fontSize: '0.75rem', color: '#94a3b8' }}>ID: {user._id.slice(-6).toUpperCase()}</p>
+                      </td>
+                      <td style={{ padding: '1.5rem 2.5rem' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                          <span style={{ fontWeight: '700', color: '#475569', fontSize: '0.95rem' }}>{u.email}</span>
+                          <span style={{ fontSize: '0.85rem', color: '#94a3b8', fontWeight: '600' }}>{u.phone || 'Sem contacto telefónico'}</span>
                         </div>
-                      </div>
-                    </td>
-                    <td style={{ padding: '1.5rem 2.5rem' }}>
-                      <p style={{ fontWeight: '600', color: '#475569', margin: 0, fontSize: '0.9rem' }}>{user.email}</p>
-                      <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>{user.phone || 'Sem telefone'}</p>
-                    </td>
-                    <td style={{ padding: '1.5rem 2.5rem', textAlign: 'center' }}>
-                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                        <button 
-                          onClick={() => handlePromote(user._id, user.name)}
-                          style={{ 
-                            background: 'rgba(235, 137, 35, 0.1)', 
-                            color: '#FFCC00', 
-                            border: '1px solid rgba(235, 137, 35, 0.2)', 
-                            padding: '10px 20px', 
-                            borderRadius: '14px', 
-                            fontSize: '0.875rem', 
-                            fontWeight: '700', 
-                            cursor: 'pointer',
-                            transition: 'all 0.2s',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px'
-                          }}
-                        >
-                          <ShieldCheck size={16} /> Promover
-                        </button>
-                        <button 
-                          onClick={() => handleDeleteUser(user._id, user.name)}
-                          style={{ 
-                            background: 'rgba(239, 68, 68, 0.1)', 
-                            color: '#ef4444', 
-                            border: '1px solid rgba(239, 68, 68, 0.2)', 
-                            padding: '10px', 
-                            borderRadius: '14px', 
-                            cursor: 'pointer',
-                            transition: 'all 0.2s',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}
-                          title="Excluir Usuário"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
+                      </td>
+                      <td style={{ padding: '1.5rem 2.5rem', textAlign: 'right' }}>
+                        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                          {!u.isAdmin && (
+                            <motion.button 
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={() => handlePromote(u._id, u.name)}
+                              style={{ 
+                                background: '#1e293b', 
+                                color: 'white', 
+                                border: 'none', 
+                                padding: '10px 18px', 
+                                borderRadius: '14px', 
+                                fontSize: '0.8rem', 
+                                fontWeight: '800', 
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                              }}
+                            >
+                              <ShieldCheck size={16} /> PROMOVER
+                            </motion.button>
+                          )}
+                          <motion.button 
+                            whileHover={{ scale: 1.05, backgroundColor: '#fee2e2' }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => handleDeleteUser(u._id, u.name)}
+                            style={{ 
+                              background: '#fff1f2', 
+                              color: '#ef4444', 
+                              border: '1px solid #fee2e2', 
+                              padding: '10px', 
+                              borderRadius: '14px', 
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              transition: 'all 0.2s ease'
+                            }}
+                            title="Eliminar Conta"
+                          >
+                            <Trash2 size={20} />
+                          </motion.button>
+                        </div>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </AnimatePresence>
+                {filteredUsers.length === 0 && (
+                  <tr>
+                    <td colSpan="3" style={{ padding: '4rem', textAlign: 'center', color: '#94a3b8' }}>
+                      <Search size={48} style={{ opacity: 0.2, marginBottom: '1.5rem' }} />
+                      <p style={{ margin: 0, fontWeight: '600' }}>Nenhum usuário encontrado para a sua pesquisa.</p>
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
-        </div>
+        </motion.div>
       )}
+
 
       {/* Main Content */}
       <main style={{ 
@@ -1111,83 +1190,209 @@ const Dashboard = () => {
 
         {/* TAB: SETTINGS */}
         {activeTab === 'settings' && (
-          <div>
-            <header style={{ marginBottom: '3rem' }}>
-              <div style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Administração <ChevronRight size={14} /> <span style={{ color: '#FFCC00', fontWeight: '600' }}>Configurações</span></div>
-              <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: 0, letterSpacing: '-1px' }}>
-                Configurações Globais
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            style={{ padding: '1rem 0' }}
+          >
+            <header style={{ marginBottom: '3.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.8rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.75rem' }}>
+                Administração <ChevronRight size={12} /> <span style={{ color: '#FFCC00' }}>Configurações Globais</span>
+              </div>
+              <h1 style={{ fontSize: '3rem', fontWeight: '900', color: '#1e293b', margin: 0, letterSpacing: '-1.5px', lineHeight: 1 }}>
+                Ajustes do <span style={{ color: '#FFCC00' }}>Sistema</span>
               </h1>
-              <p style={{ color: '#64748b', marginTop: '1rem' }}>Gerencie as informações de contato e dados da empresa que aparecem no site.</p>
+              <p style={{ color: '#64748b', marginTop: '1rem', fontSize: '1rem', fontWeight: '500' }}>Gerencie as informações institucionais, contactos e dados da empresa que são exibidos publicamente no site.</p>
             </header>
 
-            <div style={{ maxWidth: '800px' }}>
-              <form onSubmit={handleUpdateSettings} style={{ background: 'white', padding: '3rem', borderRadius: '32px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)', border: '1px solid white' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-                  <div>
-                    <label style={{ display: 'block', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' }}>Nome da Empresa</label>
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              style={{ maxWidth: '900px' }}
+            >
+              <form onSubmit={handleUpdateSettings} style={{ 
+                background: 'white', 
+                padding: '3.5rem', 
+                borderRadius: '40px', 
+                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.06)', 
+                border: '1px solid rgba(226, 232, 240, 0.4)',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                {/* Decorative element */}
+                <div style={{ position: 'absolute', top: 0, right: 0, width: '150px', height: '150px', background: 'linear-gradient(135deg, rgba(255,204,0,0.05) 0%, transparent 100%)', borderRadius: '0 0 0 100%' }} />
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2.5rem' }}>
+                  <motion.div whileHover={{ y: -2 }} transition={{ type: 'spring', stiffness: 300 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '800', color: '#1e293b', marginBottom: '1rem', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      <Briefcase size={16} color="#FFCC00" /> Nome da Empresa
+                    </label>
                     <input 
                       type="text" 
                       value={settings.companyName}
                       onChange={(e) => setSettings({...settings, companyName: e.target.value})}
-                      style={{ width: '100%', padding: '14px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#f8fafc', outline: 'none' }}
+                      style={{ 
+                        width: '100%', 
+                        padding: '16px 20px', 
+                        borderRadius: '18px', 
+                        border: '1px solid #e2e8f0', 
+                        background: '#f8fafc', 
+                        outline: 'none',
+                        fontSize: '1rem',
+                        fontWeight: '600',
+                        color: '#1e293b',
+                        transition: 'all 0.2s ease',
+                        boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
+                      }}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = '#FFCC00'; 
+                        e.target.style.background = 'white';
+                        e.target.style.boxShadow = '0 0 0 4px rgba(255, 204, 0, 0.1)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = '#e2e8f0'; 
+                        e.target.style.background = '#f8fafc';
+                        e.target.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.02)';
+                      }}
                     />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' }}>WhatsApp de Suporte</label>
+                  </motion.div>
+
+                  <motion.div whileHover={{ y: -2 }} transition={{ type: 'spring', stiffness: 300 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '800', color: '#1e293b', marginBottom: '1rem', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      <MessageCircle size={16} color="#FFCC00" /> WhatsApp de Suporte
+                    </label>
                     <input 
                       type="text" 
                       value={settings.supportWhatsapp}
                       placeholder="+258 8X XXX XXXX"
                       onChange={(e) => setSettings({...settings, supportWhatsapp: e.target.value})}
-                      style={{ width: '100%', padding: '14px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#f8fafc', outline: 'none' }}
+                      style={{ 
+                        width: '100%', 
+                        padding: '16px 20px', 
+                        borderRadius: '18px', 
+                        border: '1px solid #e2e8f0', 
+                        background: '#f8fafc', 
+                        outline: 'none',
+                        fontSize: '1rem',
+                        fontWeight: '600',
+                        color: '#1e293b',
+                        transition: 'all 0.2s ease',
+                        boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
+                      }}
+                       onFocus={(e) => {
+                        e.target.style.borderColor = '#FFCC00'; 
+                        e.target.style.background = 'white';
+                        e.target.style.boxShadow = '0 0 0 4px rgba(255, 204, 0, 0.1)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = '#e2e8f0'; 
+                        e.target.style.background = '#f8fafc';
+                        e.target.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.02)';
+                      }}
                     />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' }}>E-mail de Contato</label>
+                  </motion.div>
+
+                  <motion.div whileHover={{ y: -2 }} transition={{ type: 'spring', stiffness: 300 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '800', color: '#1e293b', marginBottom: '1rem', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      <User size={16} color="#FFCC00" /> E-mail de Contato
+                    </label>
                     <input 
                       type="email" 
                       value={settings.supportEmail}
                       placeholder="geral@docacm.com"
                       onChange={(e) => setSettings({...settings, supportEmail: e.target.value})}
-                      style={{ width: '100%', padding: '14px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#f8fafc', outline: 'none' }}
+                      style={{ 
+                        width: '100%', 
+                        padding: '16px 20px', 
+                        borderRadius: '18px', 
+                        border: '1px solid #e2e8f0', 
+                        background: '#f8fafc', 
+                        outline: 'none',
+                        fontSize: '1rem',
+                        fontWeight: '600',
+                        color: '#1e293b',
+                        transition: 'all 0.2s ease',
+                        boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
+                      }}
+                       onFocus={(e) => {
+                        e.target.style.borderColor = '#FFCC00'; 
+                        e.target.style.background = 'white';
+                        e.target.style.boxShadow = '0 0 0 4px rgba(255, 204, 0, 0.1)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = '#e2e8f0'; 
+                        e.target.style.background = '#f8fafc';
+                        e.target.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.02)';
+                      }}
                     />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' }}>Endereço Principal</label>
+                  </motion.div>
+
+                  <motion.div whileHover={{ y: -2 }} transition={{ type: 'spring', stiffness: 300 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '800', color: '#1e293b', marginBottom: '1rem', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      <Layers size={16} color="#FFCC00" /> Endereço Principal
+                    </label>
                     <input 
                       type="text" 
                       value={settings.address}
                       onChange={(e) => setSettings({...settings, address: e.target.value})}
-                      style={{ width: '100%', padding: '14px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#f8fafc', outline: 'none' }}
+                      style={{ 
+                        width: '100%', 
+                        padding: '16px 20px', 
+                        borderRadius: '18px', 
+                        border: '1px solid #e2e8f0', 
+                        background: '#f8fafc', 
+                        outline: 'none',
+                        fontSize: '1rem',
+                        fontWeight: '600',
+                        color: '#1e293b',
+                        transition: 'all 0.2s ease',
+                        boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
+                      }}
+                       onFocus={(e) => {
+                        e.target.style.borderColor = '#FFCC00'; 
+                        e.target.style.background = 'white';
+                        e.target.style.boxShadow = '0 0 0 4px rgba(255, 204, 0, 0.1)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = '#e2e8f0'; 
+                        e.target.style.background = '#f8fafc';
+                        e.target.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.02)';
+                      }}
                     />
-                  </div>
+                  </motion.div>
                 </div>
 
-                <div style={{ marginTop: '3rem', display: 'flex', justifyContent: 'flex-end' }}>
-                  <button 
+                <div style={{ marginTop: '4rem', display: 'flex', justifyContent: 'center' }}>
+                  <motion.button 
                     type="submit"
+                    whileHover={{ scale: 1.02, y: -5 }}
+                    whileTap={{ scale: 0.98 }}
                     style={{ 
                       background: 'linear-gradient(135deg, #FFCC00 0%, #d87a1d 100%)', 
                       color: 'white', 
-                      padding: '16px 40px', 
-                      borderRadius: '18px', 
+                      padding: '20px 60px', 
+                      borderRadius: '24px', 
                       border: 'none', 
-                      fontWeight: '800', 
-                      fontSize: '1rem', 
+                      fontWeight: '900', 
+                      fontSize: '1.1rem', 
                       cursor: 'pointer',
-                      boxShadow: '0 10px 15px -3px rgba(255, 204, 0, 0.3)',
+                      boxShadow: '0 20px 40px -10px rgba(255, 204, 0, 0.4)',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '10px'
+                      gap: '12px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '1px'
                     }}
                   >
-                    <Save size={20} /> SALVAR ALTERAÇÕES
-                  </button>
+                    <Save size={22} /> SALVAR ALTERAÇÕES TÉCNICAS
+                  </motion.button>
                 </div>
               </form>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         )}
+
       </main>
 
       {/* CRUD Modal */}
