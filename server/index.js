@@ -80,8 +80,27 @@ const QuoteSchema = new mongoose.Schema({
   serviceType: String,
   budgetRange: String,
   description: String,
-  status: { type: String, default: 'Pendente' }, // Pendente, Em Análise, Concluído, Cancelado
+  status: { type: String, default: 'Pendente' }, // Pendente, Em Análise, Concluído, Cancelado, Aprovado
   adminNotes: { type: String, default: '' },
+  startDate: Date,
+  endDate: Date,
+  tasks: [{
+    title: String,
+    resource: String,
+    duration: String,
+    deadline: Date,
+    status: { type: String, default: 'Pendente' },
+    progress: { type: Number, default: 0 },
+    notes: String,
+    startDate: { type: Date, default: Date.now }
+  }],
+  materials: [{
+    name: String,
+    cost: Number,
+    receiptUrl: String,
+    date: { type: Date, default: Date.now }
+  }],
+  gallery: [String],
   createdAt: { type: Date, default: Date.now }
 });
 
@@ -206,6 +225,17 @@ app.get('/api/quotes', async (req, res) => {
     await connectToDatabase();
     const quotes = await Quote.find().sort({ createdAt: -1 });
     res.json(quotes);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/quotes/:id', async (req, res) => {
+  try {
+    await connectToDatabase();
+    const quote = await Quote.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!quote) return res.status(404).json({ error: 'Orçamento não encontrado' });
+    res.json(quote);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

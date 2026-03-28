@@ -1547,6 +1547,15 @@ const Dashboard = () => {
                             style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
                           />
                         </div>
+                        <div style={{ gridColumn: '1 / -1' }}>
+                          <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Observações / Notas Extras</label>
+                          <input 
+                            placeholder="Notas sobre a tarefa..."
+                            value={taskData.notes}
+                            onChange={(e) => setTaskData({ ...taskData, notes: e.target.value })}
+                            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                          />
+                        </div>
                       </div>
                       <div style={{ marginTop: '1.5rem', display: 'flex', gap: '8px' }}>
                         <button 
@@ -1561,7 +1570,7 @@ const Dashboard = () => {
                             const newTasks = [...(selectedQuote.tasks || []), newTask];
                             handleUpdateQuote({ tasks: newTasks });
                             setIsAddingTask(false);
-                            setTaskData({ title: '', resource: '', duration: '', deadline: '' });
+                            setTaskData({ title: '', resource: '', duration: '', deadline: '', notes: '' });
                           }}
                           style={{ flex: 1, background: '#FFCC00', color: 'white', border: 'none', padding: '10px', borderRadius: '10px', fontWeight: '900', cursor: 'pointer' }}
                         >
@@ -1643,28 +1652,55 @@ const Dashboard = () => {
                             </div>
                             
                             {editingTaskIndex === i ? (
-                              <div style={{ marginTop: '1rem', background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #FFCC00' }}>
+                              <div style={{ marginTop: '1rem', background: '#f8fafc', padding: '1.5rem', borderRadius: '12px', border: '1px solid #FFCC00' }}>
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                                   <input 
-                                      value={taskData.title}
-                                      onChange={(e) => setTaskData({ ...taskData, title: e.target.value })}
-                                      placeholder="Título"
-                                      style={{ gridColumn: '1 / -1', padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
-                                   />
-                                   <input 
-                                      value={taskData.resource}
-                                      onChange={(e) => setTaskData({ ...taskData, resource: e.target.value })}
-                                      placeholder="Recurso"
-                                      style={{ padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
-                                   />
-                                   <input 
-                                      value={taskData.duration}
-                                      onChange={(e) => setTaskData({ ...taskData, duration: e.target.value })}
-                                      placeholder="Duração"
-                                      style={{ padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
-                                   />
+                                   <div style={{ gridColumn: '1 / -1' }}>
+                                      <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Título da Tarefa</label>
+                                      <input 
+                                          value={taskData.title}
+                                          onChange={(e) => setTaskData({ ...taskData, title: e.target.value })}
+                                          placeholder="Título"
+                                          style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                                      />
+                                   </div>
+                                   <div>
+                                      <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Quem realiza? (Recurso)</label>
+                                      <input 
+                                          value={taskData.resource}
+                                          onChange={(e) => setTaskData({ ...taskData, resource: e.target.value })}
+                                          placeholder="Recurso"
+                                          style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                                      />
+                                   </div>
+                                   <div>
+                                      <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Tempo Estimado (Duração)</label>
+                                      <input 
+                                          value={taskData.duration}
+                                          onChange={(e) => setTaskData({ ...taskData, duration: e.target.value })}
+                                          placeholder="Ex: 2 dias"
+                                          style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                                      />
+                                   </div>
+                                   <div style={{ gridColumn: '1 / -1' }}>
+                                      <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Deadline (Prazo)</label>
+                                      <input 
+                                          type="date"
+                                          value={taskData.deadline ? new Date(taskData.deadline).toISOString().split('T')[0] : ''}
+                                          onChange={(e) => setTaskData({ ...taskData, deadline: e.target.value })}
+                                          style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                                      />
+                                   </div>
+                                   <div style={{ gridColumn: '1 / -1' }}>
+                                      <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Observações / Notas</label>
+                                      <input 
+                                          value={taskData.notes}
+                                          onChange={(e) => setTaskData({ ...taskData, notes: e.target.value })}
+                                          placeholder="Notas extra sobre a tarefa..."
+                                          style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                                      />
+                                   </div>
                                 </div>
-                                <div style={{ marginTop: '1rem', display: 'flex', gap: '8px' }}>
+                                <div style={{ marginTop: '1.5rem', display: 'flex', gap: '8px' }}>
                                   <button 
                                     onClick={() => {
                                       const newTasks = [...selectedQuote.tasks];
@@ -1672,11 +1708,11 @@ const Dashboard = () => {
                                       handleUpdateQuote({ tasks: newTasks });
                                       setEditingTaskIndex(null);
                                     }}
-                                    style={{ flex: 1, background: '#1e293b', color: 'white', border: 'none', padding: '8px', borderRadius: '8px', fontWeight: '800', cursor: 'pointer' }}
+                                    style={{ flex: 1, background: '#1e293b', color: 'white', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: '900', cursor: 'pointer', textTransform: 'uppercase' }}
                                   >
                                     SALVAR ALTERAÇÕES
                                   </button>
-                                  <button onClick={() => setEditingTaskIndex(null)} style={{ padding: '8px 15px', background: '#e2e8f0', borderRadius: '8px', border: 'none', cursor: 'pointer' }}>Cancelar</button>
+                                  <button onClick={() => setEditingTaskIndex(null)} style={{ padding: '12px 20px', background: '#e2e8f0', color: '#475569', fontWeight: '800', borderRadius: '8px', border: 'none', cursor: 'pointer' }}>Cancelar</button>
                                 </div>
                               </div>
                             ) : (
@@ -1949,25 +1985,49 @@ const Dashboard = () => {
                     {(selectedQuote.materials || []).map((mat, i) => (
                       <div key={i} style={{ padding: '1rem', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         {editingMaterialIndex === i ? (
-                          <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
-                            <input 
-                              value={materialData.name}
-                              onChange={(e) => setMaterialData({ ...materialData, name: e.target.value })}
-                              style={{ flex: 2, padding: '6px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
-                            />
-                            <input 
-                              type="number"
-                              value={materialData.cost}
-                              onChange={(e) => setMaterialData({ ...materialData, cost: e.target.value })}
-                              style={{ flex: 1, padding: '6px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
-                            />
-                            <button onClick={() => {
-                               const newMaterials = [...selectedQuote.materials];
-                               newMaterials[i] = { ...newMaterials[i], name: materialData.name, cost: Number(materialData.cost) };
-                               handleUpdateQuote({ materials: newMaterials });
-                               setEditingMaterialIndex(null);
-                            }} style={{ background: '#FFCC00', border: 'none', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer' }}><Check size={14} color="white" /></button>
-                            <button onClick={() => setEditingMaterialIndex(null)} style={{ background: '#e2e8f0', border: 'none', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer' }}><X size={14} /></button>
+                          <div style={{ background: 'white', padding: '1rem', borderRadius: '12px', border: '1px solid #FFCC00', width: '100%' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                              <div style={{ gridColumn: '1 / -1' }}>
+                                <label style={{ fontSize: '0.65rem', fontWeight: '800' }}>Descrição</label>
+                                <input 
+                                  value={materialData.name}
+                                  onChange={(e) => setMaterialData({ ...materialData, name: e.target.value })}
+                                  style={{ width: '100%', padding: '6px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                                />
+                              </div>
+                              <div>
+                                <label style={{ fontSize: '0.65rem', fontWeight: '800' }}>Custo (MT)</label>
+                                <input 
+                                  type="number"
+                                  value={materialData.cost}
+                                  onChange={(e) => setMaterialData({ ...materialData, cost: e.target.value })}
+                                  style={{ width: '100%', padding: '6px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                                />
+                              </div>
+                              <div>
+                                <label style={{ fontSize: '0.65rem', fontWeight: '800' }}>Data</label>
+                                <input 
+                                  type="date"
+                                  value={materialData.date ? new Date(materialData.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]}
+                                  onChange={(e) => setMaterialData({ ...materialData, date: e.target.value })}
+                                  style={{ width: '100%', padding: '6px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                                />
+                              </div>
+                            </div>
+                            <div style={{ marginTop: '10px', display: 'flex', gap: '8px' }}>
+                              <button onClick={() => {
+                                 const newMaterials = [...selectedQuote.materials];
+                                 newMaterials[i] = { 
+                                   ...newMaterials[i], 
+                                   name: materialData.name, 
+                                   cost: Number(materialData.cost),
+                                   date: materialData.date || newMaterials[i].date
+                                 };
+                                 handleUpdateQuote({ materials: newMaterials });
+                                 setEditingMaterialIndex(null);
+                              }} style={{ flex: 1, background: '#1e293b', color: 'white', border: 'none', padding: '8px', borderRadius: '6px', cursor: 'pointer', fontWeight: '800' }}>SALVAR</button>
+                              <button onClick={() => setEditingMaterialIndex(null)} style={{ background: '#e2e8f0', border: 'none', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer' }}>X</button>
+                            </div>
                           </div>
                         ) : (
                           <>
