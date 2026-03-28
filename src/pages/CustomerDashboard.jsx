@@ -468,8 +468,8 @@ const CustomerDashboard = () => {
               padding: '0 1.5rem'
             }}>
               {[
-                { label: 'Pedidos Ativos', val: quotes.filter(q => q.status !== 'Concluído' && q.status !== 'Cancelado').length, icon: FileText, color: '#FFCC00', bg: 'white' },
-                { label: 'Obras em Curso', val: quotes.filter(q => q.status === 'Em Execução' || q.status === 'Finalização').length, icon: Activity, color: '#1a1a1a', bg: 'white' },
+                { label: 'Pedidos / Orçamentos', val: quotes.filter(q => q.status === 'Pendente' || q.status === 'Em Análise').length, icon: FileText, color: '#FFCC00', bg: 'white' },
+                { label: 'Obras em Curso', val: quotes.filter(q => q.status === 'Aprovado' || q.status === 'Em Execução' || q.status === 'Finalização').length, icon: Activity, color: '#1a1a1a', bg: 'white' },
                 { label: 'Projectos Finalizados', val: quotes.filter(q => q.status === 'Concluído').length, icon: Award, color: '#10b981', bg: 'white' }
               ].map((stat, i) => (
                 <motion.div 
