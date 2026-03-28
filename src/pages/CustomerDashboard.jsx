@@ -719,7 +719,7 @@ const CustomerDashboard = () => {
                        <Award size={32} color="#FFCC00" style={{ marginBottom: '1rem' }} />
                        <h4 style={{ margin: '0 0 1rem 0', color: '#FFCC00' }}>Garantia DOCA</h4>
                        <p style={{ fontSize: '0.85rem', opacity: 0.8, lineHeight: '1.6' }}>
-                         Este relatório é sincronizado diretamente com a nossa gestão técnica. Quaisquer dúvidas sobre o cronograma podem ser esclarecidas via suporte WhatsApp.
+                         Este relatório é sincronizado diretamente com a nossa gestão técnica. Quaisquer dúvidas sobre o cronograma podem ser esclarecidas via <a href={`https://wa.me/258848580244?text=${encodeURIComponent(`Olá! Tenho uma dúvida sobre o cronograma da minha obra (Ref: #DOCA-${selectedActiveProject._id.slice(-6).toUpperCase()})`)}`} target="_blank" rel="noopener noreferrer" style={{ color: '#FFCC00', fontWeight: '900', textDecoration: 'none' }}>suporte WhatsApp</a>.
                        </p>
                     </div>
                  </div>
