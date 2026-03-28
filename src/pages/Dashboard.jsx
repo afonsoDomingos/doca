@@ -1851,10 +1851,32 @@ const Dashboard = () => {
                     <tbody>
                       {(selectedQuote.payments || []).map((pay, i) => (
                         <tr key={i} style={{ borderBottom: '1px solid #f8fafc' }}>
-                          <td style={{ padding: '1rem 0' }}>{new Date(pay.date).toLocaleDateString()}</td>
-                          <td style={{ padding: '1rem 0', fontWeight: '700' }}>{pay.amount.toLocaleString()} MT</td>
+                          <td style={{ padding: '1rem 0' }}>{new Date(pay.date || new Date()).toLocaleDateString()}</td>
+                          <td style={{ padding: '1rem 0', fontWeight: '800', color: '#1e293b' }}>{pay.amount.toLocaleString()} MT</td>
                           <td style={{ padding: '1rem 0' }}>
-                            <span style={{ background: '#ecfdf5', color: '#10b981', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: '800' }}>{pay.status}</span>
+                            <select 
+                              value={pay.status || 'Pago'}
+                              onChange={(e) => {
+                                const newPayments = [...selectedQuote.payments];
+                                newPayments[i].status = e.target.value;
+                                handleUpdateQuote({ payments: newPayments });
+                              }}
+                              style={{ 
+                                background: pay.status === 'Pago' ? '#ecfdf5' : (pay.status === 'Pendente' ? '#fef9c3' : '#fee2e2'), 
+                                color: pay.status === 'Pago' ? '#10b981' : (pay.status === 'Pendente' ? '#854d0e' : '#991b1b'), 
+                                padding: '4px 10px', 
+                                border: 'none',
+                                borderRadius: '20px', 
+                                fontSize: '0.75rem', 
+                                fontWeight: '800',
+                                cursor: 'pointer',
+                                outline: 'none'
+                              }}
+                            >
+                              <option value="Pago">Pago</option>
+                              <option value="Pendente">Pendente</option>
+                              <option value="Atrasado">Atrasado</option>
+                            </select>
                           </td>
                         </tr>
                       ))}

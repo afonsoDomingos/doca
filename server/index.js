@@ -100,6 +100,11 @@ const QuoteSchema = new mongoose.Schema({
     receiptUrl: String,
     date: { type: Date, default: Date.now }
   }],
+  payments: [{
+    amount: Number,
+    date: { type: Date, default: Date.now },
+    status: { type: String, default: 'Pago' } // Pago, Pendente, Atrasado
+  }],
   gallery: [String],
   createdAt: { type: Date, default: Date.now }
 });
