@@ -66,6 +66,7 @@ const Dashboard = () => {
     pendingQuotes: 0,
     totalUsers: 0
   });
+  const [editingProject, setEditingProject] = useState(null);
 
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [taskData, setTaskData] = useState({ title: '', resource: '', duration: '', deadline: '' });
