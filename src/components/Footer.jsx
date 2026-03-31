@@ -1,6 +1,6 @@
-import React from 'react';
-import { ArrowUp, ChevronRight } from 'lucide-react';
-import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter } from 'react-icons/fa';
+import { ArrowUp, ChevronRight, Mail, MapPin, Phone, Globe } from 'lucide-react';
+import { FaFacebook, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -10,9 +10,23 @@ const Footer = () => {
   };
 
   const footerLinks = [
-    { title: 'Links Úteis', items: ['Home', 'Serviços', 'Projetos', 'Sobre Nós', 'Contactos'] },
-    { title: 'Serviços', items: ['Construção Civil', 'Manutenção Especializada', 'Consultoria Técnica', 'Limpeza Industrial', 'Gestão de Ativos'] },
-    { title: 'Suporte', items: ['Termos e Condições', 'Política de Privacidade', 'FAQ', 'Ouvidoria'] }
+    {
+      title: 'Links Úteis', items: [
+        { name: 'Home', path: '/' },
+        { name: 'Serviços', path: '#servicos' },
+        { name: 'Projetos', path: '#projetos' },
+        { name: 'Portal do Cliente', path: '/portal/login' },
+        { name: 'Área Restrita', path: '/admin/dashboard' }
+      ]
+    },
+    {
+      title: 'Serviços', items: [
+        { name: 'Construção Civil', path: '#servicos' },
+        { name: 'Manutenção Técnica', path: '#servicos' },
+        { name: 'Consultoria', path: '#servicos' },
+        { name: 'Gestão de Ativos', path: '#servicos' }
+      ]
+    }
   ];
 
   const socialLinks = [
@@ -54,23 +68,57 @@ const Footer = () => {
           {/* Dynamic Map Links */}
           {footerLinks.map((section, idx) => (
             <div key={idx}>
-              <h4 style={{ fontSize: '1.4rem', color: 'var(--accent-yellow)', marginBottom: '30px', position: 'relative', display: 'inline-block' }}>
+              <h4 style={{ fontSize: '1.2rem', color: 'var(--accent-yellow)', marginBottom: '30px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px' }}>
                 {section.title}
-                <div style={{ position: 'absolute', bottom: '-10px', left: 0, width: '40px', height: '2px', backgroundColor: 'var(--accent-yellow)' }}></div>
               </h4>
               <ul style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                 {section.items.map((item, i) => (
                   <li key={i}>
-                    <a href="#" style={{ color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '8px', transition: '0.3s' }}
-                      onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
-                      onMouseLeave={(e) => e.currentTarget.style.color = '#CBD5E1'}>
-                      <ChevronRight size={14} /> {item}
-                    </a>
+                    {item.path.startsWith('#') ? (
+                      <a href={item.path} style={{ color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '8px', transition: '0.3s', fontSize: '0.95rem' }}
+                        onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent-yellow)'}
+                        onMouseLeave={(e) => e.currentTarget.style.color = '#CBD5E1'}>
+                        <ChevronRight size={14} style={{ color: 'var(--accent-yellow)' }} /> {item.name}
+                      </a>
+                    ) : (
+                      <Link to={item.path} style={{ color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '8px', transition: '0.3s', fontSize: '0.95rem' }}
+                        onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent-yellow)'}
+                        onMouseLeave={(e) => e.currentTarget.style.color = '#CBD5E1'}>
+                        <ChevronRight size={14} style={{ color: 'var(--accent-yellow)' }} /> {item.name}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>
             </div>
           ))}
+
+          {/* Contact Info Section */}
+          <div>
+            <h4 style={{ fontSize: '1.2rem', color: 'var(--accent-yellow)', marginBottom: '30px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px' }}>
+              Contactos
+            </h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div style={{ display: 'flex', gap: '15px' }}>
+                <div style={{ color: 'var(--accent-yellow)' }}><MapPin size={22} /></div>
+                <div style={{ color: '#CBD5E1', fontSize: '0.95rem' }}>
+                  Av. das Indústrias, Maputo<br />Moçambique
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                <div style={{ color: 'var(--accent-yellow)' }}><Phone size={20} /></div>
+                <a href="tel:+258848580244" style={{ color: '#CBD5E1', fontSize: '0.95rem' }}>+258 84 858 0244</a>
+              </div>
+              <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                <div style={{ color: 'var(--accent-yellow)' }}><Mail size={20} /></div>
+                <a href="mailto:geral@docacm.com" style={{ color: '#CBD5E1', fontSize: '0.95rem' }}>geral@docacm.com</a>
+              </div>
+              <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                <div style={{ color: 'var(--accent-yellow)' }}><Globe size={20} /></div>
+                <span style={{ color: '#CBD5E1', fontSize: '0.95rem' }}>www.docacm.com</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Bottom Bar */}
