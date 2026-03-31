@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Building2, 
-  Wrench, 
-  Users, 
-  ArrowRight, 
-  ArrowLeft, 
-  Send, 
+import { Link } from 'react-router-dom';
+import {
+  Building2,
+  Wrench,
+  Users,
+  ArrowRight,
+  ArrowLeft,
+  Send,
   MessageCircle,
   CheckCircle2,
   Calendar,
@@ -71,8 +72,8 @@ const QuoteForm = ({ onComplete }) => {
   };
 
   const handleServiceSelect = (serviceId) => {
-    setFormData({ 
-      ...formData, 
+    setFormData({
+      ...formData,
       serviceType: serviceId,
       additionalDetails: {} // Limpar detalhes se mudar o serviço
     });
@@ -117,12 +118,12 @@ const QuoteForm = ({ onComplete }) => {
     <div key="step0" className="quote-step">
       <h3 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1.5rem', textAlign: 'center' }}>Como deseja solicitar seu orçamento?</h3>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-        <button 
+        <button
           onClick={() => { setMethod('platform'); nextStep(); }}
-          style={{ 
-            padding: '2rem', 
-            borderRadius: '20px', 
-            border: '2px solid #f1f5f9', 
+          style={{
+            padding: '2rem',
+            borderRadius: '20px',
+            border: '2px solid #f1f5f9',
             background: 'white',
             cursor: 'pointer',
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -139,12 +140,12 @@ const QuoteForm = ({ onComplete }) => {
           <span style={{ fontWeight: '600', color: '#1e293b' }}>Pela Plataforma</span>
           <p style={{ fontSize: '0.8rem', color: '#64748b' }}>Processo guiado e formal</p>
         </button>
-        <button 
+        <button
           onClick={() => { setMethod('whatsapp'); nextStep(); }}
-          style={{ 
-            padding: '2rem', 
-            borderRadius: '20px', 
-            border: '2px solid #f1f5f9', 
+          style={{
+            padding: '2rem',
+            borderRadius: '20px',
+            border: '2px solid #f1f5f9',
             background: 'white',
             cursor: 'pointer',
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -169,12 +170,12 @@ const QuoteForm = ({ onComplete }) => {
       <h3 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1.5rem', textAlign: 'center' }}>Que tipo de serviço você procura?</h3>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
         {services.map((s) => (
-          <button 
+          <button
             key={s.id}
             onClick={() => handleServiceSelect(s.id)}
-            style={{ 
-              padding: '1.25rem', 
-              borderRadius: '16px', 
+            style={{
+              padding: '1.25rem',
+              borderRadius: '16px',
               border: formData.serviceType === s.id ? '2px solid #FFCC00' : '1px solid #e2e8f0',
               background: formData.serviceType === s.id ? '#FFCC0005' : 'white',
               cursor: 'pointer',
@@ -200,53 +201,53 @@ const QuoteForm = ({ onComplete }) => {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         <div style={{ position: 'relative' }}>
           <User size={18} color="#94a3b8" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
-          <input 
-            type="text" 
-            name="clientName" 
-            placeholder="Seu nome completo" 
-            value={formData.clientName} 
+          <input
+            type="text"
+            name="clientName"
+            placeholder="Seu nome completo"
+            value={formData.clientName}
             onChange={handleInputChange}
             style={{ width: '100%', padding: '14px 16px 14px 48px', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }}
           />
         </div>
         <div style={{ position: 'relative' }}>
           <Mail size={18} color="#94a3b8" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
-          <input 
-            type="email" 
-            name="email" 
-            placeholder="Seu melhor e-mail" 
-            value={formData.email} 
+          <input
+            type="email"
+            name="email"
+            placeholder="Seu melhor e-mail"
+            value={formData.email}
             onChange={handleInputChange}
             style={{ width: '100%', padding: '14px 16px 14px 48px', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }}
           />
         </div>
         <div style={{ position: 'relative' }}>
           <Phone size={18} color="#94a3b8" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
-          <input 
-            type="tel" 
-            name="phone" 
-            placeholder="Seu telefone / WhatsApp" 
-            value={formData.phone} 
+          <input
+            type="tel"
+            name="phone"
+            placeholder="Seu telefone / WhatsApp"
+            value={formData.phone}
             onChange={handleInputChange}
             style={{ width: '100%', padding: '14px 16px 14px 48px', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }}
           />
         </div>
         <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
           <button onClick={prevStep} style={{ flex: 1, padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', fontWeight: '600', color: '#64748b' }}>Voltar</button>
-          <button 
-            onClick={nextStep} 
+          <button
+            onClick={nextStep}
             disabled={!formData.clientName || !formData.email || !formData.phone}
-            style={{ 
-              flex: 1, 
-              padding: '14px', 
-              borderRadius: '12px', 
-              border: 'none', 
-              background: '#FFCC00', 
-              fontWeight: '600', 
-              color: 'white', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
+            style={{
+              flex: 1,
+              padding: '14px',
+              borderRadius: '12px',
+              border: 'none',
+              background: '#FFCC00',
+              fontWeight: '600',
+              color: 'white',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               gap: '8px',
               opacity: (!formData.clientName || !formData.email || !formData.phone) ? 0.5 : 1
             }}
@@ -261,14 +262,14 @@ const QuoteForm = ({ onComplete }) => {
     <div key="step3" className="quote-step">
       <h3 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '0.5rem', textAlign: 'center' }}>Detalhes do Projeto</h3>
       <p style={{ color: '#64748b', textAlign: 'center', marginBottom: '1.5rem', fontSize: '0.9rem' }}>Quanto mais detalhes, mais preciso será seu orçamento.</p>
-      
+
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         {/* Conditional Fields: Construção Civil */}
         {formData.serviceType === 'Construção' && (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div>
               <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '0.5rem' }}>Tipo de Imóvel</label>
-              <select 
+              <select
                 value={formData.additionalDetails?.propertyType || ''}
                 onChange={(e) => updateAdditionalDetail('propertyType', e.target.value)}
                 style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', fontWeight: '600' }}
@@ -283,7 +284,7 @@ const QuoteForm = ({ onComplete }) => {
               {formData.additionalDetails?.propertyType === 'Outro' && (
                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ marginTop: '1rem' }}>
                   <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#FFCC00', marginBottom: '0.5rem' }}>Especifique o Tipo de Obra</label>
-                  <input 
+                  <input
                     type="text"
                     placeholder="Ex: Estaleiro, Ponte, etc..."
                     value={formData.additionalDetails?.customPropertyType || ''}
@@ -295,7 +296,7 @@ const QuoteForm = ({ onComplete }) => {
             </div>
             <div>
               <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '0.5rem' }}>Área Prevista (m²)</label>
-              <input 
+              <input
                 type="number"
                 placeholder="Ex: 150"
                 value={formData.additionalDetails?.area || ''}
@@ -311,7 +312,7 @@ const QuoteForm = ({ onComplete }) => {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div>
               <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '0.5rem' }}>Especialidade</label>
-              <select 
+              <select
                 value={formData.additionalDetails?.maintenanceType || ''}
                 onChange={(e) => updateAdditionalDetail('maintenanceType', e.target.value)}
                 style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white' }}
@@ -326,7 +327,7 @@ const QuoteForm = ({ onComplete }) => {
             </div>
             <div>
               <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '0.5rem' }}>Urgência</label>
-              <select 
+              <select
                 value={formData.additionalDetails?.urgency || ''}
                 onChange={(e) => updateAdditionalDetail('urgency', e.target.value)}
                 style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white' }}
@@ -344,9 +345,9 @@ const QuoteForm = ({ onComplete }) => {
           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '0.5rem' }}>
             <DollarSign size={14} /> Expectativa de Orçamento
           </label>
-          <select 
-            name="budgetRange" 
-            value={formData.budgetRange} 
+          <select
+            name="budgetRange"
+            value={formData.budgetRange}
             onChange={handleInputChange}
             style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none', background: 'white' }}
           >
@@ -354,16 +355,16 @@ const QuoteForm = ({ onComplete }) => {
             {budgets.map(b => <option key={b} value={b}>{b}</option>)}
           </select>
         </div>
-        
+
         <div>
           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '0.5rem' }}>
             <MessageCircle size={14} /> Descrição Adicional
           </label>
-          <textarea 
-            name="description" 
-            placeholder="Descreva o que você precisa, localização, prazos, etc..." 
-            rows="3" 
-            value={formData.description} 
+          <textarea
+            name="description"
+            placeholder="Descreva o que você precisa, localização, prazos, etc..."
+            rows="3"
+            value={formData.description}
             onChange={handleInputChange}
             style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none', resize: 'none' }}
           ></textarea>
@@ -371,25 +372,25 @@ const QuoteForm = ({ onComplete }) => {
 
         <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
           <button onClick={prevStep} style={{ flex: 1, padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', fontWeight: '600', color: '#64748b' }}>Voltar</button>
-          <button 
+          <button
             onClick={method === 'whatsapp' ? handleSubmitWhatsApp : handleSubmitPlatform}
             disabled={!formData.budgetRange || !formData.description}
-            style={{ 
-              flex: 1, 
-              padding: '14px', 
-              borderRadius: '12px', 
-              border: 'none', 
-              background: method === 'whatsapp' ? '#25D366' : '#FFCC00', 
-              fontWeight: '600', 
-              color: 'white', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
+            style={{
+              flex: 1,
+              padding: '14px',
+              borderRadius: '12px',
+              border: 'none',
+              background: method === 'whatsapp' ? '#25D366' : '#FFCC00',
+              fontWeight: '600',
+              color: 'white',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               gap: '8px',
               opacity: (!formData.budgetRange || !formData.description) ? 0.5 : 1
             }}
           >
-            {method === 'whatsapp' ? 'Enviar WhatsApp' : 'Finalizar Pedido'} 
+            {method === 'whatsapp' ? 'Enviar WhatsApp' : 'Finalizar Pedido'}
             {method === 'whatsapp' ? <MessageCircle size={18} /> : <ArrowRight size={18} />}
           </button>
         </div>
@@ -399,8 +400,8 @@ const QuoteForm = ({ onComplete }) => {
 
   if (submitted) {
     return (
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }} 
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         style={{ textAlign: 'center', padding: '3rem 1rem' }}
       >
@@ -408,26 +409,64 @@ const QuoteForm = ({ onComplete }) => {
           <CheckCircle2 size={48} color="#10b981" />
         </div>
         <h2 style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b', marginBottom: '1rem' }}>Pedido Enviado!</h2>
-        <p style={{ color: '#64748b', maxWidth: '400px', margin: '0 auto 2.5rem', lineHeight: '1.6' }}>
-          {method === 'whatsapp' 
+        <p style={{ color: '#64748b', maxWidth: '400px', margin: '0 auto 1.5rem', lineHeight: '1.6' }}>
+          {method === 'whatsapp'
             ? "Conclua o envio no seu aplicativo de WhatsApp. Entraremos em contato o mais breve possível."
             : "Sua solicitação foi recebida com sucesso. Nossa equipe analisará os detalhes e entrará em contato em breve."}
         </p>
-        <button 
+
+        {/* Real-time Tracking Invitation */}
+        {!user && (
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            style={{
+              background: 'linear-gradient(135deg, #003366 0%, #001e40 100%)',
+              padding: '1.5rem',
+              borderRadius: '24px',
+              color: 'white',
+              marginBottom: '2rem',
+              textAlign: 'center',
+              boxShadow: '0 10px 20px rgba(0, 51, 102, 0.2)'
+            }}
+          >
+            <h4 style={{ color: '#FFCC00', fontSize: '1rem', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase' }}>Acompanhe a Obra em Tempo Real</h4>
+            <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.8)', marginBottom: '1.25rem' }}>Deseja ver fotos, relatórios e o progresso da sua obra online?</p>
+            <Link
+              to="/portal/login"
+              style={{
+                display: 'inline-block',
+                background: '#FFCC00',
+                color: '#003366',
+                padding: '10px 20px',
+                borderRadius: '100px',
+                fontWeight: '900',
+                fontSize: '0.8rem',
+                textTransform: 'uppercase',
+                textDecoration: 'none'
+              }}
+            >
+              Criar Conta no Portal
+            </Link>
+          </motion.div>
+        )}
+
+        <button
           onClick={() => { setStep(0); setSubmitted(false); }}
           style={{ padding: '12px 24px', background: '#f1f5f9', border: 'none', borderRadius: '100px', fontWeight: '600', color: '#1e293b', cursor: 'pointer' }}
         >
-          Novo Orçamento
+          Solicitar Novo Orçamento
         </button>
       </motion.div>
     );
   }
 
   return (
-    <div className="quote-form-container" style={{ 
-      background: 'white', 
-      borderRadius: '32px', 
-      padding: '2.5rem', 
+    <div className="quote-form-container" style={{
+      background: 'white',
+      borderRadius: '32px',
+      padding: '2.5rem',
       boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
       border: '1px solid #f1f5f9',
       maxWidth: '600px',
@@ -441,7 +480,7 @@ const QuoteForm = ({ onComplete }) => {
             <span>{Math.round((step / 3) * 100)}%</span>
           </div>
           <div style={{ height: '6px', background: '#f1f5f9', borderRadius: '100px', overflow: 'hidden' }}>
-            <motion.div 
+            <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${(step / 3) * 100}%` }}
               style={{ height: '100%', background: '#FFCC00', borderRadius: '100px' }}
