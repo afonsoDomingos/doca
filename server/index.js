@@ -501,6 +501,21 @@ app.get('/', (req, res) => {
   res.send('DOCA API is running...');
 });
 
+// Ping route to keep server awake (Vercel Cron)
+app.get('/api/ping', async (req, res) => {
+  try {
+    await connectToDatabase();
+    res.json({
+      status: 'success',
+      message: 'Server is awake',
+      timestamp: new Date().toISOString(),
+      db: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'DB Connection Error' });
+  }
+});
+
 if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
   const PORT = 5000;
   app.listen(PORT, () => console.log(`🚀 Local Server running on port ${PORT}`));
