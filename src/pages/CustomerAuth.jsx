@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  LogIn, 
-  UserPlus, 
-  User, 
-  Mail, 
-  Lock, 
-  Phone, 
-  ArrowRight, 
+import {
+  LogIn,
+  UserPlus,
+  User,
+  Mail,
+  Lock,
+  Phone,
+  ArrowRight,
   AlertCircle,
   CheckCircle,
   ArrowLeft
@@ -49,7 +49,7 @@ const CustomerAuth = () => {
 
     const endpoint = isLogin ? '/api/auth/login' : '/api/register';
     const fullUrl = `${API_URL}${endpoint}`;
-    const payload = isLogin 
+    const payload = isLogin
       ? { email: formData.email, password: formData.password }
       : { name: formData.name, email: formData.email, password: formData.password, phone: formData.phone };
 
@@ -114,10 +114,10 @@ const CustomerAuth = () => {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', background: '#f8fafc', fontFamily: 'Inter, sans-serif' }}>
       {/* Left Side - Visual */}
-      <div style={{ 
-        flex: 1, 
-        background: 'linear-gradient(135deg, #003366 0%, #001e40 100%)', 
-        display: 'none', 
+      <div style={{
+        flex: 1,
+        background: 'linear-gradient(135deg, #003366 0%, #001e40 100%)',
+        display: 'none',
         flexDirection: 'column',
         justifyContent: 'center',
         padding: '6rem',
@@ -125,12 +125,12 @@ const CustomerAuth = () => {
         position: 'relative',
         overflow: 'hidden'
       }} className="auth-visual">
-        <div style={{ position: 'absolute', top: '0', left: '0', width: '100%', height: '100%', opacity: '0.1', backgroundImage: 'url("/bannerdoca.jpg")', backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
-        
+        <div style={{ position: 'absolute', top: '0', left: '0', width: '100%', height: '100%', opacity: '0.1', backgroundImage: 'url("/bannerdoca2.jpeg")', backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
+
         <Link to="/" style={{ color: 'white', textDecoration: 'none', position: 'absolute', top: '40px', left: '40px', display: 'flex', alignItems: 'center', gap: '8px', zIndex: 10 }}>
           <ArrowLeft size={20} /> Voltar para o Site
         </Link>
-        
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -143,7 +143,7 @@ const CustomerAuth = () => {
           <p style={{ fontSize: '1.25rem', opacity: '0.8', lineHeight: '1.6', maxWidth: '500px' }}>
             Aceda para gerenciar os seus orçamentos, acompanhar o estado das suas obras e comunicar-se diretamente com a nossa equipa técnica.
           </p>
-          
+
           <div style={{ marginTop: '4rem', display: 'flex', gap: '30px' }}>
             <div style={{ opacity: '0.6', textAlign: 'center' }}>
               <h4 style={{ fontSize: '1.5rem', margin: '0' }}>100%</h4>
@@ -186,7 +186,7 @@ const CustomerAuth = () => {
                   <AlertCircle size={18} /> {error}
                 </div>
               )}
-              
+
               {success && (
                 <div style={{ background: '#f0fdf4', border: '1px solid #dcfce7', padding: '12px 16px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '10px', color: '#10b981', fontSize: '0.875rem' }}>
                   <CheckCircle size={18} /> {success}
@@ -272,14 +272,14 @@ const CustomerAuth = () => {
               <button
                 type="submit"
                 disabled={loading}
-                style={{ 
-                  width: '100%', 
-                  padding: '14px', 
-                  background: '#003366', 
-                  color: 'white', 
-                  border: 'none', 
-                  borderRadius: '12px', 
-                  fontWeight: '700', 
+                style={{
+                  width: '100%',
+                  padding: '14px',
+                  background: '#003366',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '12px',
+                  fontWeight: '700',
                   fontSize: '1rem',
                   display: 'flex',
                   alignItems: 'center',
@@ -290,7 +290,7 @@ const CustomerAuth = () => {
                   transition: 'opacity 0.2s'
                 }}
               >
-                {loading ? 'Processando...' : isLogin ? 'Entrar no Portal' : 'Criar minha conta'} 
+                {loading ? 'Processando...' : isLogin ? 'Entrar no Portal' : 'Criar minha conta'}
                 {!loading && <ArrowRight size={20} />}
               </button>
 
@@ -317,8 +317,9 @@ const CustomerAuth = () => {
           </div>
         </div>
       </div>
-      
-      <style dangerouslySetInnerHTML={{ __html: `
+
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @media (min-width: 992px) {
           .auth-visual { display: flex !important; }
         }

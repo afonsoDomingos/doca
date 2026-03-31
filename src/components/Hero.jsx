@@ -89,7 +89,7 @@ const Hero = ({ onOpenQuote }) => {
         left: 0,
         width: '100%',
         height: '130%',
-        backgroundImage: 'url("/bannerdoca.jpg")',
+        backgroundImage: 'url("/bannerdoca2.jpeg")',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         animation: 'heroPan 12s ease-in-out infinite alternate',
