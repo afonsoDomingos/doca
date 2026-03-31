@@ -103,37 +103,53 @@ const Dashboard = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [projectsRes, quotesRes, usersRes, bannersRes, settingsRes, visitsRes] = await Promise.all([
+      const endpoints = [
         fetch(`${API_URL}/api/projects`),
         fetch(`${API_URL}/api/quotes`),
         fetch(`${API_URL}/api/users`),
         fetch(`${API_URL}/api/banners?type=about`),
         fetch(`${API_URL}/api/settings`),
         fetch(`${API_URL}/api/stats/visits`)
-      ]);
-      const projectsData = await projectsRes.json();
-      const quotesData = await quotesRes.json();
-      const usersData = await usersRes.json();
-      const bannersData = await bannersRes.json();
-      const settingsData = await settingsRes.json();
-      const visitsData = await visitsRes.json();
-      setProjects(projectsData);
-      setQuotes(quotesData);
-      setUsers(usersData);
-      setBanners(bannersData);
-      if (Object.keys(settingsData).length > 0) {
+      ];
+
+      const responses = await Promise.all(endpoints);
+
+      // Check if any response is not OK
+      const failed = responses.find(r => !r.ok);
+      if (failed) {
+        throw new Error(`Erro ao aceder à API: ${failed.statusText} (${failed.url})`);
+      }
+
+      const projectsData = await responses[0].json();
+      const quotesData = await responses[1].json();
+      const usersData = await responses[2].json();
+      const bannersData = await responses[3].json();
+      const settingsData = await responses[4].json();
+      const visitsData = await responses[5].json();
+
+      setProjects(Array.isArray(projectsData) ? projectsData : []);
+      setQuotes(Array.isArray(quotesData) ? quotesData : []);
+      setUsers(Array.isArray(usersData) ? usersData : []);
+      setBanners(Array.isArray(bannersData) ? bannersData : []);
+
+      if (settingsData && Object.keys(settingsData).length > 0) {
         setSettings(prev => ({ ...prev, ...settingsData }));
       }
 
-      // Calculate Stats
+      // Calculate Stats safely
       setStats({
-        totalProjects: projectsData.length,
-        pendingQuotes: quotesData.filter(q => q.status === 'Pendente' || q.status === 'Em Análise').length,
-        totalUsers: usersData.length,
+        totalProjects: Array.isArray(projectsData) ? projectsData.length : 0,
+        pendingQuotes: Array.isArray(quotesData) ? quotesData.filter(q => q.status === 'Pendente' || q.status === 'Em Análise').length : 0,
+        totalUsers: Array.isArray(usersData) ? usersData.length : 0,
         totalVisits: visitsData.totalVisits || 0
       });
     } catch (err) {
       console.error('Error fetching data:', err);
+      showAlert(
+        'Falha de Conexão',
+        'Não foi possível carregar os dados do painel. Verifique se o servidor backend está ligado e se a base de dados está configurada.',
+        'error'
+      );
     } finally {
       setLoading(false);
     }
@@ -868,11 +884,31 @@ const Dashboard = () => {
         {/* TAB: OVERVIEW */}
         {activeTab === 'overview' && (
           <div>
-            <header style={{ marginBottom: '3rem' }}>
-              <div style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Bem-vindo de volta, Admin</div>
-              <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: 0, letterSpacing: '-1px' }}>
-                Visão Geral do Negócio
-              </h1>
+            <header style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <div style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Bem-vindo de volta, Admin</div>
+                <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: 0, letterSpacing: '-1px' }}>
+                  Visão Geral do Negócio
+                </h1>
+              </div>
+              <button
+                onClick={async () => {
+                  try {
+                    const res = await fetch(`${API_URL}/api/ping`);
+                    const data = await res.json();
+                    if (data.status === 'success') {
+                      showAlert('Conexão OK', `Backend ativo e BD ${data.db}!`, 'success');
+                    } else {
+                      showAlert('Erro na API', data.error || 'Erro desconhecido', 'error');
+                    }
+                  } catch (e) {
+                    showAlert('Erro Crítico', 'Não foi possível contactar a API na Vercel.', 'error');
+                  }
+                }}
+                style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', padding: '8px 16px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: '700', cursor: 'pointer', color: '#64748b' }}
+              >
+                Testar Servidor (Ping)
+              </button>
             </header>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '3rem' }}>
