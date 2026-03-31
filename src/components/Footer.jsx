@@ -25,25 +25,25 @@ const Footer = () => {
     <footer style={{ backgroundColor: '#002244', color: 'white', paddingTop: '80px', position: 'relative' }}>
       <div className="container">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '50px', marginBottom: '80px' }}>
-          
+
           {/* Brand/About */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <img src="/LOGO SEM FUNDO.png" alt="DOCA MOZAMBIQUE" style={{ height: '60px', objectFit: 'contain' }} />
+              <img src="/logo-sem-fundo.png" alt="DOCA MOZAMBIQUE" style={{ height: '60px', objectFit: 'contain' }} />
             </div>
             <p style={{ color: '#E2E8F0', lineHeight: '1.8', fontSize: '1rem' }}>
               Soluções integradas em construção, manutenção e gestão de empreendimentos imobiliários de elite. Construindo o futuro com confiança e agilidade.
             </p>
             <div style={{ display: 'flex', gap: '15px' }}>
               {socialLinks.map((social, i) => (
-                <a 
-                   key={i} 
-                   href={social.href} 
-                   target="_blank" 
-                   rel="noopener noreferrer"
-                   style={{ color: 'white', backgroundColor: 'rgba(255,255,255,0.1)', padding: '12px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: '0.3s' }}
-                   onMouseEnter={(e) => {e.currentTarget.style.backgroundColor = 'var(--accent-yellow)'; e.currentTarget.style.color = 'var(--primary-blue)'}}
-                   onMouseLeave={(e) => {e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'white'}}
+                <a
+                  key={i}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'white', backgroundColor: 'rgba(255,255,255,0.1)', padding: '12px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: '0.3s' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--accent-yellow)'; e.currentTarget.style.color = 'var(--primary-blue)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'white' }}
                 >
                   <social.Icon size={20} />
                 </a>
@@ -62,8 +62,8 @@ const Footer = () => {
                 {section.items.map((item, i) => (
                   <li key={i}>
                     <a href="#" style={{ color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '8px', transition: '0.3s' }}
-                       onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
-                       onMouseLeave={(e) => e.currentTarget.style.color = '#CBD5E1'}>
+                      onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
+                      onMouseLeave={(e) => e.currentTarget.style.color = '#CBD5E1'}>
                       <ChevronRight size={14} /> {item}
                     </a>
                   </li>
@@ -82,18 +82,18 @@ const Footer = () => {
             <a href="#" style={{ color: '#94A3B8' }}>Legal</a>
             <a href="#" style={{ color: '#94A3B8' }}>Cookies</a>
           </div>
-          <button 
+          <button
             onClick={scrollToTop}
-            style={{ 
-              backgroundColor: 'var(--accent-yellow)', 
-              color: 'var(--primary-blue)', 
-              width: '50px', 
-              height: '50px', 
-              borderRadius: '12px', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              boxShadow: 'var(--shadow-lg)' 
+            style={{
+              backgroundColor: 'var(--accent-yellow)',
+              color: 'var(--primary-blue)',
+              width: '50px',
+              height: '50px',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: 'var(--shadow-lg)'
             }}
           >
             <ArrowUp size={24} />

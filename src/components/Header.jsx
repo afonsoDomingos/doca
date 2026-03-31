@@ -40,7 +40,7 @@ const Header = ({ onOpenQuote }) => {
   ];
 
   return (
-    <header 
+    <header
       style={{
         position: 'fixed',
         top: 0,
@@ -80,22 +80,22 @@ const Header = ({ onOpenQuote }) => {
       )}
 
       {/* Main Header */}
-      <div className="container" style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
+      <div className="container" style={{
+        display: 'flex',
+        justifyContent: 'space-between',
         alignItems: 'center',
         marginTop: isScrolled ? '0' : '10px'
       }}>
         {/* Logo */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
-          <img 
-            src="/LOGO SEM FUNDO.png" 
-            alt="DOCA MOZAMBIQUE" 
-            style={{ 
-              height: isScrolled ? '40px' : '50px', 
+          <img
+            src="/logo-sem-fundo.png"
+            alt="DOCA MOZAMBIQUE"
+            style={{
+              height: isScrolled ? '40px' : '50px',
               objectFit: 'contain',
               transition: 'var(--transition-smooth)'
-            }} 
+            }}
           />
         </Link>
 
@@ -104,10 +104,10 @@ const Header = ({ onOpenQuote }) => {
           <ul style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
             {navLinks.map((link) => (
               <li key={link.name}>
-                <a 
-                  href={link.href} 
-                  style={{ 
-                    fontWeight: '600', 
+                <a
+                  href={link.href}
+                  style={{
+                    fontWeight: '600',
                     color: isScrolled ? 'var(--primary-blue)' : 'white',
                     position: 'relative',
                     transition: 'var(--transition-smooth)'
@@ -120,9 +120,9 @@ const Header = ({ onOpenQuote }) => {
               </li>
             ))}
             <li>
-              <Link 
+              <Link
                 to={isAdmin ? "/admin/dashboard" : (user ? "/portal/dashboard" : "/portal/login")}
-                style={{ 
+                style={{
                   color: isScrolled ? 'var(--primary-blue)' : 'white',
                   fontWeight: '700',
                   display: 'flex',
@@ -138,9 +138,9 @@ const Header = ({ onOpenQuote }) => {
               </Link>
             </li>
             <li>
-              <button 
+              <button
                 onClick={onOpenQuote}
-                className="btn btn-primary" 
+                className="btn btn-primary"
                 style={{ padding: '10px 20px', fontSize: '0.9rem', border: 'none', cursor: 'pointer' }}
               >
                 Solicitar Orçamento
@@ -150,8 +150,8 @@ const Header = ({ onOpenQuote }) => {
         </nav>
 
         {/* Mobile Toggle */}
-        <button 
-          style={{ display: 'block', color: isScrolled ? 'var(--primary-blue)' : 'white' }} 
+        <button
+          style={{ display: 'block', color: isScrolled ? 'var(--primary-blue)' : 'white' }}
           className="mobile-only"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
@@ -180,8 +180,8 @@ const Header = ({ onOpenQuote }) => {
             <ul style={{ padding: '20px' }}>
               {navLinks.map((link) => (
                 <li key={link.name} style={{ margin: '15px 0' }}>
-                  <a 
-                    href={link.href} 
+                  <a
+                    href={link.href}
                     style={{ fontSize: '1.1rem', fontWeight: '600', display: 'flex', justifyContent: 'space-between' }}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -190,7 +190,7 @@ const Header = ({ onOpenQuote }) => {
                 </li>
               ))}
               <li style={{ margin: '15px 0' }}>
-                <Link 
+                <Link
                   to={user ? "/portal/dashboard" : "/portal/login"}
                   style={{ fontSize: '1.1rem', fontWeight: '600', display: 'flex', justifyContent: 'space-between', color: 'var(--primary-blue)', textDecoration: 'none' }}
                   onClick={() => setIsMobileMenuOpen(false)}
@@ -199,9 +199,9 @@ const Header = ({ onOpenQuote }) => {
                 </Link>
               </li>
               <li style={{ marginTop: '20px' }}>
-                <button 
+                <button
                   onClick={() => { setIsMobileMenuOpen(false); onOpenQuote(); }}
-                  className="btn btn-primary" 
+                  className="btn btn-primary"
                   style={{ width: '100%', display: 'block', textAlign: 'center', border: 'none', cursor: 'pointer' }}
                 >
                   Solicitar Orçamento
@@ -212,7 +212,8 @@ const Header = ({ onOpenQuote }) => {
         )}
       </AnimatePresence>
 
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @media (min-width: 992px) {
           .desktop-only { display: block !important; }
           .mobile-only { display: none !important; }

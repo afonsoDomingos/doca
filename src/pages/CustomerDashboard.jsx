@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { 
-  FileText, 
-  Clock, 
-  CheckCircle, 
-  Plus, 
-  ArrowRight, 
-  ChevronRight, 
-  LogOut, 
+import {
+  FileText,
+  Clock,
+  CheckCircle,
+  Plus,
+  ArrowRight,
+  ChevronRight,
+  LogOut,
   LayoutDashboard,
   X,
   Calendar,
@@ -55,12 +55,12 @@ const CustomerDashboard = () => {
   });
   const [updatingProfile, setUpdatingProfile] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
-  const [alertConfig, setAlertConfig] = useState({ 
-    isOpen: false, 
-    type: 'info', 
-    title: '', 
-    message: '', 
-    onConfirm: null 
+  const [alertConfig, setAlertConfig] = useState({
+    isOpen: false,
+    type: 'info',
+    title: '',
+    message: '',
+    onConfirm: null
   });
 
   const showAlert = (title, message, type = 'info', onConfirm = null) => {
@@ -155,7 +155,7 @@ const CustomerDashboard = () => {
     navigate('/portal/login');
   };
 
-  const filteredQuotes = quotes.filter(q => 
+  const filteredQuotes = quotes.filter(q =>
     q.serviceType.toLowerCase().includes(searchTerm.toLowerCase()) ||
     q.status.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -173,7 +173,8 @@ const CustomerDashboard = () => {
 
   return (
     <div className="dashboard-wrapper" style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc', fontFamily: 'Inter, sans-serif' }}>
-      <style dangerouslySetInnerHTML={{__html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         .mobile-header { display: none; }
         .overlay { display: none; }
         @media (max-width: 1024px) {
@@ -231,8 +232,8 @@ const CustomerDashboard = () => {
       `}} />
 
       {/* Overlay */}
-      <div 
-        className={`overlay ${isMobileMenuOpen ? 'sidebar-open' : ''}`} 
+      <div
+        className={`overlay ${isMobileMenuOpen ? 'sidebar-open' : ''}`}
         onClick={() => setIsMobileMenuOpen(false)}
       ></div>
 
@@ -250,9 +251,9 @@ const CustomerDashboard = () => {
       </div>
 
       {/* Sidebar */}
-      <aside className={`dashboard-sidebar ${isMobileMenuOpen ? 'sidebar-open' : ''}`} style={{ 
-        width: '280px', 
-        background: '#000000', 
+      <aside className={`dashboard-sidebar ${isMobileMenuOpen ? 'sidebar-open' : ''}`} style={{
+        width: '280px',
+        background: '#000000',
         padding: '2.5rem 1.8rem 5rem 1.8rem',
         display: 'flex',
         flexDirection: 'column',
@@ -267,7 +268,7 @@ const CustomerDashboard = () => {
         overflowX: 'hidden'
       }}>
         {/* Ir para o Site Button - High Visibility */}
-        <motion.button 
+        <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => navigate('/')}
@@ -293,32 +294,32 @@ const CustomerDashboard = () => {
           <Home size={18} /> Ir para a Página Inicial
         </motion.button>
 
-        <Link to="/" style={{ 
-          textDecoration: 'none', 
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center', 
-          gap: '4px', 
-          marginBottom: '2rem', 
+        <Link to="/" style={{
+          textDecoration: 'none',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '4px',
+          marginBottom: '2rem',
           padding: '0 0.5rem',
           textAlign: 'center'
         }}>
-          <img src="/LOGO SEM FUNDO.png" alt="DOCA" style={{ height: '48px', objectFit: 'contain' }} />
+          <img src="/logo-sem-fundo.png" alt="DOCA" style={{ height: '48px', objectFit: 'contain' }} />
           <span style={{ fontSize: '0.8rem', fontWeight: '900', letterSpacing: '2px', color: '#FFCC00', textTransform: 'uppercase', marginTop: '4px' }}>DOCA PORTAL</span>
         </Link>
 
         <nav style={{ flex: 1 }}>
           <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.65rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '1.25rem', padding: '0 0.5rem' }}>AÇÕES RÁPIDAS</p>
           <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <li 
+            <li
               onClick={() => setActiveTab('orders')}
-              style={{ 
-                background: activeTab === 'orders' ? 'rgba(255, 204, 0, 0.15)' : 'transparent', 
-                color: activeTab === 'orders' ? '#FFCC00' : 'rgba(255,255,255,0.7)', 
-                padding: '12px 18px', 
-                borderRadius: '16px', 
-                display: 'flex', 
-                alignItems: 'center', 
+              style={{
+                background: activeTab === 'orders' ? 'rgba(255, 204, 0, 0.15)' : 'transparent',
+                color: activeTab === 'orders' ? '#FFCC00' : 'rgba(255,255,255,0.7)',
+                padding: '12px 18px',
+                borderRadius: '16px',
+                display: 'flex',
+                alignItems: 'center',
                 gap: '12px',
                 cursor: 'pointer',
                 fontWeight: '700',
@@ -329,15 +330,15 @@ const CustomerDashboard = () => {
             >
               <FileText size={18} /> Meus Pedidos
             </li>
-            <li 
+            <li
               onClick={() => setActiveTab('profile')}
-              style={{ 
-                background: activeTab === 'profile' ? 'rgba(255, 204, 0, 0.15)' : 'transparent', 
-                color: activeTab === 'profile' ? '#FFCC00' : 'rgba(255,255,255,0.7)', 
-                padding: '12px 18px', 
-                borderRadius: '16px', 
-                display: 'flex', 
-                alignItems: 'center', 
+              style={{
+                background: activeTab === 'profile' ? 'rgba(255, 204, 0, 0.15)' : 'transparent',
+                color: activeTab === 'profile' ? '#FFCC00' : 'rgba(255,255,255,0.7)',
+                padding: '12px 18px',
+                borderRadius: '16px',
+                display: 'flex',
+                alignItems: 'center',
                 gap: '12px',
                 cursor: 'pointer',
                 fontWeight: '700',
@@ -352,14 +353,14 @@ const CustomerDashboard = () => {
         </nav>
         <WhatsAppContact variant="sidebar" />
 
-        <button 
+        <button
           onClick={handleLogout}
-          style={{ 
-            width: '100%', 
-            padding: '14px', 
-            background: 'transparent', 
-            color: 'rgba(255,255,255,0.6)', 
-            border: 'none', 
+          style={{
+            width: '100%',
+            padding: '14px',
+            background: 'transparent',
+            color: 'rgba(255,255,255,0.6)',
+            border: 'none',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -382,10 +383,10 @@ const CustomerDashboard = () => {
             visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
           }}>
             {/* Professional Welcome Bar */}
-            <header className="header-actions" style={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center', 
+            <header className="header-actions" style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
               marginBottom: '2.5rem',
               background: 'linear-gradient(135deg, #000 0%, #1a1a1a 100%)',
               padding: '2rem 2.5rem',
@@ -397,19 +398,19 @@ const CustomerDashboard = () => {
             }}>
               {/* Decorative Background Pattern */}
               <div style={{ position: 'absolute', top: '-10%', right: '-5%', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(255,204,0,0.1) 0%, transparent 70%)' }}></div>
-              
+
               <div className="desktop-profile" style={{ display: 'flex', alignItems: 'center', gap: '20px', position: 'relative', zIndex: 2 }}>
-                <motion.div 
+                <motion.div
                   whileHover={{ scale: 1.05, rotate: 5 }}
-                  style={{ 
-                    width: '64px', 
-                    height: '64px', 
+                  style={{
+                    width: '64px',
+                    height: '64px',
                     background: user.photo ? `url(${user.photo})` : '#FFCC00',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
-                    borderRadius: '18px', 
-                    display: 'flex', 
-                    alignItems: 'center', 
+                    borderRadius: '18px',
+                    display: 'flex',
+                    alignItems: 'center',
                     justifyContent: 'center',
                     color: '#000',
                     fontSize: '1.5rem',
@@ -430,20 +431,20 @@ const CustomerDashboard = () => {
                 </div>
               </div>
 
-              <motion.button 
+              <motion.button
                 whileHover={{ scale: 1.02, boxShadow: '0 0 20px rgba(255,204,0,0.4)' }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setIsQuoteModalOpen(true)}
-                style={{ 
-                  padding: '14px 28px', 
-                  background: '#FFCC00', 
-                  color: '#000', 
-                  border: 'none', 
-                  borderRadius: '16px', 
-                  fontWeight: '900', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '10px', 
+                style={{
+                  padding: '14px 28px',
+                  background: '#FFCC00',
+                  color: '#000',
+                  border: 'none',
+                  borderRadius: '16px',
+                  fontWeight: '900',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
                   cursor: 'pointer',
                   fontSize: '0.9rem',
                   textTransform: 'uppercase',
@@ -457,11 +458,11 @@ const CustomerDashboard = () => {
             </header>
 
             {/* Compact Stats Bar */}
-            <div className="dashboard-stats-grid" style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(3, 1fr)', 
-              gap: '1.5rem', 
-              marginBottom: '3rem' ,
+            <div className="dashboard-stats-grid" style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '1.5rem',
+              marginBottom: '3rem',
               marginTop: '-1rem',
               zIndex: 3,
               position: 'relative',
@@ -472,30 +473,30 @@ const CustomerDashboard = () => {
                 { label: 'Obras em Curso', val: quotes.filter(q => q.status === 'Aprovado' || q.status === 'Em Execução' || q.status === 'Finalização').length, icon: Activity, color: '#1a1a1a', bg: 'white' },
                 { label: 'Projectos Finalizados', val: quotes.filter(q => q.status === 'Concluído').length, icon: Award, color: '#10b981', bg: 'white' }
               ].map((stat, i) => (
-                <motion.div 
+                <motion.div
                   key={i}
                   variants={{ hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1 } }}
                   whileHover={{ y: -5 }}
-                  style={{ 
-                    background: 'white', 
-                    padding: '1.25rem 1.75rem', 
-                    borderRadius: '24px', 
-                    display: 'flex', 
-                    alignItems: 'center', 
+                  style={{
+                    background: 'white',
+                    padding: '1.25rem 1.75rem',
+                    borderRadius: '24px',
+                    display: 'flex',
+                    alignItems: 'center',
                     gap: '1.25rem',
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.02)',
                     border: '1px solid rgba(255,255,255,0.8)'
                   }}
                 >
-                  <div style={{ 
-                    color: stat.color, 
-                    background: `${stat.color}15`, 
-                    width: '42px', 
-                    height: '42px', 
-                    borderRadius: '12px', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center' 
+                  <div style={{
+                    color: stat.color,
+                    background: `${stat.color}15`,
+                    width: '42px',
+                    height: '42px',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
                   }}>
                     <stat.icon size={20} />
                   </div>
@@ -516,8 +517,8 @@ const CustomerDashboard = () => {
                 <div className="dashboard-projects-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '1.5rem' }}>
                   {quotes.filter(q => q.percentage > 0 || q.status === 'Aprovado' || q.status === 'Em Execução' || q.status === 'Finalização').map((proj) => {
                     return (
-                      <motion.div 
-                        key={proj._id} 
+                      <motion.div
+                        key={proj._id}
                         variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1 } }}
                         whileHover={{ y: -8, boxShadow: '0 30px 60px -12px rgba(0,0,0,0.15)' }}
                         style={{ background: 'white', borderRadius: '28px', border: '1px solid rgba(0,0,0,0.03)', overflow: 'hidden', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.04)', transition: 'all 0.4s' }}
@@ -526,28 +527,28 @@ const CustomerDashboard = () => {
                           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9), transparent)' }}></div>
                           <div style={{ position: 'absolute', bottom: '15px', left: '20px', right: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                             <div>
-                               <div style={{ display: 'flex', gap: '6px', marginBottom: '6px' }}>
-                                  <span style={{ background: '#FFCC00', color: '#000', padding: '4px 10px', borderRadius: '100px', fontSize: '0.6rem', fontWeight: '900', textTransform: 'uppercase' }}>{proj.status}</span>
-                               </div>
-                               <h3 style={{ color: 'white', margin: 0, fontSize: '1.25rem', fontWeight: '900', letterSpacing: '-0.5px' }}>{proj.serviceType}</h3>
+                              <div style={{ display: 'flex', gap: '6px', marginBottom: '6px' }}>
+                                <span style={{ background: '#FFCC00', color: '#000', padding: '4px 10px', borderRadius: '100px', fontSize: '0.6rem', fontWeight: '900', textTransform: 'uppercase' }}>{proj.status}</span>
+                              </div>
+                              <h3 style={{ color: 'white', margin: 0, fontSize: '1.25rem', fontWeight: '900', letterSpacing: '-0.5px' }}>{proj.serviceType}</h3>
                             </div>
                             <div style={{ color: 'white', textAlign: 'right' }}>
-                               <p style={{ margin: 0, fontSize: '0.6rem', opacity: 0.6, fontWeight: '800' }}>TOTAL</p>
-                               <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: '900', color: '#FFCC00' }}>{(proj.totalBudget || 0).toLocaleString()} MT</p>
+                              <p style={{ margin: 0, fontSize: '0.6rem', opacity: 0.6, fontWeight: '800' }}>TOTAL</p>
+                              <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: '900', color: '#FFCC00' }}>{(proj.totalBudget || 0).toLocaleString()} MT</p>
                             </div>
                           </div>
                         </div>
                         <div style={{ padding: '1.5rem' }}>
                           <div style={{ marginBottom: '1.25rem' }}>
-                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                               <span style={{ fontWeight: '800', color: '#64748b', fontSize: '0.7rem', textTransform: 'uppercase' }}>PROGRESSO TÉCNICO</span>
-                               <span style={{ fontWeight: '900', color: '#000', fontSize: '0.85rem' }}>{proj.percentage || 0}%</span>
-                             </div>
-                             <div style={{ height: '6px', background: '#f1f5f9', borderRadius: '10px', overflow: 'hidden' }}>
-                               <motion.div initial={{ width: 0 }} animate={{ width: `${proj.percentage || 0}%` }} transition={{ duration: 1, ease: "easeOut" }} style={{ height: '100%', background: 'linear-gradient(90deg, #FFCC00, #f97316)', borderRadius: '10px' }} />
-                             </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                              <span style={{ fontWeight: '800', color: '#64748b', fontSize: '0.7rem', textTransform: 'uppercase' }}>PROGRESSO TÉCNICO</span>
+                              <span style={{ fontWeight: '900', color: '#000', fontSize: '0.85rem' }}>{proj.percentage || 0}%</span>
+                            </div>
+                            <div style={{ height: '6px', background: '#f1f5f9', borderRadius: '10px', overflow: 'hidden' }}>
+                              <motion.div initial={{ width: 0 }} animate={{ width: `${proj.percentage || 0}%` }} transition={{ duration: 1, ease: "easeOut" }} style={{ height: '100%', background: 'linear-gradient(90deg, #FFCC00, #f97316)', borderRadius: '10px' }} />
+                            </div>
                           </div>
-                          <motion.button 
+                          <motion.button
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => setSelectedActiveProject(proj)}
@@ -564,20 +565,20 @@ const CustomerDashboard = () => {
             )}
 
             {/* Redesigned Quotes Table Section */}
-            <div style={{ 
-              background: 'white', 
-              borderRadius: '28px', 
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)', 
+            <div style={{
+              background: 'white',
+              borderRadius: '28px',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
               padding: '2rem',
               border: '1px solid rgba(0,0,0,0.02)'
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                 <h2 style={{ fontSize: '1.1rem', fontWeight: '950', color: '#0f172a', textTransform: 'uppercase', letterSpacing: '1px', margin: 0 }}>Histórico de Pedidos</h2>
                 <div style={{ display: 'flex', gap: '10px' }}>
-                   <div style={{ color: '#64748b', fontSize: '0.75rem', fontWeight: '700' }}>{filteredQuotes.length} Entradas Encontradas</div>
+                  <div style={{ color: '#64748b', fontSize: '0.75rem', fontWeight: '700' }}>{filteredQuotes.length} Entradas Encontradas</div>
                 </div>
               </div>
-              
+
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 8px', textAlign: 'left' }}>
                   <thead>
@@ -590,8 +591,8 @@ const CustomerDashboard = () => {
                   </thead>
                   <tbody>
                     {filteredQuotes.map((quote) => (
-                      <motion.tr 
-                        key={quote._id} 
+                      <motion.tr
+                        key={quote._id}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         whileHover={{ scale: 1.002, x: 5 }}
@@ -599,22 +600,22 @@ const CustomerDashboard = () => {
                       >
                         <td style={{ padding: '1.25rem 1rem', borderTopLeftRadius: '14px', borderBottomLeftRadius: '14px' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                             <div style={{ background: '#fff', padding: '8px', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
-                                <FileText size={16} color="#0f172a" />
-                             </div>
-                             <span style={{ fontWeight: '800', color: '#0f172a', fontSize: '0.9rem' }}>{quote.serviceType}</span>
+                            <div style={{ background: '#fff', padding: '8px', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
+                              <FileText size={16} color="#0f172a" />
+                            </div>
+                            <span style={{ fontWeight: '800', color: '#0f172a', fontSize: '0.9rem' }}>{quote.serviceType}</span>
                           </div>
                         </td>
                         <td style={{ padding: '1.25rem 1rem' }}>
                           <span style={{ color: '#64748b', fontWeight: '700', fontSize: '0.85rem' }}>{new Date(quote.createdAt).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
                         </td>
                         <td style={{ padding: '1.25rem 1rem' }}>
-                          <span style={{ 
-                            background: getStatusColor(quote.status), 
-                            color: 'white', 
-                            padding: '4px 12px', 
-                            borderRadius: '100px', 
-                            fontSize: '0.65rem', 
+                          <span style={{
+                            background: getStatusColor(quote.status),
+                            color: 'white',
+                            padding: '4px 12px',
+                            borderRadius: '100px',
+                            fontSize: '0.65rem',
                             fontWeight: '900',
                             boxShadow: `0 4px 10px ${getStatusColor(quote.status)}40`
                           }}>
@@ -622,9 +623,9 @@ const CustomerDashboard = () => {
                           </span>
                         </td>
                         <td style={{ padding: '1.25rem 1rem', textAlign: 'right', borderTopRightRadius: '14px', borderBottomRightRadius: '14px' }}>
-                          <motion.button 
+                          <motion.button
                             whileHover={{ scale: 1.1 }}
-                            onClick={() => showAlert('Detalhes do Pedido', quote.description, 'info')} 
+                            onClick={() => showAlert('Detalhes do Pedido', quote.description, 'info')}
                             style={{ background: 'white', border: '1px solid #e2e8f0', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#0f172a' }}
                           >
                             <ChevronRight size={18} />
@@ -640,31 +641,31 @@ const CustomerDashboard = () => {
         ) : (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ maxWidth: '800px', margin: '0 auto' }}>
             <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#0f172a', marginBottom: '2rem' }}>Configurações do Perfil</h1>
-            
+
             <form onSubmit={handleUpdateProfile} style={{ background: 'white', padding: '3rem', borderRadius: '32px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)' }}>
               <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-                <label style={{ 
-                  width: '120px', 
-                  height: '120px', 
-                  margin: '0 auto 1.5rem', 
+                <label style={{
+                  width: '120px',
+                  height: '120px',
+                  margin: '0 auto 1.5rem',
                   background: profileForm.photo ? `url(${profileForm.photo})` : '#003366',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
-                  borderRadius: '32px', 
+                  borderRadius: '32px',
                   border: '6px solid #f1f5f9',
-                  display: 'flex', 
-                  alignItems: 'center', 
+                  display: 'flex',
+                  alignItems: 'center',
                   justifyContent: 'center',
                   color: 'white',
                   cursor: 'pointer',
                   position: 'relative',
                   overflow: 'hidden'
                 }}>
-                  <input 
-                    type="file" 
-                    onChange={handlePhotoFile} 
-                    accept="image/*" 
-                    style={{ display: 'none' }} 
+                  <input
+                    type="file"
+                    onChange={handlePhotoFile}
+                    accept="image/*"
+                    style={{ display: 'none' }}
                   />
                   {uploadingPhoto && (
                     <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -678,11 +679,11 @@ const CustomerDashboard = () => {
                 </label>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
                   <p style={{ margin: 0, fontSize: '0.75rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase' }}>Clique no ícone para carregar foto</p>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     placeholder="Ou cole o link da foto aqui..."
                     value={profileForm.photo}
-                    onChange={(e) => setProfileForm({...profileForm, photo: e.target.value})}
+                    onChange={(e) => setProfileForm({ ...profileForm, photo: e.target.value })}
                     style={{ width: '100%', maxWidth: '400px', padding: '10px', borderRadius: '100px', border: '1px solid #e2e8f0', fontSize: '0.75rem', textAlign: 'center', background: '#f8fafc' }}
                   />
                 </div>
@@ -693,22 +694,22 @@ const CustomerDashboard = () => {
                   <label style={{ display: 'block', fontWeight: '800', color: '#64748b', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '8px' }}>Nome Completo / Empresa</label>
                   <div style={{ position: 'relative' }}>
                     <User size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#cbd5e1' }} />
-                    <input 
+                    <input
                       required
                       type="text"
                       value={profileForm.name}
-                      onChange={(e) => setProfileForm({...profileForm, name: e.target.value})}
+                      onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
                       style={{ width: '100%', padding: '14px 14px 14px 50px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#f8fafc', fontWeight: '600' }}
                     />
                   </div>
                 </div>
                 <div>
                   <label style={{ display: 'block', fontWeight: '800', color: '#64748b', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '8px' }}>Email Corporativo</label>
-                  <input 
+                  <input
                     required
                     type="email"
                     value={profileForm.email}
-                    onChange={(e) => setProfileForm({...profileForm, email: e.target.value})}
+                    onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
                     style={{ width: '100%', padding: '14px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#f8fafc', fontWeight: '600' }}
                   />
                 </div>
@@ -717,10 +718,10 @@ const CustomerDashboard = () => {
               <div className="dashboard-profile-flex" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
                 <div>
                   <label style={{ display: 'block', fontWeight: '800', color: '#64748b', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '8px' }}>Contacto Telefónico</label>
-                  <input 
+                  <input
                     type="text"
                     value={profileForm.phone}
-                    onChange={(e) => setProfileForm({...profileForm, phone: e.target.value})}
+                    onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
                     style={{ width: '100%', padding: '14px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#f8fafc', fontWeight: '600' }}
                   />
                 </div>
@@ -728,11 +729,11 @@ const CustomerDashboard = () => {
                   <label style={{ display: 'block', fontWeight: '800', color: '#64748b', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '8px' }}>NUIT (Identificação Fiscal)</label>
                   <div style={{ position: 'relative' }}>
                     <CreditCard size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#cbd5e1' }} />
-                    <input 
+                    <input
                       type="text"
                       placeholder="Ex: 500293841"
                       value={profileForm.nuit}
-                      onChange={(e) => setProfileForm({...profileForm, nuit: e.target.value})}
+                      onChange={(e) => setProfileForm({ ...profileForm, nuit: e.target.value })}
                       style={{ width: '100%', padding: '14px 14px 14px 50px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#f8fafc', fontWeight: '600' }}
                     />
                   </div>
@@ -743,15 +744,15 @@ const CustomerDashboard = () => {
                 <label style={{ display: 'block', fontWeight: '800', color: '#64748b', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '8px' }}>Endereço</label>
                 <div style={{ position: 'relative' }}>
                   <MapPin size={18} style={{ position: 'absolute', left: '16px', top: '16px', color: '#cbd5e1' }} />
-                  <textarea 
+                  <textarea
                     value={profileForm.address}
-                    onChange={(e) => setProfileForm({...profileForm, address: e.target.value})}
+                    onChange={(e) => setProfileForm({ ...profileForm, address: e.target.value })}
                     style={{ width: '100%', padding: '14px 14px 14px 50px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#f8fafc', fontWeight: '600', minHeight: '100px', resize: 'none' }}
                   />
                 </div>
               </div>
 
-              <motion.button 
+              <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 disabled={updatingProfile}
@@ -769,8 +770,8 @@ const CustomerDashboard = () => {
         {isQuoteModalOpen && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ position: 'fixed', inset: 0, background: 'rgba(0, 51, 102, 0.8)', backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '2rem' }}>
             <motion.div initial={{ scale: 0.9, y: 30 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 30 }} style={{ background: 'white', width: '100%', maxWidth: '650px', borderRadius: '40px', overflow: 'hidden', position: 'relative' }}>
-              <button 
-                onClick={() => setIsQuoteModalOpen(false)} 
+              <button
+                onClick={() => setIsQuoteModalOpen(false)}
                 style={{ position: 'absolute', top: '24px', right: '24px', background: '#f1f5f9', border: 'none', borderRadius: '12px', padding: '10px', cursor: 'pointer', zIndex: 10 }}
               >
                 <X size={20} />
@@ -790,7 +791,7 @@ const CustomerDashboard = () => {
       {selectedActiveProject && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0, 0, 0, 0.85)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100, padding: '2rem' }}>
           <div style={{ background: '#f8fafc', width: '100%', maxWidth: '1000px', height: '85vh', borderRadius: '40px', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
-            
+
             {/* Modal Header */}
             <div style={{ padding: '2rem 3rem', background: '#000', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
@@ -834,140 +835,140 @@ const CustomerDashboard = () => {
             </div>
 
             <div style={{ flex: 1, overflowY: 'auto', padding: '3rem' }}>
-               
-               {/* TAB: SUMMARY */}
-               {reportTab === 'summary' && (
-                 <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '3rem' }}>
-                    <div>
-                      <h4 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', fontWeight: '900', color: '#0f172a' }}>Estado da Empreitada</h4>
-                      <div style={{ background: 'white', padding: '2rem', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
-                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                           <span style={{ fontWeight: '800', color: '#64748b' }}>PROGRESSO GLOBAL</span>
-                           <span style={{ fontWeight: '900', color: '#FFCC00' }}>{selectedActiveProject.percentage || 0}%</span>
-                         </div>
-                         <div style={{ height: '12px', background: '#f1f5f9', borderRadius: '20px', overflow: 'hidden', marginBottom: '2rem' }}>
-                           <div style={{ width: `${selectedActiveProject.percentage || 0}%`, height: '100%', background: '#FFCC00', borderRadius: '20px' }} />
-                         </div>
-                         
-                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-                            <div>
-                               <p style={{ margin: 0, fontSize: '0.7rem', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase' }}>Início da Obra</p>
-                               <p style={{ margin: '4px 0 0', fontWeight: '700', color: '#1e293b' }}>{selectedActiveProject.startDate ? new Date(selectedActiveProject.startDate).toLocaleDateString() : 'A definir'}</p>
-                            </div>
-                            <div>
-                               <p style={{ margin: 0, fontSize: '0.7rem', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase' }}>Estimativa de Entrega</p>
-                               <p style={{ margin: '4px 0 0', fontWeight: '700', color: '#FFCC00' }}>{selectedActiveProject.deadline ? new Date(selectedActiveProject.deadline).toLocaleDateString() : 'A definir'}</p>
-                            </div>
-                         </div>
+
+              {/* TAB: SUMMARY */}
+              {reportTab === 'summary' && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '3rem' }}>
+                  <div>
+                    <h4 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', fontWeight: '900', color: '#0f172a' }}>Estado da Empreitada</h4>
+                    <div style={{ background: 'white', padding: '2rem', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                        <span style={{ fontWeight: '800', color: '#64748b' }}>PROGRESSO GLOBAL</span>
+                        <span style={{ fontWeight: '900', color: '#FFCC00' }}>{selectedActiveProject.percentage || 0}%</span>
+                      </div>
+                      <div style={{ height: '12px', background: '#f1f5f9', borderRadius: '20px', overflow: 'hidden', marginBottom: '2rem' }}>
+                        <div style={{ width: `${selectedActiveProject.percentage || 0}%`, height: '100%', background: '#FFCC00', borderRadius: '20px' }} />
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                        <div>
+                          <p style={{ margin: 0, fontSize: '0.7rem', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase' }}>Início da Obra</p>
+                          <p style={{ margin: '4px 0 0', fontWeight: '700', color: '#1e293b' }}>{selectedActiveProject.startDate ? new Date(selectedActiveProject.startDate).toLocaleDateString() : 'A definir'}</p>
+                        </div>
+                        <div>
+                          <p style={{ margin: 0, fontSize: '0.7rem', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase' }}>Estimativa de Entrega</p>
+                          <p style={{ margin: '4px 0 0', fontWeight: '700', color: '#FFCC00' }}>{selectedActiveProject.deadline ? new Date(selectedActiveProject.deadline).toLocaleDateString() : 'A definir'}</p>
+                        </div>
                       </div>
                     </div>
-                    
-                    <div style={{ background: '#000', color: 'white', padding: '2rem', borderRadius: '24px' }}>
-                       <Award size={32} color="#FFCC00" style={{ marginBottom: '1rem' }} />
-                       <h4 style={{ margin: '0 0 1rem 0', color: '#FFCC00' }}>Garantia DOCA</h4>
-                       <p style={{ fontSize: '0.85rem', opacity: 0.8, lineHeight: '1.6' }}>
-                         Este relatório é sincronizado diretamente com a nossa gestão técnica. Quaisquer dúvidas sobre o cronograma podem ser esclarecidas via <a href={`https://wa.me/258848580244?text=${encodeURIComponent(`Olá! Tenho uma dúvida sobre o cronograma da minha obra (Ref: #DOCA-${selectedActiveProject._id.slice(-6).toUpperCase()})`)}`} target="_blank" rel="noopener noreferrer" style={{ color: '#FFCC00', fontWeight: '900', textDecoration: 'none' }}>suporte WhatsApp</a>.
-                       </p>
-                    </div>
-                 </div>
-               )}
+                  </div>
 
-               {/* TAB: TIMELINE */}
-               {reportTab === 'timeline' && (
-                 <div>
-                   <h4 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', fontWeight: '900', color: '#0f172a' }}>Cronograma de Tarefas</h4>
-                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                     {!selectedActiveProject.tasks || selectedActiveProject.tasks.length === 0 ? (
-                       <div style={{ textAlign: 'center', padding: '4rem', color: '#94a3b8' }}>
-                         O gestor ainda está a elaborar o cronograma detalhado para esta fase.
-                       </div>
-                     ) : (
-                       selectedActiveProject.tasks.map((task, i) => (
-                         <div key={i} style={{ background: 'white', padding: '1.5rem', borderRadius: '20px', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                           <div>
-                             <h5 style={{ margin: 0, fontWeight: '800', color: '#1e293b' }}>{task.title}</h5>
-                             <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: '#64748b' }}>Fim planeado: {new Date(task.deadline).toLocaleDateString()}</p>
-                           </div>
-                           <div style={{ textAlign: 'right' }}>
-                             <span style={{ 
-                               background: task.status === 'Concluído' ? '#ecfdf5' : '#fff7ed', 
-                               color: task.status === 'Concluído' ? '#10b981' : '#f97316', 
-                               padding: '6px 12px', 
-                               borderRadius: '100px', 
-                               fontSize: '0.7rem', 
-                               fontWeight: '900' 
-                             }}>
-                               {task.status.toUpperCase()}
-                             </span>
-                           </div>
-                         </div>
-                       ))
-                     )}
-                   </div>
-                 </div>
-               )}
+                  <div style={{ background: '#000', color: 'white', padding: '2rem', borderRadius: '24px' }}>
+                    <Award size={32} color="#FFCC00" style={{ marginBottom: '1rem' }} />
+                    <h4 style={{ margin: '0 0 1rem 0', color: '#FFCC00' }}>Garantia DOCA</h4>
+                    <p style={{ fontSize: '0.85rem', opacity: 0.8, lineHeight: '1.6' }}>
+                      Este relatório é sincronizado diretamente com a nossa gestão técnica. Quaisquer dúvidas sobre o cronograma podem ser esclarecidas via <a href={`https://wa.me/258848580244?text=${encodeURIComponent(`Olá! Tenho uma dúvida sobre o cronograma da minha obra (Ref: #DOCA-${selectedActiveProject._id.slice(-6).toUpperCase()})`)}`} target="_blank" rel="noopener noreferrer" style={{ color: '#FFCC00', fontWeight: '900', textDecoration: 'none' }}>suporte WhatsApp</a>.
+                    </p>
+                  </div>
+                </div>
+              )}
 
-               {/* TAB: FINANCE */}
-               {reportTab === 'finance' && (
-                 <div>
-                   <h4 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', fontWeight: '900', color: '#0f172a' }}>Extrato de Pagamentos</h4>
-                   <div style={{ background: 'white', borderRadius: '24px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
-                      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                        <thead style={{ background: '#f8fafc' }}>
-                          <tr>
-                            <th style={{ padding: '1rem 2rem', textAlign: 'left', color: '#94a3b8', fontSize: '0.75rem' }}>DATA</th>
-                            <th style={{ padding: '1rem 2rem', textAlign: 'left', color: '#94a3b8', fontSize: '0.75rem' }}>VALOR</th>
-                            <th style={{ padding: '1rem 2rem', textAlign: 'right', color: '#94a3b8', fontSize: '0.75rem' }}>ESTADO</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {!selectedActiveProject.payments || selectedActiveProject.payments.length === 0 ? (
-                            <tr><td colSpan="3" style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>Sem registos financeiros até ao momento.</td></tr>
-                          ) : (
-                            selectedActiveProject.payments.map((p, i) => (
-                              <tr key={i} style={{ borderTop: '1px solid #f1f5f9' }}>
-                                <td style={{ padding: '1.25rem 2rem', fontWeight: '600' }}>{new Date(p.date).toLocaleDateString()}</td>
-                                <td style={{ padding: '1.25rem 2rem', fontWeight: '900', color: '#1e293b' }}>{p.amount.toLocaleString()} MT</td>
-                                <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
-                                  <span style={{ color: '#10b981', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end' }}>
-                                    <CheckCircle size={14} /> PAGO
-                                  </span>
-                                </td>
-                              </tr>
-                            ))
-                          )}
-                        </tbody>
-                      </table>
-                   </div>
-                 </div>
-               )}
-
-               {/* TAB: PHOTOS */}
-               {reportTab === 'photos' && (
-                 <div>
-                    <h4 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', fontWeight: '900', color: '#0f172a' }}>Galeria de Execução</h4>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1.5rem' }}>
-                      {!selectedActiveProject.workPhotos || selectedActiveProject.workPhotos.length === 0 ? (
-                         <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '4rem', color: '#94a3b8' }}>Nenhuma foto registada ainda.</div>
-                      ) : (
-                        selectedActiveProject.workPhotos.map((p, i) => (
-                          <div key={i} style={{ height: '220px', borderRadius: '24px', overflow: 'hidden', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
-                            <img src={p} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              {/* TAB: TIMELINE */}
+              {reportTab === 'timeline' && (
+                <div>
+                  <h4 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', fontWeight: '900', color: '#0f172a' }}>Cronograma de Tarefas</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {!selectedActiveProject.tasks || selectedActiveProject.tasks.length === 0 ? (
+                      <div style={{ textAlign: 'center', padding: '4rem', color: '#94a3b8' }}>
+                        O gestor ainda está a elaborar o cronograma detalhado para esta fase.
+                      </div>
+                    ) : (
+                      selectedActiveProject.tasks.map((task, i) => (
+                        <div key={i} style={{ background: 'white', padding: '1.5rem', borderRadius: '20px', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div>
+                            <h5 style={{ margin: 0, fontWeight: '800', color: '#1e293b' }}>{task.title}</h5>
+                            <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: '#64748b' }}>Fim planeado: {new Date(task.deadline).toLocaleDateString()}</p>
                           </div>
-                        ))
-                      )}
-                    </div>
-                 </div>
-               )}
+                          <div style={{ textAlign: 'right' }}>
+                            <span style={{
+                              background: task.status === 'Concluído' ? '#ecfdf5' : '#fff7ed',
+                              color: task.status === 'Concluído' ? '#10b981' : '#f97316',
+                              padding: '6px 12px',
+                              borderRadius: '100px',
+                              fontSize: '0.7rem',
+                              fontWeight: '900'
+                            }}>
+                              {task.status.toUpperCase()}
+                            </span>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB: FINANCE */}
+              {reportTab === 'finance' && (
+                <div>
+                  <h4 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', fontWeight: '900', color: '#0f172a' }}>Extrato de Pagamentos</h4>
+                  <div style={{ background: 'white', borderRadius: '24px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                      <thead style={{ background: '#f8fafc' }}>
+                        <tr>
+                          <th style={{ padding: '1rem 2rem', textAlign: 'left', color: '#94a3b8', fontSize: '0.75rem' }}>DATA</th>
+                          <th style={{ padding: '1rem 2rem', textAlign: 'left', color: '#94a3b8', fontSize: '0.75rem' }}>VALOR</th>
+                          <th style={{ padding: '1rem 2rem', textAlign: 'right', color: '#94a3b8', fontSize: '0.75rem' }}>ESTADO</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {!selectedActiveProject.payments || selectedActiveProject.payments.length === 0 ? (
+                          <tr><td colSpan="3" style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>Sem registos financeiros até ao momento.</td></tr>
+                        ) : (
+                          selectedActiveProject.payments.map((p, i) => (
+                            <tr key={i} style={{ borderTop: '1px solid #f1f5f9' }}>
+                              <td style={{ padding: '1.25rem 2rem', fontWeight: '600' }}>{new Date(p.date).toLocaleDateString()}</td>
+                              <td style={{ padding: '1.25rem 2rem', fontWeight: '900', color: '#1e293b' }}>{p.amount.toLocaleString()} MT</td>
+                              <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
+                                <span style={{ color: '#10b981', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end' }}>
+                                  <CheckCircle size={14} /> PAGO
+                                </span>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB: PHOTOS */}
+              {reportTab === 'photos' && (
+                <div>
+                  <h4 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', fontWeight: '900', color: '#0f172a' }}>Galeria de Execução</h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1.5rem' }}>
+                    {!selectedActiveProject.workPhotos || selectedActiveProject.workPhotos.length === 0 ? (
+                      <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '4rem', color: '#94a3b8' }}>Nenhuma foto registada ainda.</div>
+                    ) : (
+                      selectedActiveProject.workPhotos.map((p, i) => (
+                        <div key={i} style={{ height: '220px', borderRadius: '24px', overflow: 'hidden', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
+                          <img src={p} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
       )}
 
       {/* Modern Alert Component */}
-      <ModernAlert 
-        {...alertConfig} 
-        onClose={() => setAlertConfig({ ...alertConfig, isOpen: false })} 
+      <ModernAlert
+        {...alertConfig}
+        onClose={() => setAlertConfig({ ...alertConfig, isOpen: false })}
       />
     </div>
   );

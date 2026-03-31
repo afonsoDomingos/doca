@@ -428,7 +428,7 @@ const Dashboard = () => {
           padding: '0 0.5rem',
           textAlign: 'center'
         }}>
-          <img src="/LOGO SEM FUNDO.png" alt="DOCA" style={{ height: isSidebarCollapsed ? '32px' : '44px', objectFit: 'contain', transition: 'all 0.3s' }} />
+          <img src="/logo-sem-fundo.png" alt="DOCA" style={{ height: isSidebarCollapsed ? '32px' : '44px', objectFit: 'contain', transition: 'all 0.3s' }} />
           {!isSidebarCollapsed && (
             <span style={{ fontSize: '0.75rem', fontWeight: '900', letterSpacing: '2px', color: 'rgba(255, 204, 0, 0.8)', textTransform: 'uppercase', marginTop: '4px' }}>DOCA ADMIN</span>
           )}

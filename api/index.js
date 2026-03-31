@@ -26,7 +26,7 @@ const connectToDatabase = async () => {
     console.log('=> Using existing database connection');
     return cachedDb;
   }
-  
+
   const uri = process.env.MONGODB_URI || process.env.VITE_MONGODB_URI;
   if (!uri) {
     console.error('❌ FATAL: MONGODB_URI is not defined in environment!');
@@ -84,42 +84,42 @@ const QuoteSchema = new mongoose.Schema({
   serviceType: String,
   budgetRange: String,
   description: String,
-  status: { type: String, default: 'Pendente' }, 
+  status: { type: String, default: 'Pendente' },
   adminNotes: { type: String, default: '' },
-  
+
   // --- NOVOS CAMPOS DE GESTÃO PRO ---
   totalBudget: { type: Number, default: 0 },
   startDate: { type: Date },
   deadline: { type: Date },
   percentage: { type: Number, default: 0 }, // 0 a 100
-  
+
   payments: [{
     amount: Number,
     date: { type: Date, default: Date.now },
     status: { type: String, default: 'Pendente' }, // Pago, Pendente
     method: String
   }],
-  
+
   materials: [{
     name: String,
     cost: Number,
     date: { type: Date, default: Date.now }
   }],
-  
+
   workPhotos: [String], // URLs de fotos da obra
-  
-  additionalDetails: { type: mongoose.Schema.Types.Mixed, default: {} }, 
-  
+
+  additionalDetails: { type: mongoose.Schema.Types.Mixed, default: {} },
+
   tasks: [{
     title: String,
-    status: { type: String, default: 'Pendente' }, 
+    status: { type: String, default: 'Pendente' },
     startDate: Date,
     deadline: Date,
     progress: { type: Number, default: 0 },
     dependencies: [String],
     resources: [String]
   }],
-  
+
   createdAt: { type: Date, default: Date.now }
 });
 
@@ -142,6 +142,12 @@ const Quote = mongoose.models.Quote || mongoose.model('Quote', QuoteSchema);
 const User = mongoose.models.User || mongoose.model('User', UserSchema);
 const Banner = mongoose.models.Banner || mongoose.model('Banner', BannerSchema);
 const Setting = mongoose.models.Setting || mongoose.model('Setting', SettingSchema);
+
+// Stats Schema for tracking visits
+const StatsSchema = new mongoose.Schema({
+  totalVisits: { type: Number, default: 0 }
+});
+const Stats = mongoose.models.Stats || mongoose.model('Stats', StatsSchema);
 
 // Routes
 // Projects CRUD
@@ -356,7 +362,7 @@ app.put('/api/user/:id', async (req, res) => {
     await connectToDatabase(); // Ensure database connection
     const { name, email, phone, nuit, address, photo } = req.body;
     const user = await User.findByIdAndUpdate(
-      req.params.id, 
+      req.params.id,
       { name, email, phone, nuit, address, photo },
       { new: true }
     );
@@ -397,7 +403,7 @@ app.post('/api/register', async (req, res) => {
   const { name, email, password, phone } = req.body;
   console.log('--- NOVA TENTATIVA DE REGISTRO ---');
   console.log('Dados recebidos (exceto senha):', { name, email, phone });
-  
+
   if (!name || !email || !password) {
     console.log('❌ Falha: Dados obrigatórios ausentes');
     return res.status(400).json({ error: 'Nome, e-mail e senha são obrigatórios' });
@@ -406,12 +412,12 @@ app.post('/api/register', async (req, res) => {
   try {
     console.log('1. Conectando à base de dados para registro...');
     await connectToDatabase();
-    
+
     // Verificar se já existe (sempre em minúsculas)
     const normalizedEmail = email.toLowerCase();
     console.log('2. Verificando existência de e-mail:', normalizedEmail);
     const existingUser = await User.findOne({ email: normalizedEmail });
-    
+
     if (existingUser) {
       console.log('❌ Falha: E-mail já cadastrado');
       return res.status(400).json({ error: 'Este e-mail já está cadastrado' });
@@ -422,25 +428,25 @@ app.post('/api/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     console.log('4. Criando e salvando novo registro...');
-    const user = new User({ 
-      name, 
-      email: normalizedEmail, 
-      password: hashedPassword, 
-      phone 
+    const user = new User({
+      name,
+      email: normalizedEmail,
+      password: hashedPassword,
+      phone
     });
-    
+
     await user.save();
     console.log('✅ SUCESSO: Usuário registrado no Banco de Dados');
-    
-    res.json({ 
-      success: true, 
-      message: 'Usuário registrado com sucesso', 
-      user: { id: user._id, name: user.name, email: user.email } 
+
+    res.json({
+      success: true,
+      message: 'Usuário registrado com sucesso',
+      user: { id: user._id, name: user.name, email: user.email }
     });
   } catch (err) {
     console.error('❌ ERRO CRÍTICO NO REGISTRO:', err.name, err.message);
-    res.status(500).json({ 
-      error: 'Erro interno ao registrar usuário', 
+    res.status(500).json({
+      error: 'Erro interno ao registrar usuário',
       details: err.message,
       code: err.code || 'UNKNOWN_ERROR'
     });
@@ -484,13 +490,13 @@ app.post('/api/auth/login', async (req, res) => {
       try {
         const adminPass = admin.password || '';
         const isMatch = await bcrypt.compare(password, adminPass).catch(() => false);
-        
+
         if (isMatch || admin.password === password) {
           console.log('✅ SUCESSO: Admin Identificado');
-          return res.json({ 
-            success: true, 
-            role: 'admin', 
-            user: { id: admin._id, email: admin.email, name: 'Administrador' } 
+          return res.json({
+            success: true,
+            role: 'admin',
+            user: { id: admin._id, email: admin.email, name: 'Administrador' }
           });
         }
         console.log('❌ Senha Admin Incorreta');
@@ -510,22 +516,22 @@ app.post('/api/auth/login', async (req, res) => {
       try {
         const userPass = user.password || '';
         const isMatch = await bcrypt.compare(password, userPass).catch(() => false);
-        
+
         if (isMatch || user.password === password) {
-           console.log('✅ SUCESSO: Cliente Identificado');
-           return res.json({ 
-             success: true, 
-             role: 'customer', 
-             user: { 
-               id: user._id, 
-               name: user.name, 
-               email: user.email,
-               phone: user.phone || '',
-               nuit: user.nuit || '',
-               address: user.address || '',
-               photo: user.photo || ''
-             }
-           });
+          console.log('✅ SUCESSO: Cliente Identificado');
+          return res.json({
+            success: true,
+            role: 'customer',
+            user: {
+              id: user._id,
+              name: user.name,
+              email: user.email,
+              phone: user.phone || '',
+              nuit: user.nuit || '',
+              address: user.address || '',
+              photo: user.photo || ''
+            }
+          });
         }
         console.log('❌ Senha Cliente Incorreta');
         return res.status(401).json({ error: 'Senha incorreta para esta conta de cliente' });
@@ -540,8 +546,8 @@ app.post('/api/auth/login', async (req, res) => {
     res.status(401).json({ error: 'E-mail ou senha incorretos' });
   } catch (err) {
     console.error('❌ ERRO CRÍTICO NO LOGIN:', err.name, err.message);
-    res.status(500).json({ 
-      error: 'Erro interno no servidor de autenticação', 
+    res.status(500).json({
+      error: 'Erro interno no servidor de autenticação',
       details: err.message,
       code: err.code || 'AUTH_SYSTEM_ERROR'
     });
@@ -595,7 +601,7 @@ app.post('/api/settings', async (req, res) => {
   try {
     await connectToDatabase();
     const updates = req.body; // { key: value, ... }
-    const promises = Object.entries(updates).map(([key, value]) => 
+    const promises = Object.entries(updates).map(([key, value]) =>
       Setting.findOneAndUpdate({ key }, { value, updatedAt: new Date() }, { upsert: true, new: true })
     );
     await Promise.all(promises);
@@ -605,9 +611,45 @@ app.post('/api/settings', async (req, res) => {
   }
 });
 
+// --- Visit Tracking ---
+app.post('/api/track-visit', async (req, res) => {
+  try {
+    await connectToDatabase();
+    await Stats.findOneAndUpdate({}, { $inc: { totalVisits: 1 } }, { upsert: true, new: true });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/stats/visits', async (req, res) => {
+  try {
+    await connectToDatabase();
+    const stats = await Stats.findOne({});
+    res.json({ totalVisits: stats ? stats.totalVisits : 0 });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Ping route to keep server awake (Vercel Cron)
+app.get('/api/ping', async (req, res) => {
+  try {
+    await connectToDatabase();
+    res.json({
+      status: 'success',
+      message: 'Server is awake',
+      timestamp: new Date().toISOString(),
+      db: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'DB Connection Error' });
+  }
+});
+
 // Simple route to check server
 app.get('/', (req, res) => {
-    res.send('DOCA API is running...');
+  res.send('DOCA API is running...');
 });
 
 if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
