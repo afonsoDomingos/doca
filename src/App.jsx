@@ -14,6 +14,7 @@ import QuoteModal from './components/QuoteModal';
 import CustomerAuth from './pages/CustomerAuth';
 import CustomerDashboard from './pages/CustomerDashboard';
 import WhatsAppContact from './components/WhatsAppContact';
+import HowToOrder from './components/HowToOrder';
 
 const Home = ({ onOpenQuote }) => (
   <div className="app-container">
@@ -22,6 +23,7 @@ const Home = ({ onOpenQuote }) => (
       <Hero onOpenQuote={onOpenQuote} />
       <About />
       <Services />
+      <HowToOrder onOpenQuote={onOpenQuote} />
       <MissionVision />
       <Projects />
       <Testimonials />
