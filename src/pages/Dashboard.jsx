@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Briefcase, 
-  Settings, 
-  LogOut, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Check, 
+import {
+  LayoutDashboard,
+  Briefcase,
+  Settings,
+  LogOut,
+  Plus,
+  Edit,
+  Trash2,
+  Check,
   X,
   ExternalLink,
   ChevronRight,
@@ -64,7 +64,8 @@ const Dashboard = () => {
   const [stats, setStats] = useState({
     totalProjects: 0,
     pendingQuotes: 0,
-    totalUsers: 0
+    totalUsers: 0,
+    totalVisits: 0
   });
   const [editingProject, setEditingProject] = useState(null);
 
@@ -77,18 +78,18 @@ const Dashboard = () => {
   const [editingMaterialIndex, setEditingMaterialIndex] = useState(null);
   const [planningView, setPlanningView] = useState('list'); // 'list' | 'gantt'
 
-  const [alertConfig, setAlertConfig] = useState({ 
-    isOpen: false, 
-    type: 'info', 
-    title: '', 
-    message: '', 
-    onConfirm: null 
+  const [alertConfig, setAlertConfig] = useState({
+    isOpen: false,
+    type: 'info',
+    title: '',
+    message: '',
+    onConfirm: null
   });
 
   const showAlert = (title, message, type = 'info', onConfirm = null) => {
     setAlertConfig({ isOpen: true, title, message, type, onConfirm });
   };
-  
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -102,18 +103,20 @@ const Dashboard = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [projectsRes, quotesRes, usersRes, bannersRes, settingsRes] = await Promise.all([
+      const [projectsRes, quotesRes, usersRes, bannersRes, settingsRes, visitsRes] = await Promise.all([
         fetch(`${API_URL}/api/projects`),
         fetch(`${API_URL}/api/quotes`),
         fetch(`${API_URL}/api/users`),
         fetch(`${API_URL}/api/banners?type=about`),
-        fetch(`${API_URL}/api/settings`)
+        fetch(`${API_URL}/api/settings`),
+        fetch(`${API_URL}/api/stats/visits`)
       ]);
       const projectsData = await projectsRes.json();
       const quotesData = await quotesRes.json();
       const usersData = await usersRes.json();
       const bannersData = await bannersRes.json();
       const settingsData = await settingsRes.json();
+      const visitsData = await visitsRes.json();
       setProjects(projectsData);
       setQuotes(quotesData);
       setUsers(usersData);
@@ -121,12 +124,13 @@ const Dashboard = () => {
       if (Object.keys(settingsData).length > 0) {
         setSettings(prev => ({ ...prev, ...settingsData }));
       }
-      
+
       // Calculate Stats
       setStats({
         totalProjects: projectsData.length,
         pendingQuotes: quotesData.filter(q => q.status === 'Pendente' || q.status === 'Em Análise').length,
-        totalUsers: usersData.length
+        totalUsers: usersData.length,
+        totalVisits: visitsData.totalVisits || 0
       });
     } catch (err) {
       console.error('Error fetching data:', err);
@@ -150,8 +154,8 @@ const Dashboard = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = editingProject 
-      ? `${API_URL}/api/projects/${editingProject._id}` 
+    const url = editingProject
+      ? `${API_URL}/api/projects/${editingProject._id}`
       : `${API_URL}/api/projects`;
     const method = editingProject ? 'PUT' : 'POST';
 
@@ -173,8 +177,8 @@ const Dashboard = () => {
 
   const handleDeleteProject = async (id) => {
     showAlert(
-      'Confirmar Exclusão', 
-      'Tem certeza que deseja excluir este projeto permanentemente?', 
+      'Confirmar Exclusão',
+      'Tem certeza que deseja excluir este projeto permanentemente?',
       'confirm',
       async () => {
         try {
@@ -193,8 +197,8 @@ const Dashboard = () => {
 
   const handleDeleteQuote = async (id) => {
     showAlert(
-      'Confirmar remoção', 
-      'Tem certeza que deseja excluir este pedido de orçamento?', 
+      'Confirmar remoção',
+      'Tem certeza que deseja excluir este pedido de orçamento?',
       'confirm',
       async () => {
         try {
@@ -289,7 +293,7 @@ const Dashboard = () => {
             showAlert('Sucesso', 'Usuário removido com sucesso.', 'success');
             fetchData();
           } else {
-             showAlert('Erro', 'Não foi possível remover o usuário.', 'error');
+            showAlert('Erro', 'Não foi possível remover o usuário.', 'error');
           }
         } catch (err) {
           console.error('Error deleting user:', err);
@@ -367,23 +371,23 @@ const Dashboard = () => {
   const getServiceData = () => {
     const counts = {};
     quotes.forEach(q => { counts[q.serviceType] = (counts[q.serviceType] || 0) + 1; });
-    return Object.keys(counts).map(k => ({ name: k, valor: counts[k] })).sort((a,b) => b.valor - a.valor).slice(0, 5);
+    return Object.keys(counts).map(k => ({ name: k, valor: counts[k] })).sort((a, b) => b.valor - a.valor).slice(0, 5);
   };
 
   const COLORS = ['#FFCC00', '#3b82f6', '#8b5cf6', '#f59e0b', '#10b981', '#ef4444'];
 
-  const filteredProjects = projects.filter(p => 
-    p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredProjects = projects.filter(p =>
+    p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     p.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const filteredUsers = users.filter(u => 
-    u.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredUsers = users.filter(u =>
+    u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     u.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const filteredQuotes = quotes.filter(q => 
-    q.clientName.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredQuotes = quotes.filter(q =>
+    q.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     q.serviceType.toLowerCase().includes(searchTerm.toLowerCase()) ||
     q.status.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -391,10 +395,10 @@ const Dashboard = () => {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#f1f5f9', fontFamily: 'Inter, system-ui, sans-serif' }}>
       {/* Sidebar */}
-      <aside style={{ 
-        width: isSidebarCollapsed ? '100px' : '280px', 
-        background: '#000000', 
-        color: 'white', 
+      <aside style={{
+        width: isSidebarCollapsed ? '100px' : '280px',
+        background: '#000000',
+        color: 'white',
         padding: isSidebarCollapsed ? '2rem 1rem' : '2rem 1.5rem',
         display: 'flex',
         flexDirection: 'column',
@@ -406,7 +410,7 @@ const Dashboard = () => {
         borderRight: '1px solid rgba(255, 255, 255, 0.05)'
       }}>
         <div style={{ display: 'flex', justifyContent: isSidebarCollapsed ? 'center' : 'flex-end', marginBottom: '1rem' }}>
-          <button 
+          <button
             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
             style={{ background: 'rgba(255, 255, 255, 0.05)', border: 'none', color: '#94a3b8', padding: '8px', borderRadius: '10px', cursor: 'pointer' }}
           >
@@ -414,13 +418,13 @@ const Dashboard = () => {
           </button>
         </div>
 
-        <Link to="/" style={{ 
-          textDecoration: 'none', 
-          display: 'flex', 
-          flexDirection: isSidebarCollapsed ? 'row' : 'column', 
-          alignItems: 'center', 
-          gap: isSidebarCollapsed ? '0' : '4px', 
-          marginBottom: '2rem', 
+        <Link to="/" style={{
+          textDecoration: 'none',
+          display: 'flex',
+          flexDirection: isSidebarCollapsed ? 'row' : 'column',
+          alignItems: 'center',
+          gap: isSidebarCollapsed ? '0' : '4px',
+          marginBottom: '2rem',
           padding: '0 0.5rem',
           textAlign: 'center'
         }}>
@@ -436,17 +440,17 @@ const Dashboard = () => {
               <p style={{ color: '#475569', fontSize: '0.65rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.75rem', padding: '0 0.5rem', opacity: 0.6 }}>GERÊNCIA</p>
             )}
             <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <li 
+              <li
                 onClick={() => setActiveTab('overview')}
-                style={{ 
-                  background: activeTab === 'overview' ? 'rgba(255, 204, 0, 0.12)' : 'transparent', 
-                  color: activeTab === 'overview' ? '#FFCC00' : 'rgba(255,255,255,0.7)', 
-                  padding: '10px 14px', 
-                  borderRadius: '12px', 
-                  display: 'flex', 
-                  alignItems: 'center', 
+                style={{
+                  background: activeTab === 'overview' ? 'rgba(255, 204, 0, 0.12)' : 'transparent',
+                  color: activeTab === 'overview' ? '#FFCC00' : 'rgba(255,255,255,0.7)',
+                  padding: '10px 14px',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
                   justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
-                  gap: isSidebarCollapsed ? '0' : '12px', 
+                  gap: isSidebarCollapsed ? '0' : '12px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                   border: activeTab === 'overview' ? '1px solid rgba(255, 204, 0, 0.2)' : '1px solid transparent'
@@ -455,17 +459,17 @@ const Dashboard = () => {
                 <LayoutDashboard size={18} />
                 {!isSidebarCollapsed && <span style={{ fontWeight: '700', fontSize: '0.85rem' }}>Visão Geral</span>}
               </li>
-              <li 
+              <li
                 onClick={() => setActiveTab('projects')}
-                style={{ 
-                  background: activeTab === 'projects' ? 'rgba(255, 204, 0, 0.12)' : 'transparent', 
-                  color: activeTab === 'projects' ? '#FFCC00' : 'rgba(255,255,255,0.7)', 
-                  padding: '10px 14px', 
-                  borderRadius: '12px', 
-                  display: 'flex', 
-                  alignItems: 'center', 
+                style={{
+                  background: activeTab === 'projects' ? 'rgba(255, 204, 0, 0.12)' : 'transparent',
+                  color: activeTab === 'projects' ? '#FFCC00' : 'rgba(255,255,255,0.7)',
+                  padding: '10px 14px',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
                   justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
-                  gap: isSidebarCollapsed ? '0' : '12px', 
+                  gap: isSidebarCollapsed ? '0' : '12px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                   border: activeTab === 'projects' ? '1px solid rgba(255, 204, 0, 0.2)' : '1px solid transparent'
@@ -474,17 +478,17 @@ const Dashboard = () => {
                 <Briefcase size={18} />
                 {!isSidebarCollapsed && <span style={{ fontWeight: '700', fontSize: '0.85rem' }}>Projetos</span>}
               </li>
-              <li 
+              <li
                 onClick={() => setActiveTab('quotes')}
-                style={{ 
-                  background: activeTab === 'quotes' ? 'rgba(255, 204, 0, 0.12)' : 'transparent', 
-                  color: activeTab === 'quotes' ? '#FFCC00' : 'rgba(255,255,255,0.7)', 
-                  padding: '10px 14px', 
-                  borderRadius: '12px', 
-                  display: 'flex', 
-                  alignItems: 'center', 
+                style={{
+                  background: activeTab === 'quotes' ? 'rgba(255, 204, 0, 0.12)' : 'transparent',
+                  color: activeTab === 'quotes' ? '#FFCC00' : 'rgba(255,255,255,0.7)',
+                  padding: '10px 14px',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
                   justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
-                  gap: isSidebarCollapsed ? '0' : '12px', 
+                  gap: isSidebarCollapsed ? '0' : '12px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                   border: activeTab === 'quotes' ? '1px solid rgba(255, 204, 0, 0.2)' : '1px solid transparent'
@@ -493,17 +497,17 @@ const Dashboard = () => {
                 <MessageCircle size={18} />
                 {!isSidebarCollapsed && <span style={{ fontWeight: '700', fontSize: '0.85rem' }}>Orçamentos</span>}
               </li>
-              <li 
+              <li
                 onClick={() => setActiveTab('users')}
-                style={{ 
-                  background: activeTab === 'users' ? 'rgba(255, 204, 0, 0.12)' : 'transparent', 
-                  color: activeTab === 'users' ? '#FFCC00' : 'rgba(255,255,255,0.7)', 
-                  padding: '10px 14px', 
-                  borderRadius: '12px', 
-                  display: 'flex', 
-                  alignItems: 'center', 
+                style={{
+                  background: activeTab === 'users' ? 'rgba(255, 204, 0, 0.12)' : 'transparent',
+                  color: activeTab === 'users' ? '#FFCC00' : 'rgba(255,255,255,0.7)',
+                  padding: '10px 14px',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
                   justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
-                  gap: isSidebarCollapsed ? '0' : '12px', 
+                  gap: isSidebarCollapsed ? '0' : '12px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                   border: activeTab === 'users' ? '1px solid rgba(255, 204, 0, 0.2)' : '1px solid transparent'
@@ -512,17 +516,17 @@ const Dashboard = () => {
                 <User size={18} />
                 {!isSidebarCollapsed && <span style={{ fontWeight: '700', fontSize: '0.85rem' }}>Usuários</span>}
               </li>
-              <li 
+              <li
                 onClick={() => setActiveTab('banners')}
-                style={{ 
-                  background: activeTab === 'banners' ? 'rgba(255, 204, 0, 0.12)' : 'transparent', 
-                  color: activeTab === 'banners' ? '#FFCC00' : 'rgba(255,255,255,0.7)', 
-                  padding: '10px 14px', 
-                  borderRadius: '12px', 
-                  display: 'flex', 
-                  alignItems: 'center', 
+                style={{
+                  background: activeTab === 'banners' ? 'rgba(255, 204, 0, 0.12)' : 'transparent',
+                  color: activeTab === 'banners' ? '#FFCC00' : 'rgba(255,255,255,0.7)',
+                  padding: '10px 14px',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
                   justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
-                  gap: isSidebarCollapsed ? '0' : '12px', 
+                  gap: isSidebarCollapsed ? '0' : '12px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                   border: activeTab === 'banners' ? '1px solid rgba(255, 204, 0, 0.2)' : '1px solid transparent'
@@ -531,17 +535,17 @@ const Dashboard = () => {
                 <ImageIcon size={18} />
                 {!isSidebarCollapsed && <span style={{ fontWeight: '700', fontSize: '0.85rem' }}>Portal Banners</span>}
               </li>
-              <li 
+              <li
                 onClick={() => setActiveTab('settings')}
-                style={{ 
-                  background: activeTab === 'settings' ? 'rgba(255, 204, 0, 0.12)' : 'transparent', 
-                  color: activeTab === 'settings' ? '#FFCC00' : 'rgba(255,255,255,0.7)', 
-                  padding: '10px 14px', 
-                  borderRadius: '12px', 
-                  display: 'flex', 
-                  alignItems: 'center', 
+                style={{
+                  background: activeTab === 'settings' ? 'rgba(255, 204, 0, 0.12)' : 'transparent',
+                  color: activeTab === 'settings' ? '#FFCC00' : 'rgba(255,255,255,0.7)',
+                  padding: '10px 14px',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
                   justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
-                  gap: isSidebarCollapsed ? '0' : '12px', 
+                  gap: isSidebarCollapsed ? '0' : '12px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                   border: activeTab === 'settings' ? '1px solid rgba(255, 204, 0, 0.2)' : '1px solid transparent'
@@ -552,18 +556,18 @@ const Dashboard = () => {
               </li>
             </ul>
           </div>
-          <a 
-            href="/" 
-            target="_blank" 
-            style={{ 
-              textDecoration: 'none', 
-              color: 'rgba(255,255,255,0.5)', 
-              padding: '10px 14px', 
-              borderRadius: '12px', 
-              display: 'flex', 
-              alignItems: 'center', 
+          <a
+            href="/"
+            target="_blank"
+            style={{
+              textDecoration: 'none',
+              color: 'rgba(255,255,255,0.5)',
+              padding: '10px 14px',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
               justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
-              gap: isSidebarCollapsed ? '0' : '12px', 
+              gap: isSidebarCollapsed ? '0' : '12px',
               cursor: 'pointer',
               transition: 'all 0.2s',
               border: '1px solid rgba(255,255,255,0.05)'
@@ -574,10 +578,10 @@ const Dashboard = () => {
           </a>
         </nav>
 
-        <div style={{ 
-          marginTop: 'auto', 
-          padding: isSidebarCollapsed ? '0.75rem 0' : '1rem', 
-          background: 'rgba(255, 255, 255, 0.03)', 
+        <div style={{
+          marginTop: 'auto',
+          padding: isSidebarCollapsed ? '0.75rem 0' : '1rem',
+          background: 'rgba(255, 255, 255, 0.03)',
           borderRadius: '20px',
           border: '1px solid rgba(255, 255, 255, 0.08)',
           marginBottom: '1rem',
@@ -587,35 +591,35 @@ const Dashboard = () => {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: isSidebarCollapsed ? 'center' : 'flex-start', gap: '10px', marginBottom: '0.75rem', width: '100%', padding: isSidebarCollapsed ? '0' : '0 0.5rem' }}>
             <label style={{ cursor: 'pointer', position: 'relative' }}>
-               <div style={{ 
-                 width: isSidebarCollapsed ? '40px' : '36px', 
-                 height: isSidebarCollapsed ? '40px' : '36px', 
-                 borderRadius: '50%', 
-                 background: '#1e293b', 
-                 display: 'flex', 
-                 alignItems: 'center', 
-                 justifyContent: 'center',
-                 overflow: 'hidden',
-                 border: '1px solid rgba(255, 204, 0, 0.4)'
-               }}>
-                 {adminPhoto ? (
-                   <img src={adminPhoto} alt="Admin" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                 ) : (
-                   <User size={16} color="#94a3b8" />
-                 )}
-               </div>
-               <input 
-                 type="file" 
-                 accept="image/*" 
-                 style={{ display: 'none' }}
-                 onChange={async (e) => {
-                   const file = e.target.files[0];
-                   if (!file) return;
-                   const reader = new FileReader();
-                   reader.readAsDataURL(file);
-                   reader.onloadend = () => setAdminPhoto(reader.result);
-                 }}
-               />
+              <div style={{
+                width: isSidebarCollapsed ? '40px' : '36px',
+                height: isSidebarCollapsed ? '40px' : '36px',
+                borderRadius: '50%',
+                background: '#1e293b',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+                border: '1px solid rgba(255, 204, 0, 0.4)'
+              }}>
+                {adminPhoto ? (
+                  <img src={adminPhoto} alt="Admin" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <User size={16} color="#94a3b8" />
+                )}
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={async (e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.readAsDataURL(file);
+                  reader.onloadend = () => setAdminPhoto(reader.result);
+                }}
+              />
             </label>
             {!isSidebarCollapsed && (
               <div>
@@ -624,15 +628,15 @@ const Dashboard = () => {
               </div>
             )}
           </div>
-          <button 
+          <button
             onClick={handleLogout}
-            style={{ 
-              width: isSidebarCollapsed ? '36px' : '100%', 
+            style={{
+              width: isSidebarCollapsed ? '36px' : '100%',
               height: isSidebarCollapsed ? '36px' : 'auto',
-              padding: isSidebarCollapsed ? '0' : '8px', 
-              background: 'transparent', 
-              color: 'rgba(248, 113, 113, 0.8)', 
-              border: '1px solid rgba(248, 113, 113, 0.1)', 
+              padding: isSidebarCollapsed ? '0' : '8px',
+              background: 'transparent',
+              color: 'rgba(248, 113, 113, 0.8)',
+              border: '1px solid rgba(248, 113, 113, 0.1)',
               borderRadius: '8px',
               display: 'flex',
               alignItems: 'center',
@@ -651,7 +655,7 @@ const Dashboard = () => {
       </aside>
 
       {activeTab === 'users' && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           style={{ marginLeft: isSidebarCollapsed ? '100px' : '280px', flex: 1, padding: '3rem', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}
@@ -659,7 +663,7 @@ const Dashboard = () => {
           <header style={{ marginBottom: '3.5rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2.5rem' }}>
               <div>
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.1 }}
@@ -674,18 +678,18 @@ const Dashboard = () => {
                   Gerencie permissões, consulte dados de contacto e monitore o crescimento da sua base profissional.
                 </p>
               </div>
-              
+
               <div style={{ position: 'relative', width: '380px' }}>
                 <Search size={20} style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   placeholder="Pesquisar por nome, email ou ID..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  style={{ 
-                    padding: '16px 20px 16px 56px', 
-                    borderRadius: '24px', 
-                    border: '1px solid rgba(226, 232, 240, 0.8)', 
+                  style={{
+                    padding: '16px 20px 16px 56px',
+                    borderRadius: '24px',
+                    border: '1px solid rgba(226, 232, 240, 0.8)',
                     background: 'white',
                     width: '100%',
                     outline: 'none',
@@ -701,7 +705,7 @@ const Dashboard = () => {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem' }}>
-              <motion.div 
+              <motion.div
                 whileHover={{ y: -5 }}
                 style={{ background: 'white', padding: '1.5rem', borderRadius: '28px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)', border: '1px solid white', display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
                 <div style={{ background: 'rgba(235, 137, 35, 0.1)', color: '#FFCC00', width: '56px', height: '56px', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -712,8 +716,8 @@ const Dashboard = () => {
                   <h4 style={{ margin: '2px 0 0', fontSize: '1.75rem', fontWeight: '900', color: '#1e293b' }}>{users.length}</h4>
                 </div>
               </motion.div>
-              
-              <motion.div 
+
+              <motion.div
                 whileHover={{ y: -5 }}
                 style={{ background: 'white', padding: '1.5rem', borderRadius: '28px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)', border: '1px solid white', display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
                 <div style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', width: '56px', height: '56px', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -741,7 +745,7 @@ const Dashboard = () => {
               <tbody>
                 <AnimatePresence mode="popLayout">
                   {filteredUsers.map((u, idx) => (
-                    <motion.tr 
+                    <motion.tr
                       key={u._id}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -751,18 +755,18 @@ const Dashboard = () => {
                       style={{ borderBottom: '1px solid #f1f5f9', transition: 'all 0.2s ease' }}>
                       <td style={{ padding: '1.5rem 2.5rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                          <div style={{ 
-                            width: '64px', 
-                            height: '64px', 
-                            borderRadius: '20px', 
+                          <div style={{
+                            width: '64px',
+                            height: '64px',
+                            borderRadius: '20px',
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             backgroundImage: u.photo ? `url(${u.photo})` : 'none',
                             backgroundColor: '#f1f5f9',
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            justifyContent: 'center', 
-                            color: '#94a3b8', 
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: '#94a3b8',
                             border: '2px solid white',
                             boxShadow: '0 4px 6px rgba(0,0,0,0.04)',
                             overflow: 'hidden'
@@ -791,18 +795,18 @@ const Dashboard = () => {
                       <td style={{ padding: '1.5rem 2.5rem', textAlign: 'right' }}>
                         <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
                           {!u.isAdmin && (
-                            <motion.button 
+                            <motion.button
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
                               onClick={() => handlePromote(u._id, u.name)}
-                              style={{ 
-                                background: '#1e293b', 
-                                color: 'white', 
-                                border: 'none', 
-                                padding: '10px 18px', 
-                                borderRadius: '14px', 
-                                fontSize: '0.8rem', 
-                                fontWeight: '800', 
+                              style={{
+                                background: '#1e293b',
+                                color: 'white',
+                                border: 'none',
+                                padding: '10px 18px',
+                                borderRadius: '14px',
+                                fontSize: '0.8rem',
+                                fontWeight: '800',
                                 cursor: 'pointer',
                                 display: 'flex',
                                 alignItems: 'center',
@@ -813,16 +817,16 @@ const Dashboard = () => {
                               <ShieldCheck size={16} /> PROMOVER
                             </motion.button>
                           )}
-                          <motion.button 
+                          <motion.button
                             whileHover={{ scale: 1.05, backgroundColor: '#fee2e2' }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => handleDeleteUser(u._id, u.name)}
-                            style={{ 
-                              background: '#fff1f2', 
-                              color: '#ef4444', 
-                              border: '1px solid #fee2e2', 
-                              padding: '10px', 
-                              borderRadius: '14px', 
+                            style={{
+                              background: '#fff1f2',
+                              color: '#ef4444',
+                              border: '1px solid #fee2e2',
+                              padding: '10px',
+                              borderRadius: '14px',
                               cursor: 'pointer',
                               display: 'flex',
                               alignItems: 'center',
@@ -854,13 +858,13 @@ const Dashboard = () => {
 
 
       {/* Main Content */}
-      <main style={{ 
-        marginLeft: isSidebarCollapsed ? '100px' : '280px', 
-        flex: 1, 
+      <main style={{
+        marginLeft: isSidebarCollapsed ? '100px' : '280px',
+        flex: 1,
         padding: '2rem 3rem',
         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
       }}>
-        
+
         {/* TAB: OVERVIEW */}
         {activeTab === 'overview' && (
           <div>
@@ -871,7 +875,7 @@ const Dashboard = () => {
               </h1>
             </header>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '3rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '3rem' }}>
               <div style={{ background: 'white', padding: '1.5rem', borderRadius: '24px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', border: '1px solid white' }}>
                 <div style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6', width: '45px', height: '45px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
                   <Briefcase size={22} />
@@ -894,6 +898,14 @@ const Dashboard = () => {
                 </div>
                 <p style={{ margin: 0, fontSize: '0.875rem', fontWeight: '600', color: '#64748b' }}>Total de Clientes</p>
                 <h4 style={{ margin: '4px 0 0', fontSize: '2rem', fontWeight: '900', color: '#1e293b' }}>{stats.totalUsers}</h4>
+              </div>
+
+              <div style={{ background: 'white', padding: '1.5rem', borderRadius: '24px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', border: '1px solid white' }}>
+                <div style={{ background: 'rgba(139, 92, 246, 0.1)', color: '#8b5cf6', width: '45px', height: '45px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+                  <TrendingUp size={22} />
+                </div>
+                <p style={{ margin: 0, fontSize: '0.875rem', fontWeight: '600', color: '#64748b' }}>Acessos ao Site</p>
+                <h4 style={{ margin: '4px 0 0', fontSize: '2rem', fontWeight: '900', color: '#1e293b' }}>{stats.totalVisits}</h4>
               </div>
             </div>
 
@@ -943,14 +955,14 @@ const Dashboard = () => {
             <div style={{ background: 'white', padding: '2rem', borderRadius: '32px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)', border: '1px solid white' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#1e293b' }}>Atividade Recente</h3>
-                <button 
+                <button
                   onClick={() => setActiveTab('quotes')}
                   style={{ background: 'none', border: 'none', color: '#FFCC00', fontWeight: '700', fontSize: '0.875rem', cursor: 'pointer' }}
                 >
                   Ver todos os orçamentos →
                 </button>
               </div>
-              
+
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {quotes.slice(0, 3).map((q, idx) => (
                   <div key={idx} style={{ padding: '1.25rem', background: '#f8fafc', borderRadius: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -981,19 +993,19 @@ const Dashboard = () => {
                   Gerenciar Projetos
                 </h1>
               </div>
-              
+
               <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                 <div style={{ position: 'relative' }}>
+                <div style={{ position: 'relative' }}>
                   <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     placeholder="Pesquisar projeto..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     style={{ padding: '12px 16px 12px 48px', borderRadius: '16px', border: '1px solid #e2e8f0', background: 'white', outline: 'none', width: '250px' }}
                   />
                 </div>
-                <button 
+                <button
                   onClick={() => openModal()}
                   style={{ background: 'linear-gradient(135deg, #FFCC00 0%, #d87a1d 100%)', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '16px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 6px -1px rgba(235, 137, 35, 0.4)', cursor: 'pointer' }}
                 >
@@ -1042,12 +1054,12 @@ const Dashboard = () => {
                     Solicitações de Clientes
                   </h1>
                 </div>
-                
+
                 <div style={{ display: 'flex', gap: '1rem' }}>
                   <div style={{ position: 'relative' }}>
                     <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       placeholder="Filtrar por nome, serviço ou status..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -1090,7 +1102,7 @@ const Dashboard = () => {
                         </div>
                       </td>
                       <td style={{ padding: '1.5rem 2.5rem', textAlign: 'right' }}>
-                        <button 
+                        <button
                           onClick={() => openManageModal(quote)}
                           style={{ background: '#1e293b', color: 'white', border: 'none', padding: '10px 16px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: '700', cursor: 'pointer', marginRight: '10px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
                         >
@@ -1124,22 +1136,22 @@ const Dashboard = () => {
             <div style={{ background: 'white', padding: '2rem', borderRadius: '32px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', marginBottom: '2rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                 <h3 style={{ margin: 0 }}>Imagens Atuais</h3>
-                <label style={{ 
-                  background: 'linear-gradient(135deg, #FFCC00 0%, #d87a1d 100%)', 
-                  color: 'white', 
-                  padding: '12px 24px', 
-                  borderRadius: '16px', 
-                  fontWeight: '800', 
+                <label style={{
+                  background: 'linear-gradient(135deg, #FFCC00 0%, #d87a1d 100%)',
+                  color: 'white',
+                  padding: '12px 24px',
+                  borderRadius: '16px',
+                  fontWeight: '800',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px'
                 }}>
                   <Plus size={20} /> {loadingImage ? 'Processando...' : 'Adicionar Criativo (1:1)'}
-                  <input 
-                    type="file" 
-                    accept="image/*" 
-                    style={{ display: 'none' }} 
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
                     disabled={loadingImage}
                     onChange={async (e) => {
                       const file = e.target.files[0];
@@ -1157,7 +1169,7 @@ const Dashboard = () => {
                           const data = await res.json();
                           await handleAddBanner(data.url);
                         } catch (err) {
-                           showAlert('Erro', 'Falha no upload', 'error');
+                          showAlert('Erro', 'Falha no upload', 'error');
                         } finally {
                           setLoadingImage(false);
                         }
@@ -1171,7 +1183,7 @@ const Dashboard = () => {
                 {banners.map(b => (
                   <div key={b._id} style={{ position: 'relative', aspectRatio: '1/1', borderRadius: '20px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
                     <img src={b.imageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <button 
+                    <button
                       onClick={() => handleDeleteBanner(b._id)}
                       style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: '10px', padding: '8px', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
                     >
@@ -1191,7 +1203,7 @@ const Dashboard = () => {
 
         {/* TAB: SETTINGS */}
         {activeTab === 'settings' && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             style={{ padding: '1rem 0' }}
@@ -1206,17 +1218,17 @@ const Dashboard = () => {
               <p style={{ color: '#64748b', marginTop: '1rem', fontSize: '1rem', fontWeight: '500' }}>Gerencie as informações institucionais, contactos e dados da empresa que são exibidos publicamente no site.</p>
             </header>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               style={{ maxWidth: '900px' }}
             >
-              <form onSubmit={handleUpdateSettings} style={{ 
-                background: 'white', 
-                padding: '3.5rem', 
-                borderRadius: '40px', 
-                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.06)', 
+              <form onSubmit={handleUpdateSettings} style={{
+                background: 'white',
+                padding: '3.5rem',
+                borderRadius: '40px',
+                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.06)',
                 border: '1px solid rgba(226, 232, 240, 0.4)',
                 position: 'relative',
                 overflow: 'hidden'
@@ -1229,16 +1241,16 @@ const Dashboard = () => {
                     <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '800', color: '#1e293b', marginBottom: '1rem', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                       <Briefcase size={16} color="#FFCC00" /> Nome da Empresa
                     </label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={settings.companyName}
-                      onChange={(e) => setSettings({...settings, companyName: e.target.value})}
-                      style={{ 
-                        width: '100%', 
-                        padding: '16px 20px', 
-                        borderRadius: '18px', 
-                        border: '1px solid #e2e8f0', 
-                        background: '#f8fafc', 
+                      onChange={(e) => setSettings({ ...settings, companyName: e.target.value })}
+                      style={{
+                        width: '100%',
+                        padding: '16px 20px',
+                        borderRadius: '18px',
+                        border: '1px solid #e2e8f0',
+                        background: '#f8fafc',
                         outline: 'none',
                         fontSize: '1rem',
                         fontWeight: '600',
@@ -1247,12 +1259,12 @@ const Dashboard = () => {
                         boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
                       }}
                       onFocus={(e) => {
-                        e.target.style.borderColor = '#FFCC00'; 
+                        e.target.style.borderColor = '#FFCC00';
                         e.target.style.background = 'white';
                         e.target.style.boxShadow = '0 0 0 4px rgba(255, 204, 0, 0.1)';
                       }}
                       onBlur={(e) => {
-                        e.target.style.borderColor = '#e2e8f0'; 
+                        e.target.style.borderColor = '#e2e8f0';
                         e.target.style.background = '#f8fafc';
                         e.target.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.02)';
                       }}
@@ -1263,17 +1275,17 @@ const Dashboard = () => {
                     <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '800', color: '#1e293b', marginBottom: '1rem', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                       <MessageCircle size={16} color="#FFCC00" /> WhatsApp de Suporte
                     </label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={settings.supportWhatsapp}
                       placeholder="+258 8X XXX XXXX"
-                      onChange={(e) => setSettings({...settings, supportWhatsapp: e.target.value})}
-                      style={{ 
-                        width: '100%', 
-                        padding: '16px 20px', 
-                        borderRadius: '18px', 
-                        border: '1px solid #e2e8f0', 
-                        background: '#f8fafc', 
+                      onChange={(e) => setSettings({ ...settings, supportWhatsapp: e.target.value })}
+                      style={{
+                        width: '100%',
+                        padding: '16px 20px',
+                        borderRadius: '18px',
+                        border: '1px solid #e2e8f0',
+                        background: '#f8fafc',
                         outline: 'none',
                         fontSize: '1rem',
                         fontWeight: '600',
@@ -1281,13 +1293,13 @@ const Dashboard = () => {
                         transition: 'all 0.2s ease',
                         boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
                       }}
-                       onFocus={(e) => {
-                        e.target.style.borderColor = '#FFCC00'; 
+                      onFocus={(e) => {
+                        e.target.style.borderColor = '#FFCC00';
                         e.target.style.background = 'white';
                         e.target.style.boxShadow = '0 0 0 4px rgba(255, 204, 0, 0.1)';
                       }}
                       onBlur={(e) => {
-                        e.target.style.borderColor = '#e2e8f0'; 
+                        e.target.style.borderColor = '#e2e8f0';
                         e.target.style.background = '#f8fafc';
                         e.target.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.02)';
                       }}
@@ -1298,17 +1310,17 @@ const Dashboard = () => {
                     <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '800', color: '#1e293b', marginBottom: '1rem', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                       <User size={16} color="#FFCC00" /> E-mail de Contato
                     </label>
-                    <input 
-                      type="email" 
+                    <input
+                      type="email"
                       value={settings.supportEmail}
                       placeholder="geral@docacm.com"
-                      onChange={(e) => setSettings({...settings, supportEmail: e.target.value})}
-                      style={{ 
-                        width: '100%', 
-                        padding: '16px 20px', 
-                        borderRadius: '18px', 
-                        border: '1px solid #e2e8f0', 
-                        background: '#f8fafc', 
+                      onChange={(e) => setSettings({ ...settings, supportEmail: e.target.value })}
+                      style={{
+                        width: '100%',
+                        padding: '16px 20px',
+                        borderRadius: '18px',
+                        border: '1px solid #e2e8f0',
+                        background: '#f8fafc',
                         outline: 'none',
                         fontSize: '1rem',
                         fontWeight: '600',
@@ -1316,13 +1328,13 @@ const Dashboard = () => {
                         transition: 'all 0.2s ease',
                         boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
                       }}
-                       onFocus={(e) => {
-                        e.target.style.borderColor = '#FFCC00'; 
+                      onFocus={(e) => {
+                        e.target.style.borderColor = '#FFCC00';
                         e.target.style.background = 'white';
                         e.target.style.boxShadow = '0 0 0 4px rgba(255, 204, 0, 0.1)';
                       }}
                       onBlur={(e) => {
-                        e.target.style.borderColor = '#e2e8f0'; 
+                        e.target.style.borderColor = '#e2e8f0';
                         e.target.style.background = '#f8fafc';
                         e.target.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.02)';
                       }}
@@ -1333,16 +1345,16 @@ const Dashboard = () => {
                     <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '800', color: '#1e293b', marginBottom: '1rem', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                       <Layers size={16} color="#FFCC00" /> Endereço Principal
                     </label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={settings.address}
-                      onChange={(e) => setSettings({...settings, address: e.target.value})}
-                      style={{ 
-                        width: '100%', 
-                        padding: '16px 20px', 
-                        borderRadius: '18px', 
-                        border: '1px solid #e2e8f0', 
-                        background: '#f8fafc', 
+                      onChange={(e) => setSettings({ ...settings, address: e.target.value })}
+                      style={{
+                        width: '100%',
+                        padding: '16px 20px',
+                        borderRadius: '18px',
+                        border: '1px solid #e2e8f0',
+                        background: '#f8fafc',
                         outline: 'none',
                         fontSize: '1rem',
                         fontWeight: '600',
@@ -1350,13 +1362,13 @@ const Dashboard = () => {
                         transition: 'all 0.2s ease',
                         boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
                       }}
-                       onFocus={(e) => {
-                        e.target.style.borderColor = '#FFCC00'; 
+                      onFocus={(e) => {
+                        e.target.style.borderColor = '#FFCC00';
                         e.target.style.background = 'white';
                         e.target.style.boxShadow = '0 0 0 4px rgba(255, 204, 0, 0.1)';
                       }}
                       onBlur={(e) => {
-                        e.target.style.borderColor = '#e2e8f0'; 
+                        e.target.style.borderColor = '#e2e8f0';
                         e.target.style.background = '#f8fafc';
                         e.target.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.02)';
                       }}
@@ -1365,18 +1377,18 @@ const Dashboard = () => {
                 </div>
 
                 <div style={{ marginTop: '4rem', display: 'flex', justifyContent: 'center' }}>
-                  <motion.button 
+                  <motion.button
                     type="submit"
                     whileHover={{ scale: 1.02, y: -5 }}
                     whileTap={{ scale: 0.98 }}
-                    style={{ 
-                      background: 'linear-gradient(135deg, #FFCC00 0%, #d87a1d 100%)', 
-                      color: 'white', 
-                      padding: '20px 60px', 
-                      borderRadius: '24px', 
-                      border: 'none', 
-                      fontWeight: '900', 
-                      fontSize: '1.1rem', 
+                    style={{
+                      background: 'linear-gradient(135deg, #FFCC00 0%, #d87a1d 100%)',
+                      color: 'white',
+                      padding: '20px 60px',
+                      borderRadius: '24px',
+                      border: 'none',
+                      fontWeight: '900',
+                      fontSize: '1.1rem',
                       cursor: 'pointer',
                       boxShadow: '0 20px 40px -10px rgba(255, 204, 0, 0.4)',
                       display: 'flex',
@@ -1398,22 +1410,22 @@ const Dashboard = () => {
 
       {/* CRUD Modal */}
       {isModalOpen && (
-        <div style={{ 
-          position: 'fixed', 
-          inset: 0, 
-          background: 'rgba(15, 23, 42, 0.7)', 
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(15, 23, 42, 0.7)',
           backdropFilter: 'blur(4px)',
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           zIndex: 100,
           padding: '2rem'
         }}>
-          <div style={{ 
-            background: 'white', 
-            width: '100%', 
-            maxWidth: '550px', 
-            borderRadius: '24px', 
+          <div style={{
+            background: 'white',
+            width: '100%',
+            maxWidth: '550px',
+            borderRadius: '24px',
             boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
             overflow: 'hidden'
           }}>
@@ -1425,13 +1437,13 @@ const Dashboard = () => {
                 <X size={24} />
               </button>
             </div>
-            
+
             <form onSubmit={handleSubmit} style={{ padding: '2rem' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#475569', marginBottom: '0.5rem' }}>Título do Projeto</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     name="title"
                     value={formData.title}
                     onChange={handleInputChange}
@@ -1439,10 +1451,10 @@ const Dashboard = () => {
                     style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }}
                   />
                 </div>
-                
+
                 <div>
                   <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#475569', marginBottom: '0.5rem' }}>Categoria</label>
-                  <select 
+                  <select
                     name="category"
                     value={formData.category}
                     onChange={handleInputChange}
@@ -1456,32 +1468,32 @@ const Dashboard = () => {
                     <option value="Antes/Depois">Antes/Depois</option>
                   </select>
                 </div>
-                
+
                 <div>
                   <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#475569', marginBottom: '0.5rem' }}>Imagem do Projeto</label>
                   <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                     {formData.imageUrl && (
                       <img src={formData.imageUrl} alt="Preview" style={{ width: '60px', height: '60px', borderRadius: '8px', objectFit: 'cover' }} />
                     )}
-                    <label style={{ 
-                      flex: 1, 
-                      padding: '12px', 
-                      background: '#f8fafc', 
-                      border: '2px dashed #e2e8f0', 
-                      borderRadius: '12px', 
+                    <label style={{
+                      flex: 1,
+                      padding: '12px',
+                      background: '#f8fafc',
+                      border: '2px dashed #e2e8f0',
+                      borderRadius: '12px',
                       textAlign: 'center',
                       cursor: 'pointer',
                       fontSize: '0.875rem',
                       color: '#64748b'
                     }}>
                       {loadingImage ? 'Fazendo upload...' : (formData.imageUrl ? 'Trocar Imagem' : 'Selecionar Imagem do PC')}
-                      <input 
-                        type="file" 
+                      <input
+                        type="file"
                         accept="image/*"
                         onChange={async (e) => {
                           const file = e.target.files[0];
                           if (!file) return;
-                          
+
                           setLoadingImage(true);
                           const reader = new FileReader();
                           reader.readAsDataURL(file);
@@ -1506,10 +1518,10 @@ const Dashboard = () => {
                     </label>
                   </div>
                 </div>
-                
+
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     id="isFeatured"
                     name="isFeatured"
                     checked={formData.isFeatured}
@@ -1521,16 +1533,16 @@ const Dashboard = () => {
                   </label>
                 </div>
               </div>
-              
+
               <div style={{ marginTop: '2.5rem', display: 'flex', gap: '12px' }}>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={closeModal}
                   style={{ flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', fontWeight: '600', color: '#64748b', cursor: 'pointer' }}
                 >
                   Cancelar
                 </button>
-                <button 
+                <button
                   type="submit"
                   style={{ flex: 1, padding: '12px', borderRadius: '12px', border: 'none', background: '#FFCC00', fontWeight: '600', color: 'white', cursor: 'pointer' }}
                 >
@@ -1545,28 +1557,28 @@ const Dashboard = () => {
       {isManageModalOpen && selectedQuote ? (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '2rem' }}>
           <div className="manage-modal-content" style={{ background: 'white', width: '100%', maxWidth: '900px', height: '80vh', borderRadius: '32px', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
-            
+
             {/* Modal Header */}
             <div style={{ padding: '2rem 2.5rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', background: '#f8fafc' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                 <img src="/LOGO SEM FUNDO.png" alt="DOCA" style={{ height: '60px', objectFit: 'contain' }} />
                 <div>
-                   <h3 style={{ fontSize: '1.5rem', fontWeight: '900', color: '#1e293b', margin: 0 }}>Portal de Gestão de Obra</h3>
-                   <div style={{ display: 'flex', gap: '20px', marginTop: '4px' }}>
-                     <div>
-                       <p style={{ margin: 0, color: '#64748b', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase' }}>DADOS DA OBRA</p>
-                       <p style={{ margin: 0, color: '#1e293b', fontSize: '0.875rem', fontWeight: '700' }}>{selectedQuote.serviceType} | Ref: #DOCA-{selectedQuote._id.slice(-6).toUpperCase()}</p>
-                     </div>
-                     <div style={{ borderLeft: '1px solid #e2e8f0', paddingLeft: '20px' }}>
-                       <p style={{ margin: 0, color: '#64748b', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase' }}>CLIENTE</p>
-                       <p style={{ margin: 0, color: '#1e293b', fontSize: '0.875rem', fontWeight: '700' }}>{selectedQuote.clientName}</p>
-                       <p style={{ margin: 0, color: '#64748b', fontSize: '0.75rem' }}>{selectedQuote.phone} | {selectedQuote.email}</p>
-                     </div>
-                   </div>
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: '900', color: '#1e293b', margin: 0 }}>Portal de Gestão de Obra</h3>
+                  <div style={{ display: 'flex', gap: '20px', marginTop: '4px' }}>
+                    <div>
+                      <p style={{ margin: 0, color: '#64748b', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase' }}>DADOS DA OBRA</p>
+                      <p style={{ margin: 0, color: '#1e293b', fontSize: '0.875rem', fontWeight: '700' }}>{selectedQuote.serviceType} | Ref: #DOCA-{selectedQuote._id.slice(-6).toUpperCase()}</p>
+                    </div>
+                    <div style={{ borderLeft: '1px solid #e2e8f0', paddingLeft: '20px' }}>
+                      <p style={{ margin: 0, color: '#64748b', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase' }}>CLIENTE</p>
+                      <p style={{ margin: 0, color: '#1e293b', fontSize: '0.875rem', fontWeight: '700' }}>{selectedQuote.clientName}</p>
+                      <p style={{ margin: 0, color: '#64748b', fontSize: '0.75rem' }}>{selectedQuote.phone} | {selectedQuote.email}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div style={{ display: 'flex', gap: '8px' }}>
-                <button 
+                <button
                   onClick={() => {
                     const printStyles = document.createElement('style');
                     printStyles.innerHTML = `
@@ -1626,13 +1638,13 @@ const Dashboard = () => {
 
             {/* Modal Content */}
             <div style={{ flex: 1, overflowY: 'auto', padding: '2.5rem' }}>
-              
+
               <div className="tab-panel" style={{ display: manageTab === 'general' ? 'block' : 'none' }}>
                 <h4 className="only-print" style={{ display: 'none', margin: '0 0 1.5rem 0', color: '#FFCC00' }}>Dados Gerais</h4>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
                   <div>
                     <label style={{ display: 'block', fontWeight: '700', marginBottom: '0.5rem' }}>Status da Obra</label>
-                    <select 
+                    <select
                       value={selectedQuote.status}
                       onChange={(e) => handleUpdateQuote({ status: e.target.value })}
                       style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0' }}
@@ -1648,7 +1660,7 @@ const Dashboard = () => {
                   </div>
                   <div>
                     <label style={{ display: 'block', fontWeight: '700', marginBottom: '0.5rem' }}>Orçamento Total (MT)</label>
-                    <input 
+                    <input
                       type="number"
                       value={selectedQuote.totalBudget || ''}
                       onChange={(e) => handleUpdateQuote({ totalBudget: Number(e.target.value) })}
@@ -1658,7 +1670,7 @@ const Dashboard = () => {
                   </div>
                   <div>
                     <label style={{ display: 'block', fontWeight: '700', marginBottom: '0.5rem' }}>Data de Início</label>
-                    <input 
+                    <input
                       type="date"
                       value={selectedQuote.startDate ? new Date(selectedQuote.startDate).toISOString().split('T')[0] : ''}
                       onChange={(e) => handleUpdateQuote({ startDate: e.target.value })}
@@ -1667,7 +1679,7 @@ const Dashboard = () => {
                   </div>
                   <div>
                     <label style={{ display: 'block', fontWeight: '700', marginBottom: '0.5rem' }}>Deadline (Data de Entrega)</label>
-                    <input 
+                    <input
                       type="date"
                       value={selectedQuote.deadline ? new Date(selectedQuote.deadline).toISOString().split('T')[0] : ''}
                       onChange={(e) => handleUpdateQuote({ deadline: e.target.value })}
@@ -1701,20 +1713,20 @@ const Dashboard = () => {
                     </div>
                     <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                       <div style={{ display: 'flex', background: '#f1f5f9', padding: '4px', borderRadius: '10px' }}>
-                        <button 
+                        <button
                           onClick={() => setPlanningView('list')}
                           style={{ padding: '6px 12px', borderRadius: '8px', border: 'none', background: planningView === 'list' ? 'white' : 'transparent', fontWeight: '700', fontSize: '0.75rem', cursor: 'pointer' }}
                         >
                           Lista
                         </button>
-                        <button 
+                        <button
                           onClick={() => setPlanningView('gantt')}
                           style={{ padding: '6px 12px', borderRadius: '8px', border: 'none', background: planningView === 'gantt' ? 'white' : 'transparent', fontWeight: '700', fontSize: '0.75rem', cursor: 'pointer' }}
                         >
                           Gantt
                         </button>
                       </div>
-                      <button 
+                      <button
                         onClick={() => setIsAddingTask(true)}
                         style={{ background: '#1e293b', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '12px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
                       >
@@ -1728,8 +1740,8 @@ const Dashboard = () => {
                       <h5 style={{ margin: '0 0 1rem 0' }}>📋 Detalhes da Nova Tarefa</h5>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                         <div style={{ gridColumn: '1 / -1' }}>
-                          <input 
-                            placeholder="Nome da Tarefa (ex: Pintura, Fundações...)" 
+                          <input
+                            placeholder="Nome da Tarefa (ex: Pintura, Fundações...)"
                             value={taskData.title}
                             onChange={(e) => setTaskData({ ...taskData, title: e.target.value })}
                             style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
@@ -1737,8 +1749,8 @@ const Dashboard = () => {
                         </div>
                         <div>
                           <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Quem vai realizar? (Recurso)</label>
-                          <input 
-                            placeholder="Nome da equipa/pessoa" 
+                          <input
+                            placeholder="Nome da equipa/pessoa"
                             value={taskData.resource}
                             onChange={(e) => setTaskData({ ...taskData, resource: e.target.value })}
                             style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
@@ -1746,8 +1758,8 @@ const Dashboard = () => {
                         </div>
                         <div>
                           <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Tempo Estimado (ex: 2 dias, 1 semana)</label>
-                          <input 
-                            placeholder="Duração" 
+                          <input
+                            placeholder="Duração"
                             value={taskData.duration}
                             onChange={(e) => setTaskData({ ...taskData, duration: e.target.value })}
                             style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
@@ -1755,7 +1767,7 @@ const Dashboard = () => {
                         </div>
                         <div style={{ gridColumn: '1 / -1' }}>
                           <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Deadline (Data Limite)</label>
-                          <input 
+                          <input
                             type="date"
                             value={taskData.deadline}
                             onChange={(e) => setTaskData({ ...taskData, deadline: e.target.value })}
@@ -1764,7 +1776,7 @@ const Dashboard = () => {
                         </div>
                         <div style={{ gridColumn: '1 / -1' }}>
                           <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Observações / Notas Extras</label>
-                          <input 
+                          <input
                             placeholder="Notas sobre a tarefa..."
                             value={taskData.notes}
                             onChange={(e) => setTaskData({ ...taskData, notes: e.target.value })}
@@ -1773,12 +1785,12 @@ const Dashboard = () => {
                         </div>
                       </div>
                       <div style={{ marginTop: '1.5rem', display: 'flex', gap: '8px' }}>
-                        <button 
+                        <button
                           onClick={() => {
                             if (!taskData.title) return showAlert('Atenção', 'O nome da tarefa é obrigatório', 'warning');
-                            const newTask = { 
+                            const newTask = {
                               ...taskData,
-                              startDate: new Date(), 
+                              startDate: new Date(),
                               progress: 0,
                               status: 'Pendente'
                             };
@@ -1791,7 +1803,7 @@ const Dashboard = () => {
                         >
                           GUARDAR TAREFA
                         </button>
-                        <button 
+                        <button
                           onClick={() => setIsAddingTask(false)}
                           style={{ padding: '10px 20px', background: '#e2e8f0', border: 'none', borderRadius: '10px', cursor: 'pointer' }}
                         >
@@ -1832,7 +1844,7 @@ const Dashboard = () => {
                                 </div>
                               </div>
                               <div style={{ display: 'flex', gap: '8px' }}>
-                                <select 
+                                <select
                                   value={task.status}
                                   onChange={(e) => {
                                     const newTasks = [...selectedQuote.tasks];
@@ -1845,7 +1857,7 @@ const Dashboard = () => {
                                   <option value="Em Curso">Em Curso</option>
                                   <option value="Concluído">Concluído</option>
                                 </select>
-                                <button 
+                                <button
                                   onClick={() => {
                                     setEditingTaskIndex(i);
                                     setTaskData({ ...task });
@@ -1854,7 +1866,7 @@ const Dashboard = () => {
                                 >
                                   <Edit size={16} />
                                 </button>
-                                <button 
+                                <button
                                   onClick={() => {
                                     const newTasks = selectedQuote.tasks.filter((_, idx) => idx !== i);
                                     handleUpdateQuote({ tasks: newTasks });
@@ -1865,58 +1877,58 @@ const Dashboard = () => {
                                 </button>
                               </div>
                             </div>
-                            
+
                             {editingTaskIndex === i ? (
                               <div style={{ marginTop: '1rem', background: '#f8fafc', padding: '1.5rem', borderRadius: '12px', border: '1px solid #FFCC00' }}>
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                                   <div style={{ gridColumn: '1 / -1' }}>
-                                      <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Título da Tarefa</label>
-                                      <input 
-                                          value={taskData.title}
-                                          onChange={(e) => setTaskData({ ...taskData, title: e.target.value })}
-                                          placeholder="Título"
-                                          style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
-                                      />
-                                   </div>
-                                   <div>
-                                      <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Quem realiza? (Recurso)</label>
-                                      <input 
-                                          value={taskData.resource}
-                                          onChange={(e) => setTaskData({ ...taskData, resource: e.target.value })}
-                                          placeholder="Recurso"
-                                          style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
-                                      />
-                                   </div>
-                                   <div>
-                                      <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Tempo Estimado (Duração)</label>
-                                      <input 
-                                          value={taskData.duration}
-                                          onChange={(e) => setTaskData({ ...taskData, duration: e.target.value })}
-                                          placeholder="Ex: 2 dias"
-                                          style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
-                                      />
-                                   </div>
-                                   <div style={{ gridColumn: '1 / -1' }}>
-                                      <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Deadline (Prazo)</label>
-                                      <input 
-                                          type="date"
-                                          value={taskData.deadline ? new Date(taskData.deadline).toISOString().split('T')[0] : ''}
-                                          onChange={(e) => setTaskData({ ...taskData, deadline: e.target.value })}
-                                          style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
-                                      />
-                                   </div>
-                                   <div style={{ gridColumn: '1 / -1' }}>
-                                      <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Observações / Notas</label>
-                                      <input 
-                                          value={taskData.notes}
-                                          onChange={(e) => setTaskData({ ...taskData, notes: e.target.value })}
-                                          placeholder="Notas extra sobre a tarefa..."
-                                          style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
-                                      />
-                                   </div>
+                                  <div style={{ gridColumn: '1 / -1' }}>
+                                    <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Título da Tarefa</label>
+                                    <input
+                                      value={taskData.title}
+                                      onChange={(e) => setTaskData({ ...taskData, title: e.target.value })}
+                                      placeholder="Título"
+                                      style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                                    />
+                                  </div>
+                                  <div>
+                                    <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Quem realiza? (Recurso)</label>
+                                    <input
+                                      value={taskData.resource}
+                                      onChange={(e) => setTaskData({ ...taskData, resource: e.target.value })}
+                                      placeholder="Recurso"
+                                      style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                                    />
+                                  </div>
+                                  <div>
+                                    <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Tempo Estimado (Duração)</label>
+                                    <input
+                                      value={taskData.duration}
+                                      onChange={(e) => setTaskData({ ...taskData, duration: e.target.value })}
+                                      placeholder="Ex: 2 dias"
+                                      style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                                    />
+                                  </div>
+                                  <div style={{ gridColumn: '1 / -1' }}>
+                                    <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Deadline (Prazo)</label>
+                                    <input
+                                      type="date"
+                                      value={taskData.deadline ? new Date(taskData.deadline).toISOString().split('T')[0] : ''}
+                                      onChange={(e) => setTaskData({ ...taskData, deadline: e.target.value })}
+                                      style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                                    />
+                                  </div>
+                                  <div style={{ gridColumn: '1 / -1' }}>
+                                    <label style={{ fontSize: '0.75rem', fontWeight: '800', display: 'block' }}>Observações / Notas</label>
+                                    <input
+                                      value={taskData.notes}
+                                      onChange={(e) => setTaskData({ ...taskData, notes: e.target.value })}
+                                      placeholder="Notas extra sobre a tarefa..."
+                                      style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                                    />
+                                  </div>
                                 </div>
                                 <div style={{ marginTop: '1.5rem', display: 'flex', gap: '8px' }}>
-                                  <button 
+                                  <button
                                     onClick={() => {
                                       const newTasks = [...selectedQuote.tasks];
                                       newTasks[i] = { ...newTasks[i], ...taskData };
@@ -1935,10 +1947,10 @@ const Dashboard = () => {
                                 <div style={{ flex: 1, height: '8px', background: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
                                   <div style={{ width: `${task.progress}%`, height: '100%', background: task.status === 'Concluído' ? '#10b981' : '#FFCC00', transition: 'width 0.3s' }} />
                                 </div>
-                                <input 
-                                  type="number" 
-                                  value={task.progress} 
-                                  min="0" 
+                                <input
+                                  type="number"
+                                  value={task.progress}
+                                  min="0"
                                   max="100"
                                   onChange={(e) => {
                                     const newTasks = [...selectedQuote.tasks];
@@ -1971,22 +1983,22 @@ const Dashboard = () => {
                             const end = new Date(task.deadline || new Date());
                             const projStart = new Date(selectedQuote.startDate || task.startDate);
                             const projEnd = new Date(selectedQuote.deadline || new Date());
-                            
+
                             // Calculate timeline window (min 14 days, max based on actual project)
-                            const totalDays = Math.max(14, Math.floor((projEnd - projStart) / (1000 * 60 * 60 * 24)) + 5); 
-                            
+                            const totalDays = Math.max(14, Math.floor((projEnd - projStart) / (1000 * 60 * 60 * 24)) + 5);
+
                             const offset = Math.max(0, Math.floor((start - projStart) / (1000 * 60 * 60 * 24)));
                             const duration = Math.max(1, Math.floor((end - start) / (1000 * 60 * 60 * 24)));
-                            
+
                             return (
                               <div key={idx} style={{ display: 'flex', alignItems: 'center', height: '40px', marginBottom: '8px' }}>
                                 <div style={{ width: '200px', fontSize: '0.75rem', fontWeight: '700', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', paddingRight: '10px' }}>{task.title}</div>
                                 <div style={{ flex: 1, background: '#f1f5f9', height: '24px', borderRadius: '6px', position: 'relative', overflow: 'hidden' }}>
-                                  <div style={{ 
-                                    position: 'absolute', 
-                                    left: `${(offset / totalDays) * 100}%`, 
-                                    width: `${(duration / totalDays) * 100}%`, 
-                                    height: '100%', 
+                                  <div style={{
+                                    position: 'absolute',
+                                    left: `${(offset / totalDays) * 100}%`,
+                                    width: `${(duration / totalDays) * 100}%`,
+                                    height: '100%',
                                     background: task.status === 'Concluído' ? '#10b981' : '#FFCC00',
                                     borderRadius: '4px',
                                     display: 'flex',
@@ -2032,19 +2044,19 @@ const Dashboard = () => {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                     <h4 style={{ margin: 0 }}>Histórico de Pagamentos</h4>
                     <div style={{ display: 'flex', gap: '1rem' }}>
-                       <div style={{ background: '#f8fafc', padding: '10px 20px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <BarChart2 size={18} color="#64748b" />
-                          <div>
-                            <p style={{ margin: 0, fontSize: '0.65rem', color: '#64748b', fontWeight: '700' }}>CUSTO REAL (MATERIAIS)</p>
-                            <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: '800', color: (selectedQuote.materials || []).reduce((acc, m) => acc + m.cost, 0) > selectedQuote.totalBudget ? '#ef4444' : '#1e293b' }}>
-                              {(selectedQuote.materials || []).reduce((acc, m) => acc + m.cost, 0).toLocaleString()} MT
-                            </p>
-                          </div>
-                          {(selectedQuote.materials || []).reduce((acc, m) => acc + m.cost, 0) > selectedQuote.totalBudget && (
-                            <AlertTriangle size={18} color="#ef4444" />
-                          )}
-                       </div>
-                       <button 
+                      <div style={{ background: '#f8fafc', padding: '10px 20px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <BarChart2 size={18} color="#64748b" />
+                        <div>
+                          <p style={{ margin: 0, fontSize: '0.65rem', color: '#64748b', fontWeight: '700' }}>CUSTO REAL (MATERIAIS)</p>
+                          <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: '800', color: (selectedQuote.materials || []).reduce((acc, m) => acc + m.cost, 0) > selectedQuote.totalBudget ? '#ef4444' : '#1e293b' }}>
+                            {(selectedQuote.materials || []).reduce((acc, m) => acc + m.cost, 0).toLocaleString()} MT
+                          </p>
+                        </div>
+                        {(selectedQuote.materials || []).reduce((acc, m) => acc + m.cost, 0) > selectedQuote.totalBudget && (
+                          <AlertTriangle size={18} color="#ef4444" />
+                        )}
+                      </div>
+                      <button
                         onClick={() => {
                           showAlert('Adicionar Pagamento', 'Introduza o valor da parcela (MT):', 'prompt', (val) => {
                             if (val && !isNaN(val)) {
@@ -2073,20 +2085,20 @@ const Dashboard = () => {
                           <td style={{ padding: '1rem 0' }}>{new Date(pay.date || new Date()).toLocaleDateString()}</td>
                           <td style={{ padding: '1rem 0', fontWeight: '800', color: '#1e293b' }}>{pay.amount.toLocaleString()} MT</td>
                           <td style={{ padding: '1rem 0' }}>
-                            <select 
+                            <select
                               value={pay.status || 'Pago'}
                               onChange={(e) => {
                                 const newPayments = [...selectedQuote.payments];
                                 newPayments[i].status = e.target.value;
                                 handleUpdateQuote({ payments: newPayments });
                               }}
-                              style={{ 
-                                background: pay.status === 'Pago' ? '#ecfdf5' : (pay.status === 'Pendente' ? '#fef9c3' : '#fee2e2'), 
-                                color: pay.status === 'Pago' ? '#10b981' : (pay.status === 'Pendente' ? '#854d0e' : '#991b1b'), 
-                                padding: '4px 10px', 
+                              style={{
+                                background: pay.status === 'Pago' ? '#ecfdf5' : (pay.status === 'Pendente' ? '#fef9c3' : '#fee2e2'),
+                                color: pay.status === 'Pago' ? '#10b981' : (pay.status === 'Pendente' ? '#854d0e' : '#991b1b'),
+                                padding: '4px 10px',
                                 border: 'none',
-                                borderRadius: '20px', 
-                                fontSize: '0.75rem', 
+                                borderRadius: '20px',
+                                fontSize: '0.75rem',
                                 fontWeight: '800',
                                 cursor: 'pointer',
                                 outline: 'none'
@@ -2109,7 +2121,7 @@ const Dashboard = () => {
                 <div>
                   <div style={{ marginBottom: '3rem' }}>
                     <label style={{ display: 'block', fontWeight: '700', marginBottom: '1rem' }}>Estado da Obra: {selectedQuote.percentage || 0}%</label>
-                    <input 
+                    <input
                       type="range"
                       min="0"
                       max="100"
@@ -2118,10 +2130,10 @@ const Dashboard = () => {
                       style={{ width: '100%', accentColor: '#FFCC00', height: '10px' }}
                     />
                   </div>
-                  
+
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                     <h4 style={{ margin: 0 }}>Materiais Adquiridos</h4>
-                    <button 
+                    <button
                       onClick={() => setIsAddingMaterial(true)}
                       style={{ background: '#1e293b', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: '700', cursor: 'pointer' }}
                     >
@@ -2133,42 +2145,42 @@ const Dashboard = () => {
                     <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '20px', marginBottom: '2rem', border: '1px solid #FFCC00' }}>
                       <h5 style={{ margin: '0 0 1rem 0' }}>🛒 Registar Compra/Serviço</h5>
                       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem' }}>
-                        <input 
-                          placeholder="Descrição do material ou serviço" 
+                        <input
+                          placeholder="Descrição do material ou serviço"
                           value={materialData.name}
-                          onChange={(e) => setMaterialData({ ...materialData, name: e.target.value })} 
+                          onChange={(e) => setMaterialData({ ...materialData, name: e.target.value })}
                           style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
                         />
-                        <input 
-                          type="number" 
-                          placeholder="Custo (MT)" 
+                        <input
+                          type="number"
+                          placeholder="Custo (MT)"
                           value={materialData.cost}
                           onChange={(e) => setMaterialData({ ...materialData, cost: e.target.value })}
                           style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
                         />
                       </div>
-                      
+
                       <div style={{ marginTop: '1rem' }}>
-                        <label style={{ 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          gap: '8px', 
-                          background: materialData.receiptUrl ? '#ecfdf5' : '#f1f5f9', 
+                        <label style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          background: materialData.receiptUrl ? '#ecfdf5' : '#f1f5f9',
                           color: materialData.receiptUrl ? '#10b981' : '#64748b',
-                          padding: '10px', 
-                          borderRadius: '10px', 
-                          fontSize: '0.8rem', 
-                          fontWeight: '800', 
+                          padding: '10px',
+                          borderRadius: '10px',
+                          fontSize: '0.8rem',
+                          fontWeight: '800',
                           cursor: 'pointer',
                           border: materialData.receiptUrl ? '1px solid #10b981' : '1px solid #e2e8f0',
                           textAlign: 'center',
                           justifyContent: 'center'
                         }}>
                           <Camera size={18} /> {loadingMaterialReceipt ? 'Carregando...' : (materialData.receiptUrl ? '✅ RECIBO ANEXADO' : '📸 ANEXAR RECIBO / FATURA')}
-                          <input 
-                            type="file" 
-                            accept="image/*" 
-                            style={{ display: 'none' }} 
+                          <input
+                            type="file"
+                            accept="image/*"
+                            style={{ display: 'none' }}
                             onChange={async (e) => {
                               const file = e.target.files[0];
                               if (!file) return;
@@ -2196,14 +2208,14 @@ const Dashboard = () => {
                       </div>
 
                       <div style={{ marginTop: '1.5rem', display: 'flex', gap: '8px' }}>
-                         <button 
+                        <button
                           onClick={() => {
                             if (!materialData.name || !materialData.cost) return showAlert('Atenção', 'Nome e custo são obrigatórios', 'warning');
-                            const newMaterials = [...(selectedQuote.materials || []), { 
-                              name: materialData.name, 
-                              cost: Number(materialData.cost), 
+                            const newMaterials = [...(selectedQuote.materials || []), {
+                              name: materialData.name,
+                              cost: Number(materialData.cost),
                               receiptUrl: materialData.receiptUrl,
-                              date: new Date() 
+                              date: new Date()
                             }];
                             handleUpdateQuote({ materials: newMaterials });
                             setIsAddingMaterial(false);
@@ -2213,7 +2225,7 @@ const Dashboard = () => {
                         >
                           REGISTAR COMPRA
                         </button>
-                        <button 
+                        <button
                           onClick={() => setIsAddingMaterial(false)}
                           style={{ padding: '10px 20px', background: '#e2e8f0', border: 'none', borderRadius: '10px', cursor: 'pointer', fontWeight: '800' }}
                         >
@@ -2231,7 +2243,7 @@ const Dashboard = () => {
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                               <div style={{ gridColumn: '1 / -1' }}>
                                 <label style={{ fontSize: '0.65rem', fontWeight: '800' }}>Descrição</label>
-                                <input 
+                                <input
                                   value={materialData.name}
                                   onChange={(e) => setMaterialData({ ...materialData, name: e.target.value })}
                                   style={{ width: '100%', padding: '6px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
@@ -2239,7 +2251,7 @@ const Dashboard = () => {
                               </div>
                               <div>
                                 <label style={{ fontSize: '0.65rem', fontWeight: '800' }}>Custo (MT)</label>
-                                <input 
+                                <input
                                   type="number"
                                   value={materialData.cost}
                                   onChange={(e) => setMaterialData({ ...materialData, cost: e.target.value })}
@@ -2248,7 +2260,7 @@ const Dashboard = () => {
                               </div>
                               <div>
                                 <label style={{ fontSize: '0.65rem', fontWeight: '800' }}>Data</label>
-                                <input 
+                                <input
                                   type="date"
                                   value={materialData.date ? new Date(materialData.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]}
                                   onChange={(e) => setMaterialData({ ...materialData, date: e.target.value })}
@@ -2258,15 +2270,15 @@ const Dashboard = () => {
                             </div>
                             <div style={{ marginTop: '10px', display: 'flex', gap: '8px' }}>
                               <button onClick={() => {
-                                 const newMaterials = [...selectedQuote.materials];
-                                 newMaterials[i] = { 
-                                   ...newMaterials[i], 
-                                   name: materialData.name, 
-                                   cost: Number(materialData.cost),
-                                   date: materialData.date || newMaterials[i].date
-                                 };
-                                 handleUpdateQuote({ materials: newMaterials });
-                                 setEditingMaterialIndex(null);
+                                const newMaterials = [...selectedQuote.materials];
+                                newMaterials[i] = {
+                                  ...newMaterials[i],
+                                  name: materialData.name,
+                                  cost: Number(materialData.cost),
+                                  date: materialData.date || newMaterials[i].date
+                                };
+                                handleUpdateQuote({ materials: newMaterials });
+                                setEditingMaterialIndex(null);
                               }} style={{ flex: 1, background: '#1e293b', color: 'white', border: 'none', padding: '8px', borderRadius: '6px', cursor: 'pointer', fontWeight: '800' }}>SALVAR</button>
                               <button onClick={() => setEditingMaterialIndex(null)} style={{ background: '#e2e8f0', border: 'none', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer' }}>X</button>
                             </div>
@@ -2287,7 +2299,7 @@ const Dashboard = () => {
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                               <p style={{ margin: 0, color: '#1e293b', fontWeight: '900' }}>{mat.cost.toLocaleString()} MT</p>
                               <div style={{ display: 'flex', gap: '4px' }}>
-                                <button 
+                                <button
                                   onClick={() => {
                                     setEditingMaterialIndex(i);
                                     setMaterialData({ name: mat.name, cost: mat.cost });
@@ -2296,7 +2308,7 @@ const Dashboard = () => {
                                 >
                                   <Edit size={14} />
                                 </button>
-                                <button 
+                                <button
                                   onClick={() => {
                                     const newMaterials = selectedQuote.materials.filter((_, idx) => idx !== i);
                                     handleUpdateQuote({ materials: newMaterials });
@@ -2320,22 +2332,22 @@ const Dashboard = () => {
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                     <h4 style={{ margin: 0 }}>Galeria de Evolução da Obra</h4>
-                    <label style={{ 
-                      background: 'linear-gradient(135deg, #FFCC00 0%, #d87a1d 100%)', 
-                      color: 'white', 
-                      padding: '12px 24px', 
-                      borderRadius: '16px', 
-                      fontWeight: '800', 
+                    <label style={{
+                      background: 'linear-gradient(135deg, #FFCC00 0%, #d87a1d 100%)',
+                      color: 'white',
+                      padding: '12px 24px',
+                      borderRadius: '16px',
+                      fontWeight: '800',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       gap: '8px'
                     }}>
                       <Camera size={20} /> {loadingImage ? 'Processando...' : 'Adicionar Foto à Obra'}
-                      <input 
-                        type="file" 
-                        accept="image/*" 
-                        style={{ display: 'none' }} 
+                      <input
+                        type="file"
+                        accept="image/*"
+                        style={{ display: 'none' }}
                         disabled={loadingImage}
                         onChange={async (e) => {
                           const file = e.target.files[0];
@@ -2354,7 +2366,7 @@ const Dashboard = () => {
                               const newPhotos = [...(selectedQuote.workPhotos || []), data.url];
                               handleUpdateQuote({ workPhotos: newPhotos });
                             } catch (err) {
-                               showAlert('Erro', 'Falha no upload', 'error');
+                              showAlert('Erro', 'Falha no upload', 'error');
                             } finally {
                               setLoadingImage(false);
                             }
@@ -2363,12 +2375,12 @@ const Dashboard = () => {
                       />
                     </label>
                   </div>
-                  
+
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1.5rem' }}>
                     {(selectedQuote.workPhotos || []).map((photo, i) => (
                       <div key={i} style={{ borderRadius: '16px', overflow: 'hidden', height: '180px', position: 'relative', border: '1px solid #e2e8f0' }}>
                         <img src={photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        <button 
+                        <button
                           onClick={() => {
                             const newPhotos = selectedQuote.workPhotos.filter((_, index) => index !== i);
                             handleUpdateQuote({ workPhotos: newPhotos });
@@ -2393,9 +2405,9 @@ const Dashboard = () => {
       ) : null}
 
       {/* Modern Alert Component */}
-      <ModernAlert 
-        {...alertConfig} 
-        onClose={() => setAlertConfig({ ...alertConfig, isOpen: false })} 
+      <ModernAlert
+        {...alertConfig}
+        onClose={() => setAlertConfig({ ...alertConfig, isOpen: false })}
       />
     </div>
   );

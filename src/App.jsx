@@ -33,7 +33,21 @@ const Home = ({ onOpenQuote }) => (
 );
 
 function App() {
-  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+  const [isQuoteModalOpen, setIsQuoteModalOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    const trackVisit = async () => {
+      try {
+        const API_URL = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:5000' : '');
+        await fetch(`${API_URL}/api/track-visit`, { method: 'POST' });
+      } catch (err) {
+        console.group('📊 DOCA Global Tracker');
+        console.error('Failed to track visit:', err.message);
+        console.groupEnd();
+      }
+    };
+    if (window.location.pathname === '/') trackVisit();
+  }, []);
 
   return (
     <Router>
