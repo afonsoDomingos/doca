@@ -337,6 +337,16 @@ app.post('/api/register', async (req, res) => {
     await user.save();
     console.log('✅ SUCESSO: Usuário registrado no Banco de Dados');
 
+    // --- Sincronização Automática de Orçamentos ---
+    try {
+      await Quote.updateMany(
+        { email: normalizedEmail, userId: null },
+        { $set: { userId: user._id } }
+      );
+    } catch (syncErr) {
+      console.error('Erro de sincronização no registo:', syncErr);
+    }
+
     res.json({
       success: true,
       message: 'Usuário registrado com sucesso',
@@ -418,6 +428,16 @@ app.post('/api/auth/login', async (req, res) => {
 
         if (isMatch || user.password === password) {
           console.log('✅ SUCESSO: Cliente Identificado');
+          // --- Sincronização Automática de Orçamentos no Login ---
+          try {
+            await Quote.updateMany(
+              { email: email.toLowerCase(), userId: null },
+              { $set: { userId: user._id } }
+            );
+          } catch (syncErr) {
+            console.error('Erro de sincronização no login:', syncErr);
+          }
+
           return res.json({
             success: true,
             role: 'customer',

@@ -438,6 +438,18 @@ app.post('/api/register', async (req, res) => {
     await user.save();
     console.log('✅ SUCESSO: Usuário registrado no Banco de Dados');
 
+    // --- Sincronização Automática de Orçamentos ---
+    // Procurar orçamentos feitos como "guest" com este email e associar ao novo utilizador
+    try {
+      await Quote.updateMany(
+        { email: normalizedEmail, userId: null },
+        { $set: { userId: user._id } }
+      );
+      console.log(`✅ Sincronizados orçamentos anteriores para o email: ${normalizedEmail}`);
+    } catch (syncErr) {
+      console.error('Erro ao sincronizar orçamentos no registo:', syncErr);
+    }
+
     res.json({
       success: true,
       message: 'Usuário registrado com sucesso',
@@ -519,6 +531,16 @@ app.post('/api/auth/login', async (req, res) => {
 
         if (isMatch || user.password === password) {
           console.log('✅ SUCESSO: Cliente Identificado');
+          // --- Sincronização Automática de Orçamentos no Login ---
+          try {
+            await Quote.updateMany(
+              { email: email.toLowerCase(), userId: null },
+              { $set: { userId: user._id } }
+            );
+          } catch (syncErr) {
+            console.error('Erro ao sincronizar orçamentos no login:', syncErr);
+          }
+
           return res.json({
             success: true,
             role: 'customer',
