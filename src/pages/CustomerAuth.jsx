@@ -305,6 +305,11 @@ const CustomerAuth = () => {
                     {isLogin ? 'Cadastre-se' : 'Faça login'}
                   </button>
                 </p>
+                {!isLogin && (
+                  <p style={{ color: '#94a3b8', fontSize: '0.75rem', marginTop: '1rem' }}>
+                    Ao cadastrar-se, você concorda com a nossa <Link to="/privacy-policy" style={{ color: '#003366', fontWeight: '700' }}>Política de Privacidade</Link>.
+                  </p>
+                )}
               </div>
             </motion.form>
           </AnimatePresence>
