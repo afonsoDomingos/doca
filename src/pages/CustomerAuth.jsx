@@ -307,7 +307,7 @@ const CustomerAuth = () => {
                 </p>
                 {!isLogin && (
                   <p style={{ color: '#94a3b8', fontSize: '0.75rem', marginTop: '1rem' }}>
-                    Ao cadastrar-se, você concorda com a nossa <Link to="/privacy-policy" style={{ color: '#003366', fontWeight: '700' }}>Política de Privacidade</Link>.
+                    Ao cadastrar-se, você concorda com os nossos <Link to="/terms-of-service" style={{ color: '#003366', fontWeight: '700' }}>Termos de Uso</Link> e <Link to="/privacy-policy" style={{ color: '#003366', fontWeight: '700' }}>Política de Privacidade</Link>.
                   </p>
                 )}
               </div>

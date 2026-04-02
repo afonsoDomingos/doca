@@ -128,7 +128,8 @@ const Footer = () => {
             &copy; {currentYear} DOCA MOZAMBIQUE, Lda. Todos os direitos reservados.
           </p>
           <div style={{ display: 'flex', gap: '30px', fontSize: '0.9rem' }}>
-            <Link to="/privacy-policy" style={{ color: '#94A3B8' }}>Legal</Link>
+            <Link to="/terms-of-service" style={{ color: '#94A3B8' }}>Termos</Link>
+            <Link to="/privacy-policy" style={{ color: '#94A3B8' }}>Privacidade</Link>
             <Link to="/privacy-policy" style={{ color: '#94A3B8' }}>Cookies</Link>
           </div>
           <button

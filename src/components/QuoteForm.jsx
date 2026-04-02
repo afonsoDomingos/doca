@@ -503,7 +503,7 @@ const QuoteForm = ({ onComplete }) => {
 
       {/* Privacy Policy Link */}
       <div style={{ marginTop: '2rem', textAlign: 'center', fontSize: '0.75rem', color: '#94a3b8' }}>
-        Ao enviar, você concorda com a nossa <Link to="/privacy-policy" style={{ color: '#FFCC00', fontWeight: '700', textDecoration: 'underline' }}>Política de Privacidade</Link>.
+        Ao enviar, você concorda com os nossos <Link to="/terms-of-service" style={{ color: '#FFCC00', fontWeight: '700', textDecoration: 'underline' }}>Termos de Uso</Link> e <Link to="/privacy-policy" style={{ color: '#FFCC00', fontWeight: '700', textDecoration: 'underline' }}>Política de Privacidade</Link>.
       </div>
     </div>
   );

@@ -14,6 +14,7 @@ import QuoteModal from './components/QuoteModal';
 import CustomerAuth from './pages/CustomerAuth';
 import CustomerDashboard from './pages/CustomerDashboard';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 import WhatsAppContact from './components/WhatsAppContact';
 import HowToOrder from './components/HowToOrder';
 import CookieConsent from './components/CookieConsent';
@@ -61,6 +62,7 @@ function App() {
         <Route path="/portal/login" element={<CustomerAuth />} />
         <Route path="/portal/dashboard" element={<CustomerDashboard />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
       </Routes>
       <CookieConsent />
       <QuoteModal isOpen={isQuoteModalOpen} onClose={() => setIsQuoteModalOpen(false)} />
