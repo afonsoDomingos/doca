@@ -13,6 +13,7 @@ import Dashboard from './pages/Dashboard';
 import QuoteModal from './components/QuoteModal';
 import CustomerAuth from './pages/CustomerAuth';
 import CustomerDashboard from './pages/CustomerDashboard';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import WhatsAppContact from './components/WhatsAppContact';
 import HowToOrder from './components/HowToOrder';
 
@@ -58,6 +59,7 @@ function App() {
         <Route path="/admin/dashboard" element={<Dashboard />} />
         <Route path="/portal/login" element={<CustomerAuth />} />
         <Route path="/portal/dashboard" element={<CustomerDashboard />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       </Routes>
       <QuoteModal isOpen={isQuoteModalOpen} onClose={() => setIsQuoteModalOpen(false)} />
     </Router>

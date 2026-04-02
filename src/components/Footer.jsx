@@ -16,6 +16,7 @@ const Footer = () => {
         { name: 'Serviços', path: '#servicos' },
         { name: 'Projetos', path: '#projetos' },
         { name: 'Portal do Cliente', path: '/portal/login' },
+        { name: 'Política de Privacidade', path: '/privacy-policy' },
         { name: 'Área Restrita', path: '/admin/dashboard' }
       ]
     },
