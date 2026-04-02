@@ -16,6 +16,7 @@ import CustomerDashboard from './pages/CustomerDashboard';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import WhatsAppContact from './components/WhatsAppContact';
 import HowToOrder from './components/HowToOrder';
+import CookieConsent from './components/CookieConsent';
 
 const Home = ({ onOpenQuote }) => (
   <div className="app-container">
@@ -61,6 +62,7 @@ function App() {
         <Route path="/portal/dashboard" element={<CustomerDashboard />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       </Routes>
+      <CookieConsent />
       <QuoteModal isOpen={isQuoteModalOpen} onClose={() => setIsQuoteModalOpen(false)} />
     </Router>
   );

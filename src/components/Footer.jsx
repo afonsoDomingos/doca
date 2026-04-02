@@ -128,8 +128,8 @@ const Footer = () => {
             &copy; {currentYear} DOCA MOZAMBIQUE, Lda. Todos os direitos reservados.
           </p>
           <div style={{ display: 'flex', gap: '30px', fontSize: '0.9rem' }}>
-            <a href="#" style={{ color: '#94A3B8' }}>Legal</a>
-            <a href="#" style={{ color: '#94A3B8' }}>Cookies</a>
+            <Link to="/privacy-policy" style={{ color: '#94A3B8' }}>Legal</Link>
+            <Link to="/privacy-policy" style={{ color: '#94A3B8' }}>Cookies</Link>
           </div>
           <button
             onClick={scrollToTop}

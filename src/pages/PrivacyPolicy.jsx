@@ -94,7 +94,24 @@ const PrivacyPolicy = () => {
 
               <section style={{ marginBottom: '40px' }}>
                 <h3 style={{ fontSize: '1.6rem', color: 'var(--primary-blue)', borderLeft: '4px solid var(--accent-yellow)', paddingLeft: '15px', marginBottom: '20px' }}>
-                  5. Seus Direitos
+                  5. Política de Cookies
+                </h3>
+                <p>
+                  Utilizamos cookies para melhorar a sua experiência de navegação. Cookies são pequenos ficheiros de texto guardados no seu dispositivo que nos ajudam a:
+                </p>
+                <ul style={{ paddingLeft: '25px', listStyleType: 'square' }}>
+                  <li style={{ marginBottom: '10px' }}>Lembrar as suas preferências (como o login no portal).</li>
+                  <li style={{ marginBottom: '10px' }}>Analisar o tráfego e comportamento dos usuários para melhorias técnicas.</li>
+                  <li style={{ marginBottom: '10px' }}>Garantir a segurança durante a utilização dos nossos formulários.</li>
+                </ul>
+                <p>
+                  Pode gerir ou desactivar os cookies através das definições do seu navegador a qualquer momento.
+                </p>
+              </section>
+
+              <section style={{ marginBottom: '40px' }}>
+                <h3 style={{ fontSize: '1.6rem', color: 'var(--primary-blue)', borderLeft: '4px solid var(--accent-yellow)', paddingLeft: '15px', marginBottom: '20px' }}>
+                  6. Seus Direitos
                 </h3>
                 <p>
                   Como utilizador, tem o direito de solicitar a actualização, correcção ou eliminação permanente dos seus dados. 
